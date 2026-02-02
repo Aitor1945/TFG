@@ -1,0 +1,176 @@
+/* --- VARIABLES DE TEMA --- */
+:root {
+    /* Variables Base (Light Mode por defecto) */
+    --bg-gradient-1: #e0f2fe; /* Azul muy claro */
+    --bg-gradient-2: #f0f9ff; /* Blanco azulado */
+    --bg-gradient-3: #bae6fd; /* Azul cielo suave */
+    
+    --card-bg: #ffffff;
+    --text-main: #212529;
+    --text-muted: #6c757d;
+    --input-bg: #ffffff;
+    --input-border: #dee2e6;
+    --branding-overlay: linear-gradient(180deg, rgba(11, 28, 46, 0.9) 0%, rgba(0, 78, 146, 0.9) 100%);
+    
+    /* Transiciones globales suaves */
+    --transition-speed: 0.5s;
+}
+
+/* Variables Dark Mode */
+body.dark-mode {
+    --bg-gradient-1: #0f172a; /* Azul noche oscuro */
+    --bg-gradient-2: #1e293b; /* Gris azulado oscuro */
+    --bg-gradient-3: #020617; /* Casi negro */
+    
+    --card-bg: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --input-bg: #334155;
+    --input-border: #475569;
+    /* En dark mode, el branding se integra más */
+    --branding-overlay: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); 
+}
+
+/* Configuraciones generales */
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+    overflow-x: hidden;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+/* --- FONDO ANIMADO --- */
+.animated-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(-45deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3), var(--bg-gradient-2));
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    transition: background var(--transition-speed); /* Suaviza el cambio de color al cambiar tema */
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* --- INTERRUPTOR DE TEMA --- */
+.theme-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: var(--card-bg);
+    color: var(--text-main);
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.theme-btn:hover {
+    transform: rotate(15deg) scale(1.1);
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+/* --- ESTILOS DE LA TARJETA (ADAPTATIVOS) --- */
+.login-wrapper {
+    width: 100%;
+    max-width: 900px;
+    min-height: 550px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+/* Columna Izquierda (Branding) */
+.bg-branding {
+    background: var(--branding-overlay);
+    position: relative;
+    z-index: 1;
+    transition: background var(--transition-speed);
+}
+
+/* Columna Derecha (Formulario) */
+.form-side {
+    background-color: var(--card-bg);
+    transition: background-color var(--transition-speed);
+}
+
+.welcome-text {
+    color: var(--text-main);
+    transition: color var(--transition-speed);
+}
+
+/* Inputs adaptados al tema */
+.form-control {
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text-main);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background-color: var(--input-bg);
+    color: var(--text-main);
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Placeholder y Labels */
+.form-floating > label {
+    color: var(--text-muted);
+}
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: var(--text-muted);
+    opacity: 0.8;
+}
+
+/* Botón toggle password */
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+/* Logo */
+.app-logo {
+    width: 180px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+    transition: transform 0.3s ease;
+}
+.app-logo:hover { transform: scale(1.05); }
+
+.brand-title { font-family: 'Poppins', sans-serif; letter-spacing: 2px; text-transform: uppercase; }
+.brand-subtitle { font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase; color: #aecbe6; font-weight: 600; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .login-wrapper {
+        min-height: auto;
+        border-radius: 0;
+        box-shadow: none;
+        background: transparent;
+    }
+    .col-md-6.form-side {
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+}
