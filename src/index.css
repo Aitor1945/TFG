@@ -1,0 +1,266 @@
+/* =========================================
+   VARIABLES & TEMAS
+   ========================================= */
+:root {
+    --bg-body: #f0f2f5;
+    --bg-sidebar: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --primary-color: #0d6efd;
+    --border-color: #e2e8f0;
+    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --social-bg: #f1f5f9;
+    --social-icon: #334155;
+    --sidebar-width: 260px;
+    --sidebar-width-collapsed: 80px;
+    --transition-speed: 0.3s;
+}
+
+[data-theme="dark"] {
+    --bg-body: #0f172a;
+    --bg-sidebar: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --primary-color: #3b82f6;
+    --border-color: #334155;
+    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    --social-bg: #334155;
+    --social-icon: #e2e8f0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    display: flex;
+    min-height: 100vh;
+    transition: background-color var(--transition-speed);
+}
+
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+/* =========================================
+   SIDEBAR (MENÚ VERTICAL)
+   ========================================= */
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+    position: fixed;
+    top: 0; left: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 1rem;
+    z-index: 1000;
+    transition: width var(--transition-speed) ease;
+    overflow-x: visible; /* Importante para que el menú social salga fuera */
+}
+
+/* Cabecera del Sidebar con botón Toggle */
+.brand-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding-left: 0.75rem;
+    min-height: 30px;
+}
+
+.brand {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity 0.2s;
+}
+
+/* Botón Hamburguesa/Toggle */
+.sidebar-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: color 0.2s;
+}
+.sidebar-toggle-btn:hover { color: var(--primary-color); }
+
+.nav-list { display: flex; flex-direction: column; gap: 0.25rem; flex: 1; }
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-weight: 500;
+    white-space: nowrap; /* Evita que el texto baje de línea al cerrar */
+    transition: all 0.2s;
+    overflow: hidden; /* Oculta texto al cerrar */
+}
+
+.nav-link i { font-size: 1.1rem; min-width: 20px; text-align: center; }
+.nav-link:hover { background-color: var(--bg-body); color: var(--primary-color); }
+.nav-link.active { background-color: var(--primary-color); color: #ffffff; }
+
+.menu-spacer { margin-top: auto; }
+
+/* =========================================
+   ESTADO COLAPSADO (Clase controlada por JS/HTML)
+   ========================================= */
+/* Cuando el elemento HTML tiene la clase sidebar-closed */
+html.sidebar-closed .sidebar {
+    width: var(--sidebar-width-collapsed);
+}
+html.sidebar-closed .brand span, 
+html.sidebar-closed .nav-link span,
+html.sidebar-closed .mode-label,
+html.sidebar-closed .radial-trigger .fa-chevron-right {
+    opacity: 0;
+    pointer-events: none;
+    display: none; /* Ocultar textos completamente */
+}
+
+html.sidebar-closed .main-content {
+    margin-left: var(--sidebar-width-collapsed);
+}
+
+/* Ajuste del botón toggle cuando está cerrado */
+html.sidebar-closed .brand-wrapper {
+    justify-content: center;
+    padding-left: 0;
+}
+html.sidebar-closed .brand { display: none; } /* Ocultar logo texto */
+
+/* =========================================
+   MENÚ SOCIAL LINEAL (CORREGIDO)
+   ========================================= */
+.radial-wrapper {
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+/* Contenedor invisible para los botones */
+.social-nodes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none; /* Click traspasa si está cerrado */
+}
+
+/* Estilo base del botón */
+.social-btn {
+    position: absolute;
+    left: 20px; /* Posición inicial oculta */
+    top: 5px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--social-bg);
+    color: var(--social-icon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 2000;
+    
+    /* Variables iniciales para controlar la animación */
+    --target-x: 0px; 
+    opacity: 0;
+    
+    /* La magia: usamos la variable --target-x para la posición */
+    transform: translateX(0) scale(0.5);
+    transition: 
+        transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+        opacity 0.2s ease,
+        background-color 0.2s;
+}
+
+/* Cuando el menú se abre: Asignamos la posición final a cada botón */
+.radial-wrapper.open .social-btn {
+    opacity: 1;
+    pointer-events: auto; /* Ahora sí reciben clicks */
+    /* Se mueven a su posición X y crecen a tamaño normal (1) */
+    transform: translateX(var(--target-x)) scale(1);
+}
+
+/* Definimos la posición X de cada botón usando variables */
+.radial-wrapper.open .social-btn:nth-child(1) { --target-x: 60px;  transition-delay: 0.05s; }
+.radial-wrapper.open .social-btn:nth-child(2) { --target-x: 110px; transition-delay: 0.1s; }
+.radial-wrapper.open .social-btn:nth-child(3) { --target-x: 160px; transition-delay: 0.15s; }
+.radial-wrapper.open .social-btn:nth-child(4) { --target-x: 210px; transition-delay: 0.2s; }
+
+/* Ajuste para cuando el menú está CERRADO (sidebar colapsado) */
+html.sidebar-closed .radial-wrapper.open .social-btn:nth-child(1) { --target-x: 50px; }
+html.sidebar-closed .radial-wrapper.open .social-btn:nth-child(2) { --target-x: 95px; }
+html.sidebar-closed .radial-wrapper.open .social-btn:nth-child(3) { --target-x: 140px; }
+html.sidebar-closed .radial-wrapper.open .social-btn:nth-child(4) { --target-x: 185px; }
+
+/* --- ANIMACIÓN HOVER (Corregida) --- */
+.social-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+    /* Mantenemos la posición X y aumentamos escala suavemente a 1.15 */
+    transform: translateX(var(--target-x)) scale(1.15) !important;
+    z-index: 3000; /* Asegura que quede por encima de los otros */
+}
+
+/* -- Animación LINEAL hacia la derecha -- */
+.radial-wrapper.open .social-btn {
+    opacity: 1;
+}
+
+/* Calculamos distancias hacia la derecha. 
+   Si el sidebar está abierto: salen desde 200px aprox.
+   Si está cerrado: salen desde 60px.
+*/
+
+/* Definimos posiciones relativas al botón "Redes" */
+.radial-wrapper.open .social-btn:nth-child(1) { transform: translateX(60px) scale(1); transition-delay: 0.05s; }
+.radial-wrapper.open .social-btn:nth-child(2) { transform: translateX(110px) scale(1); transition-delay: 0.1s; }
+.radial-wrapper.open .social-btn:nth-child(3) { transform: translateX(160px) scale(1); transition-delay: 0.15s; }
+.radial-wrapper.open .social-btn:nth-child(4) { transform: translateX(210px) scale(1); transition-delay: 0.2s; }
+
+/* Ajuste específico para cuando el sidebar está cerrado (para que no salgan encima del botón) */
+html.sidebar-closed .radial-wrapper.open .social-btn:nth-child(1) { transform: translateX(50px) scale(1); }
+html.sidebar-closed .radial-wrapper.open .social-btn:nth-child(2) { transform: translateX(95px) scale(1); }
+html.sidebar-closed .radial-wrapper.open .social-btn:nth-child(3) { transform: translateX(140px) scale(1); }
+html.sidebar-closed .radial-wrapper.open .social-btn:nth-child(4) { transform: translateX(185px) scale(1); }
+
+/* =========================================
+   CONTENIDO PRINCIPAL
+   ========================================= */
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 2rem;
+    width: 100%;
+    transition: margin var(--transition-speed) ease;
+}
+
+/* Theme Switcher Compacto */
+.theme-switch-wrapper {
+    display: flex; align-items: center; padding: 0.75rem 0.5rem;
+    border-top: 1px solid var(--border-color); margin-top: 0.5rem;
+    overflow: hidden;
+}
+.theme-switch { position: relative; display: inline-block; width: 40px; height: 22px; margin-right: 10px; flex-shrink: 0; }
+.theme-switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--primary-color); }
+input:checked + .slider:before { transform: translateX(18px); }
+.mode-label { white-space: nowrap; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }

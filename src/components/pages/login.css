@@ -1,0 +1,113 @@
+/* Tema */
+body.light-mode {
+  background: #f7f8fb;
+  color: #111827;
+}
+body.dark-mode {
+  background: #0b1220;
+  color: #e5e7eb;
+}
+
+.text-adaptive {
+  color: rgba(0, 0, 0, 0.65);
+}
+body.dark-mode .text-adaptive {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Botón tema */
+.theme-btn {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 5;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  display: grid;
+  place-items: center;
+}
+body.dark-mode .theme-btn {
+  background: rgba(17, 24, 39, 0.75);
+  color: #e5e7eb;
+}
+
+/* Fondo animado (placeholder simple) */
+.animated-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(1200px 600px at 20% 10%, rgba(59, 130, 246, 0.18), transparent 60%),
+              radial-gradient(900px 500px at 90% 30%, rgba(16, 185, 129, 0.14), transparent 55%),
+              radial-gradient(900px 700px at 50% 100%, rgba(168, 85, 247, 0.12), transparent 55%);
+  animation: floatBg 10s ease-in-out infinite alternate;
+}
+@keyframes floatBg {
+  from { filter: saturate(1); transform: translateY(0px); }
+  to   { filter: saturate(1.1); transform: translateY(-8px); }
+}
+
+/* Tarjeta */
+.login-wrapper {
+  width: min(980px, 95vw);
+  border-radius: 22px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(12px);
+}
+body.dark-mode .login-wrapper {
+  background: rgba(17, 24, 39, 0.72);
+}
+
+/* Lado branding */
+.bg-branding {
+  background: linear-gradient(145deg, #1d4ed8, #111827);
+}
+.app-logo {
+  width: 110px;
+  height: auto;
+}
+.brand-title {
+  letter-spacing: 2px;
+}
+.brand-subtitle {
+  letter-spacing: 3px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* Lado form */
+.form-side .form-control {
+  border-radius: 14px;
+}
+.custom-btn {
+  border-radius: 14px;
+  padding: 12px 18px;
+}
+
+/* Toggle contraseña */
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  padding: 6px 8px;
+  color: rgba(0, 0, 0, 0.55);
+}
+body.dark-mode .password-toggle {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+body.dark-mode .form-control,
+body.dark-mode .form-floating > label {
+  color: #e5e7eb;
+}
+body.dark-mode .form-control {
+  background-color: rgba(31, 41, 55, 0.75);
+  border-color: rgba(255, 255, 255, 0.12);
+}
