@@ -62,6 +62,7 @@ body.dark-mode .login-wrapper {
   background: rgba(17, 24, 39, 0.72);
 }
 
+
 /* Lado branding */
 .bg-branding {
   background: linear-gradient(145deg, #1d4ed8, #111827);
@@ -111,3 +112,4 @@ body.dark-mode .form-control {
   background-color: rgba(31, 41, 55, 0.75);
   border-color: rgba(255, 255, 255, 0.12);
 }
+

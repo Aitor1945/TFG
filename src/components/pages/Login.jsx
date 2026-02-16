@@ -40,7 +40,7 @@ export default function Login() {
   };
 
   return (
-    <>
+    <div>
       {/* Botón tema */}
       <button
         id="themeToggle"
@@ -54,7 +54,7 @@ export default function Login() {
 
       <div className="animated-bg" />
 
-      <div className="container-fluid min-vh-100 d-flex align-items-center justify-content-center position-relative z-1">
+      <div className="container-fluid min-vh-100 d-flex align-items-center justify-content-center position-fixed z-1">
         <div className="login-wrapper shadow-lg">
           <div className="row g-0 h-100">
             {/* Branding */}
@@ -143,7 +143,7 @@ export default function Login() {
                     </label>
                   </div>
 
-                  <a href="#" className="text-decoration-none small text-primary fw-bold">
+                  <a href="#" className={`text-decoration-none small ${theme === "light" ? "text-primary" : "text-info"} fw-bold`}>
                     ¿Olvidaste tu contraseña?
                   </a>
                 </div>
@@ -172,6 +172,6 @@ export default function Login() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
