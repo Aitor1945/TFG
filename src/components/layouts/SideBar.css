@@ -1,6 +1,7 @@
 :root {
   --bg-sidebar: #1e293b;
   --bg-sidebar-hover: #2d3f55;
+  --bg-body: #23386B;
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
   --accent: #3b82f6;
@@ -45,6 +46,7 @@ body.light-mode {
   overflow: hidden;
   z-index: 100;
   box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+  border: 0;
 }
 
 /* Al hacer hover se expande */
