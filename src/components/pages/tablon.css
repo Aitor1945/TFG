@@ -1,0 +1,23 @@
+/* Tablon.css */
+.tablon-container {
+  background-color: #f4f4f4; /* color de fondo */
+}
+.tablon-card {
+  transition: transform 0.2s;
+  cursor: pointer;
+  border-radius: 1rem; /* redondeado más marcado */
+}
+
+.tablon-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); /* hover shadow */
+}
+
+.tablon-card .card-date {
+  color: #c3c3c3; /* fecha en rojo */
+}
+
+.tablon-card {
+  border: 2px solid #0d6dfd57;   /* azul bootstrap */
+  border-radius: 16px;
+}
