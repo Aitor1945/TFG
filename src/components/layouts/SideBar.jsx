@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import { NavLink } from "react-router-dom"
 import "./SideBar.css"
 
-export default function SideBar({ collapsed, setCollapsed }) {
+export default function SideBar() {
   const [darkMode, setDarkMode] = useState(true)
   const [socialOpen, setSocialOpen] = useState(false)
 
@@ -15,20 +15,12 @@ export default function SideBar({ collapsed, setCollapsed }) {
   }, [darkMode])
 
   return (
-    <nav className={`sidebar ${collapsed ? "collapsed" : ""}`}>
+    <nav className="sidebar">
       <div className="brand-wrapper">
         <div className="brand">
           <i className="fa-solid fa-city"></i>
           <span>BarrioRed</span>
         </div>
-        <button
-          type="button"
-          className="sidebar-toggle-btn"
-          aria-label="Colapsar menú"
-          onClick={() => setCollapsed(!collapsed)}
-        >
-          <i className="fa-solid fa-bars"></i>
-        </button>
       </div>
 
       <ul className="nav-list">
@@ -70,12 +62,8 @@ export default function SideBar({ collapsed, setCollapsed }) {
 
         <li className="menu-spacer"></li>
 
-        {/* Redes sociales */}
         <li className={`radial-wrapper ${socialOpen ? "open" : ""}`}>
-          <div
-            className="nav-link radial-trigger"
-            onClick={() => setSocialOpen(!socialOpen)}
-          >
+          <div className="nav-link radial-trigger" onClick={() => setSocialOpen(!socialOpen)}>
             <i className="fa-solid fa-share-nodes"></i>
             <span>Redes</span>
           </div>
@@ -107,7 +95,6 @@ export default function SideBar({ collapsed, setCollapsed }) {
         </li>
       </ul>
 
-      {/* Modo claro/oscuro */}
       <div className="theme-switch-wrapper">
         <label className="theme-switch" htmlFor="checkbox-theme">
           <input
@@ -118,7 +105,7 @@ export default function SideBar({ collapsed, setCollapsed }) {
           />
           <div className="slider"></div>
         </label>
-        <span className="mode-label">{darkMode ? "Modo Claro" : "Modo Oscuro"}</span>
+        <span className="mode-label">{darkMode ? "Modo Oscuro" : "Modo Claro"}</span>
       </div>
     </nav>
   )
