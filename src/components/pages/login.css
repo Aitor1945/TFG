@@ -113,3 +113,85 @@ body.dark-mode .form-control {
   border-color: rgba(255, 255, 255, 0.12);
 }
 
+/* ── Fade entre vistas ── */
+.fade-view {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-out {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+}
+
+/* ── Botón volver ── */
+.back-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  width: fit-content;
+  transition: color 0.2s;
+}
+.back-btn:hover { color: #3b82f6; }
+
+/* ── Subrayado animado en olvidé contraseña ── */
+.forgot-trigger {
+  position: relative;
+}
+.forgot-trigger::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 0%;
+  height: 1.5px;
+  background: currentColor;
+  transition: width 0.25s ease;
+}
+.forgot-trigger:hover::after { width: 100%; }
+
+/* ── Éxito recuperación ── */
+.recovery-success {
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.success-icon {
+  font-size: 3.5rem;
+  color: #10b981;
+  animation: bounceIn 0.5s 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes bounceIn {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+.success-bar-wrap {
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+.success-bar {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #3b82f6, #10b981);
+  animation: fillBar 2.8s ease forwards;
+}
+@keyframes fillBar {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+/* ── Altura fija para que no cambie al hacer fade ── */
+.col-md-6.form-side {
+  height: 520px;
+}
