@@ -89,7 +89,7 @@ export default function SideBar() {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/login" className="nav-link" style={{ color: "#ef4444" }}>
+          <NavLink to="/login" className="nav-link" style={{ color: "#ff3b3b" }}>
             <i className="fa-solid fa-arrow-right-from-bracket"></i><span>Cerrar Sesión</span>
           </NavLink>
         </li>

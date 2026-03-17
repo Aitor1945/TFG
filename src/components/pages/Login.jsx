@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
 
   const navigate = useNavigate();
-
   const [theme, setTheme] = useState("light");
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -18,6 +17,7 @@ export default function Login() {
   const [recoverySent, setRecoverySent] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
   const [loginError, setLoginError] = useState("");
+
 
   useEffect(() => {
     document.body.classList.toggle("light-mode", theme === "light");
@@ -91,8 +91,6 @@ const onRecovery = async (e) => {
   setRecoverySent(true);
   setTimeout(() => goLogin(), 3500);
 };
-
-
   return (
     <div>
       <button
@@ -200,6 +198,7 @@ const onRecovery = async (e) => {
                           Acceder
                         </button>
                       </div>
+
                       {/* Mensaje de error */}
 {loginError && (
   <div className="alert alert-danger d-flex align-items-center mt-3 p-2 small" role="alert">
