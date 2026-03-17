@@ -200,12 +200,11 @@ export default function Chat() {
               </form>
             </>
           ) : (
-            // Empty state cuando no hay vecino seleccionado
             <div className="bc-empty-chat">
-              <div className="bc-empty-icon">💬</div>
-              <p>Selecciona un vecino</p>
-              <span>para empezar a chatear</span>
-            </div>
+      <div className="bc-empty-icon">💬</div>
+       <p>Selecciona un vecino</p>
+        <span>para empezar a chatear</span>
+      </div>
           )}
         </div>
       </div>

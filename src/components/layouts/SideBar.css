@@ -50,12 +50,12 @@ body.light-mode {
 }
 
 /* Al hacer hover se expande */
-.sidebar:hover {
+.sidebar{
   width: var(--sidebar-width);
 }
 
 /* El main también se mueve cuando el sidebar está hover */
-.sidebar:hover ~ .main {
+.sidebar ~ .main {
   margin-left: var(--sidebar-width);
 }
 
@@ -84,14 +84,7 @@ body.light-mode {
   min-width: 20px;
 }
 
-.brand span {
-  opacity: 0;
-  transition: opacity var(--transition);
-}
 
-.sidebar:hover .brand span {
-  opacity: 1;
-}
 
 /* ── Nav ── */
 .nav-list {
@@ -124,25 +117,6 @@ body.light-mode {
   flex-shrink: 0;
 }
 
-.nav-link span {
-  opacity: 0;
-  transition: opacity var(--transition);
-}
-
-.sidebar:hover .nav-link span {
-  opacity: 1;
-}
-
-.nav-link:hover,
-.nav-link.active {
-  background: var(--bg-sidebar-hover);
-  color: var(--text-primary);
-}
-
-.nav-link.active {
-  color: var(--accent);
-  background: rgba(59,130,246,0.15);
-}
 
 /* ── Spacer ── */
 .menu-spacer {

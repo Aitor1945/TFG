@@ -119,6 +119,28 @@
           overflow: hidden;
         }
 
+       .bc-empty-chat {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* centra horizontalmente */
+  text-align: center;
+  height: 100%;
+  color: #6b7280; /* gris suave */
+  gap: 10px;
+}
+.bc-empty-chat p {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.bc-empty-chat span {
+  font-size: 14px;
+  color: #6b7280;
+}
+
         /* Header conversación */
         .bc-chat-header {
           padding: 14px 18px;
@@ -233,3 +255,5 @@
           .bc-chat.oculto   { display: none; }
           .bc-back-btn      { display: block; }
         }
+
+/*Tema oscuro */
