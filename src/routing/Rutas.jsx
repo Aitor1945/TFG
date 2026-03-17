@@ -14,6 +14,7 @@ import Documentos from "../components/pages/Documentos"
 import Chat from "../components/pages/Chat"
 import Ajustes from "../components/pages/Ajustes"
 import MiPerfil from "../components/pages/MiPerfil"
+import ResetPassword from "../components/pages/ResetPassword"
 
 export default function Rutas() {
   return (
@@ -21,10 +22,11 @@ export default function Rutas() {
       <Routes>
         {/* Login SIN layout */}
         <Route path="/login" element={<Login />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Todo lo demás CON layout */}
         <Route element={<AppLayout />}>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/muro" element={<Muro />} />
           <Route path="/incidencias" element={<Incidencias />} />
