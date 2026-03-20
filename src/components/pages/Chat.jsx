@@ -12,12 +12,12 @@ export default function Chat() {
   const bottomRef                       = useRef(null);
   const canalRef                        = useRef(null);
 
-  // ── 1. Obtener quién soy ──────────────────────────────────
+  //Obtener quién soy
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setYo(data.user));
   }, []);
 
-  // ── 2. Cargar vecinos cuando ya sé quién soy ─────────────
+  // Cargar vecinos cuando ya sé quién soy
   useEffect(() => {
     if (!yo) return;
     supabase
@@ -27,7 +27,7 @@ export default function Chat() {
       .then(({ data }) => setVecinos(data || []));
   }, [yo]);
 
-  // ── 3. Al seleccionar vecino: historial + realtime ────────
+  //Al seleccionar vecino: historial + realtime
   useEffect(() => {
     if (!yo || !vecinoActivo) return;
 
@@ -85,12 +85,12 @@ export default function Chat() {
     };
   }, [yo, vecinoActivo]);
 
-  // ── 4. Auto-scroll al último mensaje ─────────────────────
+  // Auto-scroll al último mensaje
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [mensajes]);
 
-  // ── 5. Enviar mensaje ─────────────────────────────────────
+  // Enviar mensaje
   // No añadimos el mensaje al estado aquí — el realtime lo hará solo
   const enviar = async (e) => {
     e.preventDefault();
@@ -104,22 +104,21 @@ export default function Chat() {
     });
   };
 
-  // ── Helpers ───────────────────────────────────────────────
+  //
   const nombre = (u) =>
     u?.full_name || u?.username || u?.email?.split("@")[0] || "Usuario";
 
   const hora = (ts) =>
     new Date(ts).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
 
-  // ── Render ────────────────────────────────────────────────
   return (
     <div className="bc-wrapper">
 
       {/* ── LISTA DE VECINOS ── */}
       <div className={`bc-panel${vistaMovil === "chat" ? " oculto" : ""}`}>
         <div className="bc-panel-header">
+          <button className="bc-back-btn" onClick={() => setVistaMovil("lista")}>≡</button>
           <h2 className="bc-panel-title">BarrioChat</h2>
-          <span className="bc-panel-count">{vecinos.length}</span>
         </div>
         <ul className="bc-user-list">
           {vecinos.length === 0 && (

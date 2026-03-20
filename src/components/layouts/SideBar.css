@@ -46,15 +46,12 @@ body.light-mode {
   overflow: hidden;
   z-index: 100;
   box-shadow: 2px 0 12px rgba(0,0,0,0.15);
-  border: 0;
 }
 
-/* Al hacer hover se expande */
-.sidebar{
+.sidebar {
   width: var(--sidebar-width);
 }
 
-/* El main también se mueve cuando el sidebar está hover */
 .sidebar ~ .main {
   margin-left: var(--sidebar-width);
 }
@@ -66,6 +63,7 @@ body.light-mode {
   padding: 0 16px 16px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
   min-height: 48px;
+  flex-shrink: 0; /* nunca se encoge */
 }
 
 .brand {
@@ -84,30 +82,50 @@ body.light-mode {
   min-width: 20px;
 }
 
-
-
 /* ── Nav ── */
 .nav-list {
   list-style: none;
-  margin: 12px 0 0;
+  margin: 8px 0 0;
   padding: 0 8px;
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  justify-content: flex-start;
+  gap: 2px; /* spacing entre items sin necesitar padding extra */
+}
+
+/* Scrollbar discreta */
+.nav-list::-webkit-scrollbar {
+  width: 3px;
+}
+.nav-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.nav-list::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 2px;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 12px;
+  padding: 7px 12px;
   border-radius: 8px;
   color: var(--text-secondary);
   text-decoration: none;
   white-space: nowrap;
   transition: background var(--transition), color var(--transition);
   font-size: 0.9rem;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background: var(--bg-sidebar-hover);
+  color: var(--text-primary);
 }
 
 .nav-link i {
@@ -117,10 +135,9 @@ body.light-mode {
   flex-shrink: 0;
 }
 
-
-/* ── Spacer ── */
+/* ── Spacer eliminado: los items se distribuyen sin espacio forzado ── */
 .menu-spacer {
-  flex: 1;
+  display: none;
 }
 
 /* ── Redes ── */
@@ -186,6 +203,7 @@ body.light-mode {
   border-top: 1px solid rgba(255,255,255,0.08);
   overflow: hidden;
   white-space: nowrap;
+  flex-shrink: 0; /* siempre visible en la parte inferior */
 }
 
 .theme-switch {
@@ -238,6 +256,6 @@ body.light-mode {
   transition: opacity var(--transition);
 }
 
-.sidebar:hover .mode-label {
+.sidebar .mode-label {
   opacity: 1;
 }

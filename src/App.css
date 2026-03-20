@@ -40,3 +40,35 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Dark mode por defecto */
+:root {
+  --bg-sidebar: #1e293b;
+  --bg-sidebar-hover: #2d3f55;
+  --bg-body: #0f172a;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --accent: #3b82f6;
+  --sidebar-width: 240px;
+  --sidebar-collapsed: 68px;
+  --transition: 0.3s ease;
+}
+ 
+/* Light mode: se activa añadiendo la clase .light-mode al <body> */
+body.light-mode {
+  --bg-sidebar: #f1f5f9;
+  --bg-sidebar-hover: #e2e8f0;
+  --bg-body: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --accent: #3b82f6;
+}
+ 
+/* Aplicar colores a toda la app */
+body {
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  transition: background-color var(--transition), color var(--transition);
+  margin: 0;
+  font-family: sans-serif;
+}
