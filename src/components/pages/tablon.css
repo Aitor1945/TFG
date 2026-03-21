@@ -1,23 +1,83 @@
-/* Tablon.css */
+/* tablon.css - VERSIÓN MODIFICADA */
+
 .tablon-container {
-  background-color: #f4f4f4; /* color de fondo */
+  /* Hacemos el fondo transparente para que se vea el color del .main */
+  /* Esto elimina el "recuadro" que veías en la transición */
+  background-color: transparent !important; 
+  transition: background-color var(--transition);
+  width: 100%;
 }
+
 .tablon-card {
-  transition: transform 0.2s;
+  /* Usamos la variable de fondo de tarjeta definida en SideBar.css */
+  background-color: var(--bg-card);
+  
+  /* Sincronizamos el tiempo de la transición (0.3s) con el Sidebar */
+  transition: 
+    transform 0.2s, 
+    background-color var(--transition), 
+    box-shadow 0.2s,
+    border-color var(--transition);
+    
   cursor: pointer;
-  border-radius: 1rem; /* redondeado más marcado */
+  border-radius: 1rem;
+  /* Un borde sutil que se adapta al modo */
+  border: 1px solid rgba(59, 130, 246, 0.2); 
 }
 
 .tablon-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); /* hover shadow */
+  /* Sombra más suave para que no parezca un parche */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  border-color: var(--accent);
+}
+
+.tablon-card .card-title {
+  color: var(--text-primary);
+  transition: color var(--transition);
+}
+
+.tablon-card .card-text {
+  /* El !important asegura que Bootstrap no lo fuerce a gris oscuro fijo */
+  color: var(--text-secondary) !important;
+  transition: color var(--transition);
 }
 
 .tablon-card .card-date {
-  color: #c3c3c3; /* fecha en rojo */
+  color: var(--text-secondary);
+  opacity: 0.6;
+  font-size: 0.8rem;
 }
 
-.tablon-card {
-  border: 2px solid #0d6dfd57;   /* azul bootstrap */
-  border-radius: 16px;
+/* Ajuste para el título principal del muro */
+.tablon-container h2 {
+  color: var(--text-primary);
+  transition: color var(--transition);
+}
+
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  height: 40px; /* altura fija para que no afecte al layout */
+  margin-bottom: 40px;
+}
+
+.marquee-content {
+  position: absolute; /* 🔥 CLAVE: lo saca del flujo */
+  white-space: nowrap;
+  font-size: 30px;
+  color: var(--text-primary);
+  font-weight: 500;
+  animation: marquee 20s linear infinite;
+}
+
+/* Animación limpia */
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
