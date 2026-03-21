@@ -1,0 +1,186 @@
+/* incidencias.css - REEMPLAZA COMPLETO */
+
+.incidencias-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* FIX REAL: fixed en vez de sticky.
+   Sticky solo funciona si hay scroll suficiente.
+   Fixed siempre se queda en su sitio. */
+.incidencias-top {
+  position: fixed;
+  top: 0;
+  /* Empieza después del sidebar colapsado (68px) */
+  left: 68px;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 1.5rem;
+  padding-bottom: 0.75rem;
+  /* inherit coge el fondo real del body en cada modo */
+  background-color: inherit;
+  transition: background-color var(--transition);
+}
+
+/* Cuando el sidebar se expande al hacer hover (240px) */
+.sidebar:hover ~ .main .incidencias-top {
+  left: 240px;
+}
+
+/* El scroll de tarjetas empieza debajo del header fijo.
+   Ajusta este valor según la altura real de tu header. */
+.incidencias-scroll {
+  flex: 1;
+  width: 100%;
+  padding-top: 220px;
+}
+
+/* ── Marquee ── */
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  height: 36px;
+  margin-bottom: 1rem;
+}
+
+.marquee-content {
+  position: absolute;
+  white-space: nowrap;
+  font-size: 1.6rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  animation: marquee 20s linear infinite;
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
+
+/* ── Títulos ── */
+.incidencias-titulo {
+  color: var(--text-primary);
+  transition: color var(--transition);
+}
+
+.incidencias-subtitulo {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  transition: color var(--transition);
+}
+
+.incidencias-count {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  opacity: 0.7;
+  min-height: 1.5rem;
+}
+
+/* ── Filtros ── */
+.filtros-bar {
+  width: 100%;
+  justify-content: center;
+}
+
+.filtro-btn {
+  background-color: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 2rem;
+  padding: 0.35rem 1.1rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    color var(--transition),
+    border-color 0.2s,
+    transform 0.15s;
+}
+
+.filtro-btn:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.filtro-btn.filtro-activo {
+  background-color: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+/* ── Tarjeta ── */
+.incidencia-card {
+  background-color: var(--bg-card);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 1rem;
+  transition:
+    transform 0.2s,
+    background-color var(--transition),
+    box-shadow 0.2s,
+    border-color var(--transition);
+  cursor: default;
+}
+
+.incidencia-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  border-color: var(--accent);
+}
+
+.incidencia-card .card-title {
+  color: var(--text-primary);
+  transition: color var(--transition);
+}
+
+.incidencia-card .card-text {
+  color: var(--text-secondary) !important;
+  transition: color var(--transition);
+  font-size: 0.92rem;
+}
+
+/* ── Badges ── */
+.inc-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 2rem;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+}
+
+.prioridad-alta  { background-color: rgba(239, 68, 68, 0.15);  color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+.prioridad-media { background-color: rgba(234, 179, 8, 0.15);  color: #ca8a04; border: 1px solid rgba(234, 179, 8, 0.3); }
+.prioridad-baja  { background-color: rgba(34, 197, 94, 0.15);  color: #16a34a; border: 1px solid rgba(34, 197, 94, 0.3); }
+
+.estado-pendiente { background-color: rgba(234, 179, 8, 0.15);  color: #ca8a04; border: 1px solid rgba(234, 179, 8, 0.3); }
+.estado-proceso   { background-color: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
+.estado-resuelta  { background-color: rgba(34, 197, 94, 0.15);  color: #16a34a; border: 1px solid rgba(34, 197, 94, 0.3); }
+
+/* ── Footer tarjeta ── */
+.inc-footer {
+  border-top: 1px solid rgba(59, 130, 246, 0.1);
+  padding-top: 0.6rem;
+}
+
+.inc-autor {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.inc-autor-icono { font-size: 0.75rem; }
+
+.inc-fecha {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  opacity: 0.6;
+}
+
