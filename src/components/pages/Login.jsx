@@ -80,7 +80,7 @@ const onRecovery = async (e) => {
 
   const { error } = await supabase.auth.resetPasswordForEmail(
     recoveryEmail.trim(),
-    { redirectTo: "https://tu-dominio.com/reset-password" }
+    { redirectTo: "http://localhost:5173/reset-password" }
   );
 
   if (error) {
