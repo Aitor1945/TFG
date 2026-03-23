@@ -19,6 +19,7 @@ html.sidebar-closed .bc-wrapper { left: var(--sidebar-collapsed); }
   flex-direction: column;
   background: var(--bg-sidebar);
   box-shadow: 4px 0 12px rgba(0, 0, 0, 0.2);
+   width: calc(var(--sidebar-width) + 40px);
 }
 .bc-panel-header {
   padding: 12px 16px; /* un poco más compacto */
