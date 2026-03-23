@@ -1,4 +1,4 @@
-/* incidencias.css - REEMPLAZA COMPLETO */
+/* incidencias.css - versión ajustada para reducir espacio */
 
 .incidencias-page {
   display: flex;
@@ -7,37 +7,30 @@
   min-height: 100vh;
 }
 
-/* FIX REAL: fixed en vez de sticky.
-   Sticky solo funciona si hay scroll suficiente.
-   Fixed siempre se queda en su sitio. */
+/* Header fijo */
 .incidencias-top {
-  position: fixed;
   top: 0;
-  /* Empieza después del sidebar colapsado (68px) */
-  left: 68px;
+  left: 68px; /* ancho sidebar colapsado */
   right: 0;
   z-index: 50;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 1.5rem;
-  padding-bottom: 0.75rem;
-  /* inherit coge el fondo real del body en cada modo */
+  padding: 1rem 0 0.5rem 0; /* menos padding */
   background-color: inherit;
   transition: background-color var(--transition);
 }
 
-/* Cuando el sidebar se expande al hacer hover (240px) */
+/* Sidebar expandido */
 .sidebar:hover ~ .main .incidencias-top {
   left: 240px;
 }
 
-/* El scroll de tarjetas empieza debajo del header fijo.
-   Ajusta este valor según la altura real de tu header. */
+/* Scroll de tarjetas justo debajo del header */
 .incidencias-scroll {
   flex: 1;
   width: 100%;
-  padding-top: 280px;
+  padding-top: 100px; /* antes 280px → ahora mucho menos */
 }
 
 /* ── Marquee ── */
@@ -96,11 +89,7 @@
   padding: 0.35rem 1.1rem;
   font-size: 0.85rem;
   cursor: pointer;
-  transition:
-    background-color var(--transition),
-    color var(--transition),
-    border-color 0.2s,
-    transform 0.15s;
+  transition: background-color var(--transition), color var(--transition), border-color 0.2s, transform 0.15s;
 }
 
 .filtro-btn:hover {
@@ -121,17 +110,13 @@
   background-color: var(--bg-card);
   border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: 1rem;
-  transition:
-    transform 0.2s,
-    background-color var(--transition),
-    box-shadow 0.2s,
-    border-color var(--transition);
+  transition: transform 0.2s, background-color var(--transition), box-shadow 0.2s, border-color var(--transition);
   cursor: default;
 }
 
 .incidencia-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
   border-color: var(--accent);
 }
 
@@ -156,17 +141,17 @@
   letter-spacing: 0.03em;
 }
 
-.prioridad-alta  { background-color: rgba(239, 68, 68, 0.15);  color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
-.prioridad-media { background-color: rgba(234, 179, 8, 0.15);  color: #ca8a04; border: 1px solid rgba(234, 179, 8, 0.3); }
-.prioridad-baja  { background-color: rgba(34, 197, 94, 0.15);  color: #16a34a; border: 1px solid rgba(34, 197, 94, 0.3); }
+.prioridad-alta  { background-color: rgba(239,68,68,0.15);  color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+.prioridad-media { background-color: rgba(234,179,8,0.15);  color: #ca8a04; border: 1px solid rgba(234,179,8,0.3); }
+.prioridad-baja  { background-color: rgba(34,197,94,0.15);  color: #16a34a; border: 1px solid rgba(34,197,94,0.3); }
 
-.estado-pendiente { background-color: rgba(234, 179, 8, 0.15);  color: #ca8a04; border: 1px solid rgba(234, 179, 8, 0.3); }
-.estado-proceso   { background-color: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
-.estado-resuelta  { background-color: rgba(34, 197, 94, 0.15);  color: #16a34a; border: 1px solid rgba(34, 197, 94, 0.3); }
+.estado-pendiente { background-color: rgba(234,179,8,0.15);  color: #ca8a04; border: 1px solid rgba(234,179,8,0.3); }
+.estado-proceso   { background-color: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3); }
+.estado-resuelta  { background-color: rgba(34,197,94,0.15);  color: #16a34a; border: 1px solid rgba(34,197,94,0.3); }
 
 /* ── Footer tarjeta ── */
 .inc-footer {
-  border-top: 1px solid rgba(59, 130, 246, 0.1);
+  border-top: 1px solid rgba(59,130,246,0.1);
   padding-top: 0.6rem;
 }
 
@@ -183,4 +168,3 @@
   font-size: 0.78rem;
   opacity: 0.6;
 }
-

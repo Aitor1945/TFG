@@ -1,22 +1,42 @@
+/* ── Variables base ── */
 :root {
-  --bg-sidebar: #1e293b;
-  --bg-sidebar-hover: #2d3f55;
-  --bg-body: #0d1b2a;
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
+  /* Fondos */
+  --bg-body: #0d1b2a;             /* fondo general oscuro */
+  --bg-sidebar: #1e293b;           /* fondo del sidebar */
+  --bg-sidebar-hover: #2d3f55;     /* hover del sidebar y usuarios */
+  --bg-chat-mio: #3b82f6;          /* burbuja mensaje propio */
+  --bg-chat-otro: #1e293b33;       /* burbuja mensaje ajeno (oscuro translúcido) */
+
+  /* Textos */
+  --text-primary: #f1f5f9;         /* texto principal */
+  --text-secondary: #94a3b8;       /* texto secundario / placeholders */
+  
+  /* Colores de acento */
   --accent: #3b82f6;
+
+  /* Layout */
   --sidebar-width: 240px;
   --sidebar-collapsed: 68px;
   --transition: 0.3s ease;
 }
 
+/* ── Modo claro ── */
 body.light-mode {
+  --bg-body:  #f1f5f9;
   --bg-sidebar: #f1f5f9;
   --bg-sidebar-hover: #e2e8f0;
-  --text-primary: #1e293b;
+  --bg-chat-mio: #3b82f6;
+  --bg-chat-otro: #f1f5f9;       /* burbuja ajena clara */
+  
+  --text-primary: #1e293b;   
   --text-secondary: #64748b;
+  --text-chat: #ffffff;
   --accent: #3b82f6;
 }
+
+/* Opcional: hover de burbujas para ambos modos */
+.bc-bubble.mio:hover { filter: brightness(0.95); }
+.bc-bubble.otro:hover { filter: brightness(0.97); }
 
 /* ── Layout general ── */
 .app {
