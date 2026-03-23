@@ -75,7 +75,7 @@
 .filtro-btn {
   background-color: var(--bg-card);
   color: var(--text-secondary);
-  padding: px 15px;
+  padding: 5px;
   border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: 2rem;
   font-size: 0.85rem;
