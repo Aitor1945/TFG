@@ -1,5 +1,3 @@
-/* incidencias.css - versión ajustada para reducir espacio */
-
 .incidencias-page {
   display: flex;
   flex-direction: column;
@@ -9,28 +7,21 @@
 
 /* Header fijo */
 .incidencias-top {
-  top: 0;
-  left: 68px; /* ancho sidebar colapsado */
   right: 0;
   z-index: 50;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem 0 0.5rem 0; /* menos padding */
+  padding: 5px;
   background-color: inherit;
   transition: background-color var(--transition);
-}
-
-/* Sidebar expandido */
-.sidebar:hover ~ .main .incidencias-top {
-  left: 240px;
 }
 
 /* Scroll de tarjetas justo debajo del header */
 .incidencias-scroll {
   flex: 1;
   width: 100%;
-  padding-top: 100px; /* antes 280px → ahora mucho menos */
+  padding-top: 1rem;
 }
 
 /* ── Marquee ── */
@@ -84,9 +75,9 @@
 .filtro-btn {
   background-color: var(--bg-card);
   color: var(--text-secondary);
+  padding: px 15px;
   border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: 2rem;
-  padding: 0.35rem 1.1rem;
   font-size: 0.85rem;
   cursor: pointer;
   transition: background-color var(--transition), color var(--transition), border-color 0.2s, transform 0.15s;

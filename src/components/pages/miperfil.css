@@ -1,0 +1,119 @@
+
+.perfil-panel-dch {
+  padding: 4rem 3.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.perfil-dch-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent, #0045b4);
+  margin-bottom: 0.4rem;
+  animation: fadeUp 0.5s ease 0.1s both;
+}
+
+.perfil-dch-titulo {
+  font-size: 2.4rem;
+  color: var(--text-primary);
+  margin: 0 0 2.5rem;
+  line-height: 1.15;
+  font-weight: 700;
+  animation: fadeUp 0.5s ease 0.15s both;
+}
+
+/* ── Secciones ── */
+.perfil-seccion {
+  margin-bottom: 2rem;
+  animation: fadeUp 0.5s ease 0.2s both;
+}
+
+.perfil-seccion + .perfil-seccion { animation-delay: 0.27s; }
+.perfil-seccion:nth-child(4)      { animation-delay: 0.34s; }
+
+.perfil-seccion-titulo {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  opacity: 0.55;
+  margin: 0 0 0.85rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.12);
+}
+
+/* ── Filas de datos ── */
+.perfil-fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.07);
+  gap: 2rem;
+}
+
+.perfil-fila:last-child { border-bottom: none; }
+
+.perfil-fila-label {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 400;
+  white-space: nowrap;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.perfil-fila-valor {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: right;
+  word-break: break-word;
+}
+
+.perfil-fila-valor.mono {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  opacity: 0.45;
+  font-weight: 400;
+}
+
+/* ── Chip tipo comunidad ── */
+.perfil-chip {
+  display: inline-block;
+  background: rgba(59, 130, 246, 0.09);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  color: var(--accent, #0045b4);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.65rem;
+  border-radius: 2rem;
+  text-transform: capitalize;
+}
+
+/* ── Animación ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .perfil-panel-dch {
+    padding: 2.5rem 1.75rem 3rem;
+    justify-content: flex-start;
+  }
+  .perfil-dch-titulo { font-size: 1.8rem; }
+}
+
+@media (max-width: 480px) {
+  .perfil-panel-dch  { padding: 2rem 1.25rem 2.5rem; }
+  .perfil-dch-titulo { font-size: 1.5rem; }
+  .perfil-fila       { flex-direction: column; gap: 0.15rem; }
+  .perfil-fila-valor { text-align: left; }
+}
