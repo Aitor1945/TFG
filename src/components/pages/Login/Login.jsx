@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./login.css";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "../../../lib/supabase";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {

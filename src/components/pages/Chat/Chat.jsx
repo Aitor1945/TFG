@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./chat.css";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "../../../lib/supabase";
 
 export default function Chat() {
   const [yo, setYo]                     = useState(null);
