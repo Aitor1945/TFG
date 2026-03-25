@@ -5,16 +5,16 @@ import AppLayout from "../components/layouts/AppLayout"
 
 
 // Páginas
-import Login from "../components/pages/Login"
-import Dashboard from "../components/pages/Dashboard"
-import Muro from "../components/pages/Muro"
-import Incidencias from "../components/pages/Incidencias"
+import Login from "../components/pages/Login/Login"
+import Dashboard from "../components/pages/Dashboard/Dashboard"
+import Muro from "../components/pages/Muro/Muro"
+import Incidencias from "../components/pages/Incidencias/Incidencias"
 import Reservas from "../components/pages/Reservas"
-import Documentos from "../components/pages/Documentos"
-import Chat from "../components/pages/Chat"
-import Ajustes from "../components/pages/Ajustes"
-import MiPerfil from "../components/pages/MiPerfil"
-import ResetPassword from "../components/pages/ResetPassword"
+import Documentos from "../components/pages/Documentos/Documentos"
+import Chat from "../components/pages/Chat/Chat"
+import Ajustes from "../components/pages/Ajustes/Ajustes"
+import MiPerfil from "../components/pages/MiPerfil/MiPerfil"
+import ResetPassword from "../components/pages/ResetPassword/ResetPassword"
 
 export default function Rutas() {
   return (

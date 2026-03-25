@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../../lib/supabase";
-import "./login.css"; // reutilizamos el mismo CSS del login
+import { supabase } from "../../../lib/supabase";
+import "../Login/login.css"; // reutilizamos el mismo CSS del login
 
 export default function ResetPassword() {
   const navigate = useNavigate();
