@@ -1,42 +1,22 @@
-/* ── Variables base ── */
 :root {
-  /* Fondos */
-  --bg-body: #0d1b2a;             /* fondo general oscuro */
-  --bg-sidebar: #1e293b;           /* fondo del sidebar */
-  --bg-sidebar-hover: #2d3f55;     /* hover del sidebar y usuarios */
-  --bg-chat-mio: #3b82f6;          /* burbuja mensaje propio */
-  --bg-chat-otro: #1e293b33;       /* burbuja mensaje ajeno (oscuro translúcido) */
-
-  /* Textos */
-  --text-primary: #f1f5f9;         /* texto principal */
-  --text-secondary: #94a3b8;       /* texto secundario / placeholders */
-  
-  /* Colores de acento */
+  --bg-sidebar: #1e293b;
+  --bg-sidebar-hover: #2d3f55;
+  --bg-body: #0d1b2a;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
   --accent: #3b82f6;
-
-  /* Layout */
   --sidebar-width: 240px;
   --sidebar-collapsed: 68px;
   --transition: 0.3s ease;
 }
 
-/* ── Modo claro ── */
 body.light-mode {
-  --bg-body:  #f1f5f9;
   --bg-sidebar: #f1f5f9;
   --bg-sidebar-hover: #e2e8f0;
-  --bg-chat-mio: #3b82f6;
-  --bg-chat-otro: #f1f5f9;       /* burbuja ajena clara */
-  
-  --text-primary: #1e293b;   
+  --text-primary: #1e293b;
   --text-secondary: #64748b;
-  --text-chat: #ffffff;
   --accent: #3b82f6;
 }
-
-/* Opcional: hover de burbujas para ambos modos */
-.bc-bubble.mio:hover { filter: brightness(0.95); }
-.bc-bubble.otro:hover { filter: brightness(0.97); }
 
 /* ── Layout general ── */
 .app {
@@ -69,11 +49,13 @@ body.light-mode {
   border: 0;
 }
 
-.sidebar {
+/* Al hacer hover se expande */
+.sidebar:hover {
   width: var(--sidebar-width);
 }
 
-.sidebar ~ .main {
+/* El main también se mueve cuando el sidebar está en hover */
+.sidebar:hover ~ .main {
   margin-left: var(--sidebar-width);
 }
 
@@ -84,7 +66,6 @@ body.light-mode {
   padding: 0 16px 16px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
   min-height: 48px;
-  flex-shrink: 0; /* nunca se encoge */
 }
 
 .brand {
@@ -103,50 +84,37 @@ body.light-mode {
   min-width: 20px;
 }
 
+.brand span {
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.sidebar:hover .brand span {
+  opacity: 1;
+}
+
 /* ── Nav ── */
 .nav-list {
   list-style: none;
-  margin: 8px 0 0;
+  margin: 12px 0 0;
   padding: 0 8px;
   flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  gap: 2px; /* spacing entre items sin necesitar padding extra */
-}
-
-/* Scrollbar discreta */
-.nav-list::-webkit-scrollbar {
-  width: 3px;
-}
-.nav-list::-webkit-scrollbar-track {
-  background: transparent;
-}
-.nav-list::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.12);
-  border-radius: 2px;
+  overflow: hidden;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 7px 12px;
+  padding: 10px 12px;
   border-radius: 8px;
   color: var(--text-secondary);
   text-decoration: none;
   white-space: nowrap;
   transition: background var(--transition), color var(--transition);
   font-size: 0.9rem;
-}
-
-.nav-link:hover,
-.nav-link.active {
-  background: var(--bg-sidebar-hover);
-  color: var(--text-primary);
 }
 
 .nav-link i {
@@ -156,9 +124,29 @@ body.light-mode {
   flex-shrink: 0;
 }
 
-/* ── Spacer eliminado: los items se distribuyen sin espacio forzado ── */
+.nav-link span {
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.sidebar:hover .nav-link span {
+  opacity: 1;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background: var(--bg-sidebar-hover);
+  color: var(--text-primary);
+}
+
+.nav-link.active {
+  color: var(--accent);
+  background: rgba(59,130,246,0.15);
+}
+
+/* ── Spacer: empuja Redes, Mi Perfil y Cerrar Sesión al fondo ── */
 .menu-spacer {
-  display: none;
+  flex: 1;
 }
 
 /* ── Redes ── */
@@ -224,7 +212,6 @@ body.light-mode {
   border-top: 1px solid rgba(255,255,255,0.08);
   overflow: hidden;
   white-space: nowrap;
-  flex-shrink: 0; /* siempre visible en la parte inferior */
 }
 
 .theme-switch {
@@ -277,6 +264,6 @@ body.light-mode {
   transition: opacity var(--transition);
 }
 
-.sidebar .mode-label {
+.sidebar:hover .mode-label {
   opacity: 1;
 }
