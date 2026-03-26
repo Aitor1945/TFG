@@ -2,8 +2,10 @@
   --bg-sidebar: #1e293b;
   --bg-sidebar-hover: #2d3f55;
   --bg-body: #0d1b2a;
+  --bg-card: #1e293b;
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
+  --text-chat: #ffffff;
   --accent: #3b82f6;
   --sidebar-width: 240px;
   --sidebar-collapsed: 68px;
@@ -13,8 +15,11 @@
 body.light-mode {
   --bg-sidebar: #f1f5f9;
   --bg-sidebar-hover: #e2e8f0;
+  --bg-body: #f8fafc;
+  --bg-card: #ffffff;
   --text-primary: #1e293b;
   --text-secondary: #64748b;
+  --text-chat: #ffffff;
   --accent: #3b82f6;
 }
 
