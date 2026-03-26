@@ -2,16 +2,21 @@
 .bc-wrapper {
   position: fixed;
   top: 0;
-  left: var(--sidebar-width, 260px);
+  /* Arranca colapsado (68 px) igual que hace .main */
+  left: var(--sidebar-collapsed, 68px);
   right: 0;
   bottom: 0;
   display: flex;
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-size: 13px; /* tamaño de fuente más compacto */
-  transition: left var(--transition);
+  font-size: 13px;
+  transition: left var(--transition, 0.3s ease);
   z-index: 100;
 }
-html.sidebar-closed .bc-wrapper { left: var(--sidebar-collapsed); }
+
+/* Cuando el sidebar está en hover se expande; el chat lo sigue */
+.sidebar:hover ~ .main .bc-wrapper {
+  left: var(--sidebar-width, 240px);
+}
 
 /* ── Panel izquierdo ── */
 .bc-panel {
@@ -19,10 +24,10 @@ html.sidebar-closed .bc-wrapper { left: var(--sidebar-collapsed); }
   flex-direction: column;
   background: var(--bg-sidebar);
   box-shadow: 4px 0 12px rgba(0, 0, 0, 0.2);
-   width: calc(var(--sidebar-width) + 40px);
+  width: calc(var(--sidebar-width) + 40px);
 }
 .bc-panel-header {
-  padding: 12px 16px; /* un poco más compacto */
+  padding: 12px 16px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -72,7 +77,7 @@ html.sidebar-closed .bc-wrapper { left: var(--sidebar-collapsed); }
   transition: background var(--transition), color var(--transition);
 }
 .bc-user-item.activo .bc-avatar {
-  background: var(--bg-body); /* distinto al fondo del item activo */
+  background: var(--bg-body);
   color: var(--accent);
 }
 
@@ -152,7 +157,7 @@ html.sidebar-closed .bc-wrapper { left: var(--sidebar-collapsed); }
 }
 .bc-bubble.mio {
   background: var(--accent);
-  color:var(--text-chat);
+  color: var(--text-chat);
   border-radius: 16px 16px 4px 16px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
@@ -201,7 +206,7 @@ html.sidebar-closed .bc-wrapper { left: var(--sidebar-collapsed); }
 
 /* Responsive */
 @media (max-width: 640px) {
-  .bc-wrapper { left: 0; }
+  .bc-wrapper { left: 0 !important; }
   .bc-panel { position: absolute; inset: 0; width: 100%; z-index: 10; }
   .bc-panel.oculto { display: none; }
   .bc-chat.oculto { display: none; }
