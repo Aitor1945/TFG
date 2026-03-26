@@ -3,8 +3,9 @@ import { NavLink } from "react-router-dom"
 import "./SideBar.css"
 
 export default function SideBar() {
-  const [darkMode, setDarkMode] = useState(true)
+  const [darkMode,   setDarkMode]   = useState(true)
   const [socialOpen, setSocialOpen] = useState(false)
+  const [pinned,     setPinned]     = useState(false)
 
   useEffect(() => {
     if (darkMode) {
@@ -14,8 +15,14 @@ export default function SideBar() {
     }
   }, [darkMode])
 
+  useEffect(() => {
+    const app = document.querySelector(".app")
+    if (app) app.classList.toggle("sidebar-pinned", pinned)
+  }, [pinned])
+
   return (
-    <nav className="sidebar">
+    <nav className={`sidebar${pinned ? " pinned" : ""}`}>
+
       <div className="brand-wrapper">
         <div className="brand">
           <i className="fa-solid fa-city"></i>
@@ -89,13 +96,14 @@ export default function SideBar() {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/login" className="nav-link" style={{ color: "#ff3b3b" }}>
+          <NavLink to="/login" className="nav-link logout-link">
             <i className="fa-solid fa-arrow-right-from-bracket"></i><span>Cerrar Sesión</span>
           </NavLink>
         </li>
       </ul>
 
-      <div className="theme-switch-wrapper">
+      {/* ── Pie: tema + pin en la misma fila ── */}
+      <div className="sidebar-footer">
         <label className="theme-switch" htmlFor="checkbox-theme">
           <input
             type="checkbox"
@@ -105,8 +113,21 @@ export default function SideBar() {
           />
           <div className="slider"></div>
         </label>
-        <span className="mode-label">{darkMode ? "Modo Oscuro" : "Modo Claro"}</span>
+
+        <span className="mode-label">
+          {darkMode ? "Modo Oscuro" : "Modo Claro"}
+        </span>
+
+        {/* Pin: aparece a la derecha del label, solo cuando está expandido */}
+        <button
+          className={`pin-btn${pinned ? " pin-btn--active" : ""}`}
+          onClick={() => setPinned(p => !p)}
+          title={pinned ? "Desanclar sidebar" : "Anclar sidebar abierto"}
+        >
+          <i className="fa-solid fa-thumbtack"></i>
+        </button>
       </div>
+
     </nav>
   )
 }

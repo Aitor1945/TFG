@@ -23,7 +23,7 @@ body.light-mode {
   --accent: #3b82f6;
 }
 
-/* ── Layout general ── */
+/* ── Layout ── */
 .app {
   display: flex;
 }
@@ -36,7 +36,7 @@ body.light-mode {
   padding: 24px;
 }
 
-/* ── Sidebar ── */
+/* ── Sidebar base ── */
 .sidebar {
   position: fixed;
   top: 0;
@@ -50,27 +50,40 @@ body.light-mode {
   transition: width var(--transition);
   overflow: hidden;
   z-index: 100;
-  box-shadow: 2px 0 12px rgba(0,0,0,0.15);
-  border: 0;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Al hacer hover se expande */
-.sidebar:hover {
+/* Hover expande solo si no está anclado */
+.sidebar:not(.pinned):hover {
   width: var(--sidebar-width);
 }
 
-/* El main también se mueve cuando el sidebar está en hover */
-.sidebar:hover ~ .main {
+/* Anclado: siempre expandido */
+.sidebar.pinned {
+  width: var(--sidebar-width);
+}
+
+/* Main sigue al hover */
+.sidebar:not(.pinned):hover ~ .main {
   margin-left: var(--sidebar-width);
+}
+
+/* Main sigue al pin permanente */
+.app.sidebar-pinned .main {
+  margin-left: var(--sidebar-width);
+}
+
+/* Chat sigue al pin permanente */
+.app.sidebar-pinned .bc-wrapper {
+  left: var(--sidebar-width) !important;
 }
 
 /* ── Brand ── */
 .brand-wrapper {
   display: flex;
   align-items: center;
-  padding: 0 16px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  min-height: 48px;
+  padding: 0 16px 20px;
+  /* Sin border — solo espacio */
 }
 
 .brand {
@@ -94,14 +107,15 @@ body.light-mode {
   transition: opacity var(--transition);
 }
 
-.sidebar:hover .brand span {
+.sidebar:hover .brand span,
+.sidebar.pinned .brand span {
   opacity: 1;
 }
 
-/* ── Nav ── */
+/* ── Nav list ── */
 .nav-list {
   list-style: none;
-  margin: 12px 0 0;
+  margin: 0;
   padding: 0 8px;
   flex: 1;
   display: flex;
@@ -134,7 +148,8 @@ body.light-mode {
   transition: opacity var(--transition);
 }
 
-.sidebar:hover .nav-link span {
+.sidebar:hover .nav-link span,
+.sidebar.pinned .nav-link span {
   opacity: 1;
 }
 
@@ -146,23 +161,21 @@ body.light-mode {
 
 .nav-link.active {
   color: var(--accent);
-  background: rgba(59,130,246,0.15);
+  background: rgba(59, 130, 246, 0.15);
 }
 
-/* ── Spacer: empuja Redes, Mi Perfil y Cerrar Sesión al fondo ── */
-.menu-spacer {
-  flex: 1;
+.logout-link { color: #ef4444 !important; }
+.logout-link:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
 }
 
-/* ── Redes ── */
-.radial-wrapper {
-  position: relative;
-}
+/* ── Spacer ── */
+.menu-spacer { flex: 1; }
 
-.radial-trigger {
-  cursor: pointer;
-  user-select: none;
-}
+/* ── Redes sociales ── */
+.radial-wrapper { position: relative; }
+.radial-trigger { cursor: pointer; user-select: none; }
 
 .social-nodes {
   position: absolute;
@@ -172,15 +185,19 @@ body.light-mode {
   flex-direction: column;
   gap: 8px;
   background: var(--bg-sidebar);
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   padding: 10px 8px;
-  box-shadow: 4px 4px 16px rgba(0,0,0,0.25);
+  box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.25);
   opacity: 0;
   pointer-events: none;
   transform: translateX(-8px);
   transition: opacity var(--transition), transform var(--transition);
   z-index: 200;
+}
+
+body.light-mode .social-nodes {
+  border-color: rgba(0, 0, 0, 0.08);
 }
 
 .radial-wrapper.open .social-nodes {
@@ -208,17 +225,19 @@ body.light-mode {
   color: #fff;
 }
 
-/* ── Theme switch ── */
-.theme-switch-wrapper {
+/* ── Pie del sidebar (tema + pin) ── */
+.sidebar-footer {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 16px 4px;
-  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 12px 14px 4px;
+  /* Sin border-top — solo padding para separar */
   overflow: hidden;
   white-space: nowrap;
+  min-height: 52px;
 }
 
+/* Toggle tema */
 .theme-switch {
   position: relative;
   display: inline-block;
@@ -227,11 +246,7 @@ body.light-mode {
   flex-shrink: 0;
 }
 
-.theme-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+.theme-switch input { opacity: 0; width: 0; height: 0; }
 
 .slider {
   position: absolute;
@@ -254,21 +269,52 @@ body.light-mode {
   transition: transform var(--transition);
 }
 
-.theme-switch input:checked + .slider {
-  background: var(--accent);
-}
+.theme-switch input:checked + .slider { background: var(--accent); }
+.theme-switch input:checked + .slider::before { transform: translateX(18px); }
 
-.theme-switch input:checked + .slider::before {
-  transform: translateX(18px);
-}
-
+/* Label del tema */
 .mode-label {
+  flex: 1;
   color: var(--text-secondary);
   font-size: 0.8rem;
   opacity: 0;
   transition: opacity var(--transition);
 }
 
-.sidebar:hover .mode-label {
+.sidebar:hover .mode-label,
+.sidebar.pinned .mode-label {
   opacity: 1;
+}
+
+/* ── Botón pin ── */
+.pin-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 6px;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  opacity: 0;
+  pointer-events: none;
+  flex-shrink: 0;
+  transition: opacity var(--transition), color var(--transition),
+              background var(--transition), transform var(--transition);
+  transform: rotate(0deg);
+}
+
+.sidebar:hover .pin-btn,
+.sidebar.pinned .pin-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.pin-btn:hover {
+  color: var(--accent);
+  background: var(--bg-sidebar-hover);
+}
+
+.pin-btn--active {
+  color: var(--accent) !important;
+  transform: rotate(45deg);
 }
