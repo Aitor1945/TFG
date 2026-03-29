@@ -55,23 +55,6 @@
   transition: color var(--transition);
 }
 
-.marquee-container {
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-  height: 40px; /* altura fija para que no afecte al layout */
-  margin-bottom: 40px;
-}
-
-.marquee-content {
-  position: absolute; /* 🔥 CLAVE: lo saca del flujo */
-  white-space: nowrap;
-  font-size: 30px;
-  color: var(--text-primary);
-  font-weight: 500;
-  animation: marquee 20s linear infinite;
-}
-
 /* Animación limpia */
 @keyframes marquee {
   0% {

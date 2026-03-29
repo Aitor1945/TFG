@@ -11,11 +11,6 @@ const anuncios = [
 const Tablon = () => {
   return (
   <div className="container-fluid min-vh-100 d-flex flex-column align-items-center justify-content-start pt-5 tablon-container">
-    <div className="marquee-container">
-      <div className="marquee-content">
-        Bienvenido al muro comunitario: aquí encontrarás noticias, eventos y avisos importantes de la comunidad • Bienvenido al muro comunitario: aquí encontrarás noticias, eventos y avisos importantes de la comunidad •
-      </div>
-    </div>
     <h2 className="mb-4 fw-bold">Muro Comunitario</h2>
     <div className="row w-100 justify-content-center g-4 px-3 px-md-5">
       {anuncios.map(anuncio => (
