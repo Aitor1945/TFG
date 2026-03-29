@@ -14,7 +14,6 @@ const estadoConfig = {
   en_proceso: { label: "En proceso", clase: "estado-proceso" },
   resuelta:   { label: "Resuelta",   clase: "estado-resuelta" },
 };
-
 const prioridadConfig = {
   alta:  { label: "Alta",  clase: "prioridad-alta" },
   media: { label: "Media", clase: "prioridad-media" },
@@ -34,11 +33,6 @@ export default function Incidencias() {
 
       {/* ── BLOQUE SUPERIOR ── */}
       <div className="incidencias-top">
-        <div className="marquee-container">
-          <div className="marquee-content">
-            Gestión de incidencias comunitarias: reporta y consulta el estado de las incidencias de tu comunidad • Gestión de incidencias comunitarias: reporta y consulta el estado de las incidencias de tu comunidad •
-          </div>
-        </div>
 
         <h2 className="mb-2 fw-bold incidencias-titulo">Incidencias</h2>
         <p className="incidencias-subtitulo mb-4">Consulta y seguimiento de incidencias de la comunidad</p>

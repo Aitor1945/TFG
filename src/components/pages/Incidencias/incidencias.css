@@ -24,28 +24,6 @@
   padding-top: 1rem;
 }
 
-/* ── Marquee ── */
-.marquee-container {
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-  height: 36px;
-  margin-bottom: 1rem;
-}
-
-.marquee-content {
-  position: absolute;
-  white-space: nowrap;
-  font-size: 1.6rem;
-  color: var(--text-primary);
-  font-weight: 500;
-  animation: marquee 20s linear infinite;
-}
-
-@keyframes marquee {
-  0%   { transform: translateX(100vw); }
-  100% { transform: translateX(-100%); }
-}
 
 /* ── Títulos ── */
 .incidencias-titulo {
