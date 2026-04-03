@@ -14,7 +14,6 @@ const estadoConfig = {
   en_proceso: { label: "En proceso", clase: "estado-proceso" },
   resuelta:   { label: "Resuelta",   clase: "estado-resuelta" },
 };
-
 const prioridadConfig = {
   alta:  { label: "Alta",  clase: "prioridad-alta" },
   media: { label: "Media", clase: "prioridad-media" },
@@ -34,12 +33,6 @@ export default function Incidencias() {
 
       {/* ── BLOQUE SUPERIOR ── */}
       <div className="incidencias-top">
-        <div className="marquee-container">
-          <div className="marquee-content">
-            Gestión de incidencias comunitarias: reporta y consulta el estado de las incidencias de tu comunidad • Gestión de incidencias comunitarias: reporta y consulta el estado de las incidencias de tu comunidad •
-          </div>
-        </div>
-
         <h2 className="mb-2 fw-bold incidencias-titulo">Incidencias</h2>
         <p className="incidencias-subtitulo mb-4">Consulta y seguimiento de incidencias de la comunidad</p>
 
@@ -62,29 +55,27 @@ export default function Incidencias() {
 
       {/* ── TARJETAS ── */}
       <div className="incidencias-scroll">
-        <div className="row w-100 justify-content-center g-4 px-3 px-md-5 pb-5">
+        <div className="inc-columna pb-5">
           {incidenciasFiltradas.map((inc) => (
-            <div key={inc.id} className="col-12 col-md-8 col-lg-6">
-              <div className="card shadow-sm incidencia-card">
-                <div className="card-body">
-                  <div className="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
-                    <h5 className="card-title fw-bold mb-0">{inc.titulo}</h5>
-                    <div className="d-flex gap-2">
-                      <span className={`inc-badge ${prioridadConfig[inc.prioridad].clase}`}>
-                        {prioridadConfig[inc.prioridad].label}
-                      </span>
-                      <span className={`inc-badge ${estadoConfig[inc.estado].clase}`}>
-                        {estadoConfig[inc.estado].label}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="card-text">{inc.descripcion}</p>
-                  <div className="inc-footer d-flex justify-content-between align-items-center mt-3">
-                    <span className="inc-autor">
-                      <span className="inc-autor-icono">👤</span> {inc.autor}
+            <div key={inc.id} className="card shadow-sm incidencia-card">
+              <div className="card-body">
+                <div className="d-flex justify-content-between align-items-start mb-2 gap-2">
+                  <h5 className="card-title fw-bold mb-0">{inc.titulo}</h5>
+                  <div className="inc-badges">
+                    <span className={`inc-badge ${prioridadConfig[inc.prioridad].clase}`}>
+                      {prioridadConfig[inc.prioridad].label}
                     </span>
-                    <span className="inc-fecha">{inc.fecha}</span>
+                    <span className={`inc-badge ${estadoConfig[inc.estado].clase}`}>
+                      {estadoConfig[inc.estado].label}
+                    </span>
                   </div>
+                </div>
+                <p className="card-text">{inc.descripcion}</p>
+                <div className="inc-footer d-flex justify-content-between align-items-center mt-3">
+                  <span className="inc-autor">
+                    <span className="inc-autor-icono">👤</span> {inc.autor}
+                  </span>
+                  <span className="inc-fecha">{inc.fecha}</span>
                 </div>
               </div>
             </div>

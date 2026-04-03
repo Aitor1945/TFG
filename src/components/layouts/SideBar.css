@@ -36,6 +36,15 @@ body.light-mode {
   padding: 24px;
 }
 
+html {
+  overflow-y: scroll;          /* reserva el espacio siempre → no hay salto */
+  scrollbar-width: none;       /* Firefox: oculta la barra */
+}
+
+html::-webkit-scrollbar {
+  display: none;               /* Chrome / Safari / Edge: oculta la barra */
+}
+
 /* ── Sidebar base ── */
 .sidebar {
   position: fixed;
