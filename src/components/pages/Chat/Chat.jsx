@@ -3,211 +3,365 @@ import "./chat.css";
 import { supabase } from "../../../lib/supabase";
 
 export default function Chat() {
-  const [yo, setYo]                     = useState(null);
-  const [vecinos, setVecinos]           = useState([]);
-  const [vecinoActivo, setVecinoActivo] = useState(null);
-  const [mensajes, setMensajes]         = useState([]);
-  const [texto, setTexto]               = useState("");
-  const [vistaMovil, setVistaMovil]     = useState("lista");
-  const bottomRef                       = useRef(null);
-  const canalRef                        = useRef(null);
 
-  //Obtener quién soy
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setYo(data.user));
-  }, []);
+  const [usuarioActual, setUsuarioActual] = useState(null)
+  const [listaVecinos, setListaVecinos] = useState([])
+  const [vecinoSeleccionado, setVecinoSeleccionado] = useState(null)
+  const [listaMensajes, setListaMensajes] = useState([])
+  const [mensajeEscrito, setMensajeEscrito] = useState("")
+  const [pantallaMovil, setPantallaMovil] = useState("lista")
+  // guardo el ultimo mensaje y los no leidos de cada vecino
+  const [datosConversacion, setDatosConversacion] = useState({})
 
-  // Cargar vecinos cuando ya sé quién soy
+  const refFinal = useRef(null)
+  const refCanal = useRef(null)
+  // necesito una ref del vecino activo para usarla dentro del canal de supabase
+  const refVecinoActivo = useRef(null)
+
+  // sincronizo la ref con el estado cada vez que cambia el vecino
   useEffect(() => {
-    if (!yo) return;
+    refVecinoActivo.current = vecinoSeleccionado
+
+    // si abro una conversacion pongo los no leidos a 0
+    if (vecinoSeleccionado) {
+      setDatosConversacion((prev) => {
+        if ((prev[vecinoSeleccionado.id]?.noLeidos || 0) === 0) return prev
+        return {
+          ...prev,
+          [vecinoSeleccionado.id]: { ...prev[vecinoSeleccionado.id], noLeidos: 0 },
+        }
+      })
+    }
+  }, [vecinoSeleccionado])
+
+  // cojo el usuario que esta logueado
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUsuarioActual(data.user))
+  }, [])
+
+  // cuando tengo el usuario cargo los vecinos
+  useEffect(() => {
+    if (!usuarioActual) return
     supabase
       .from("profiles")
       .select("id, full_name, username, email, role")
-      .neq("id", yo.id)
-      .then(({ data }) => setVecinos(data || []));
-  }, [yo]);
+      .neq("id", usuarioActual.id)
+      .then(({ data }) => setListaVecinos(data || []))
+  }, [usuarioActual])
 
-  //Al seleccionar vecino: historial + realtime
+  // cargo los mensajes de todas las conversaciones para saber cuales no se han leido
   useEffect(() => {
-    if (!yo || !vecinoActivo) return;
+    if (!usuarioActual || listaVecinos.length === 0) return
 
-    // Cerrar canal anterior para no acumular suscripciones
-    if (canalRef.current) {
-      supabase.removeChannel(canalRef.current);
-      canalRef.current = null;
-    }
+    const ids = listaVecinos.map((v) => v.id)
 
-    // Limpiar mensajes de la conversación anterior
-    setMensajes([]);
-
-    // Cargar historial de esta conversación
     supabase
       .from("messages")
-      .select("*")
+      .select("id, sender_id, receiver_id, created_at, read")
       .or(
-        `and(sender_id.eq.${yo.id},receiver_id.eq.${vecinoActivo.id}),` +
-        `and(sender_id.eq.${vecinoActivo.id},receiver_id.eq.${yo.id})`
+        ids.map((id) =>
+          `and(sender_id.eq.${usuarioActual.id},receiver_id.eq.${id}),` +
+          `and(sender_id.eq.${id},receiver_id.eq.${usuarioActual.id})`
+        ).join(",")
       )
-      .order("created_at", { ascending: true })
-      .then(({ data }) => setMensajes(data || []));
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (!data) return
+        const info = {}
+        data.forEach((msg) => {
+          // saco quien es el otro en este mensaje
+          const otroId = msg.sender_id === usuarioActual.id ? msg.receiver_id : msg.sender_id
+          if (!info[otroId]) {
+            info[otroId] = { ultimoMensaje: msg.created_at, noLeidos: 0 }
+          }
+          // si me lo mando el y no lo he leido lo cuento
+          if (msg.sender_id === otroId && !msg.read) {
+            info[otroId].noLeidos += 1
+          }
+        })
+        setDatosConversacion(info)
+      })
+  }, [usuarioActual, listaVecinos])
 
-    // Abrir canal realtime para mensajes nuevos
+  // canal global para recibir mensajes nuevos de cualquier vecino y actualizar el badge
+  useEffect(() => {
+    if (!usuarioActual) return
+
     const canal = supabase
-      .channel(`chat-${[yo.id, vecinoActivo.id].sort().join("-")}`)
+      .channel(`inbox-${usuarioActual.id}`)
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages" },
         (payload) => {
-          const msg = payload.new;
+          const msg = payload.new
+          // solo me interesan los mensajes que me llegan a mi
+          if (msg.receiver_id !== usuarioActual.id) return
 
-          // Solo mensajes de esta conversación
-          const relevante =
-            (msg.sender_id === yo.id         && msg.receiver_id === vecinoActivo.id) ||
-            (msg.sender_id === vecinoActivo.id && msg.receiver_id === yo.id);
+          const quienManda = msg.sender_id
+          const estaAbierto = refVecinoActivo.current?.id === quienManda
 
-          if (!relevante) return;
-
-          // Evitar duplicados comprobando el id
-          setMensajes((prev) => {
-            if (prev.some((m) => m.id === msg.id)) return prev;
-            return [...prev, msg];
-          });
+          setDatosConversacion((prev) => {
+            const actual = prev[quienManda] || { ultimoMensaje: null, noLeidos: 0 }
+            return {
+              ...prev,
+              [quienManda]: {
+                ultimoMensaje: msg.created_at,
+                // si tengo la conversacion abierta no sumo
+                noLeidos: estaAbierto ? 0 : actual.noLeidos + 1,
+              },
+            }
+          })
         }
       )
-      .subscribe();
+      .subscribe()
 
-    canalRef.current = canal;
+    return () => supabase.removeChannel(canal)
+  }, [usuarioActual])
 
-    // Al cambiar de vecino o desmontar: cerrar canal
-    return () => {
-      supabase.removeChannel(canal);
-      canalRef.current = null;
-    };
-  }, [yo, vecinoActivo]);
-
-  // Auto-scroll al último mensaje
+  // cuando selecciono un vecino cargo su historial y abro el canal de esa conv
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [mensajes]);
+    if (!usuarioActual || !vecinoSeleccionado) return
 
-  // Enviar mensaje
-  // No añadimos el mensaje al estado aquí — el realtime lo hará solo
-  const enviar = async (e) => {
-    e.preventDefault();
-    if (!texto.trim() || !vecinoActivo || !yo) return;
-    const contenido = texto.trim();
-    setTexto("");
-    await supabase.from("messages").insert({
-      sender_id:   yo.id,
-      receiver_id: vecinoActivo.id,
-      content:     contenido,
-    });
-  };
+    // cierro el canal anterior para no acumular
+    if (refCanal.current) {
+      supabase.removeChannel(refCanal.current)
+      refCanal.current = null
+    }
 
-  //
-  const nombre = (u) =>
-    u?.full_name || u?.username || u?.email?.split("@")[0] || "Usuario";
+    setListaMensajes([])
 
-  const hora = (ts) =>
-    new Date(ts).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+    // pongo a 0 los no leidos cuando abro la conversacion
+    setDatosConversacion((prev) => ({
+      ...prev,
+      [vecinoSeleccionado.id]: {
+        ...(prev[vecinoSeleccionado.id] || {}),
+        noLeidos: 0,
+      },
+    }))
+
+    // marco como leidos en la base de datos
+    supabase
+      .from("messages")
+      .update({ read: true })
+      .eq("sender_id", vecinoSeleccionado.id)
+      .eq("receiver_id", usuarioActual.id)
+      .or("read.eq.false,read.is.null")
+      .then(() => {})
+
+    // cargo el historial de mensajes entre los dos
+    supabase
+      .from("messages")
+      .select("*")
+      .or(
+        `and(sender_id.eq.${usuarioActual.id},receiver_id.eq.${vecinoSeleccionado.id}),` +
+        `and(sender_id.eq.${vecinoSeleccionado.id},receiver_id.eq.${usuarioActual.id})`
+      )
+      .order("created_at", { ascending: true })
+      .then(({ data }) => setListaMensajes(data || []))
+
+    // abro canal de tiempo real para esta conversacion concreta
+    const canal = supabase
+      .channel(`chat-${[usuarioActual.id, vecinoSeleccionado.id].sort().join("-")}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages" },
+        (payload) => {
+          const msg = payload.new
+          const esDeEstaConv =
+            (msg.sender_id === usuarioActual.id && msg.receiver_id === vecinoSeleccionado.id) ||
+            (msg.sender_id === vecinoSeleccionado.id && msg.receiver_id === usuarioActual.id)
+
+          if (!esDeEstaConv) return
+
+          // evito duplicados por si llega dos veces
+          setListaMensajes((prev) => {
+            if (prev.some((m) => m.id === msg.id)) return prev
+            return [...prev, msg]
+          })
+
+          // actualizo el timestamp del ultimo mensaje
+          const otroId = msg.sender_id === usuarioActual.id ? msg.receiver_id : msg.sender_id
+          setDatosConversacion((prev) => ({
+            ...prev,
+            [otroId]: {
+              ...(prev[otroId] || {}),
+              ultimoMensaje: msg.created_at,
+              noLeidos: 0,
+            },
+          }))
+        }
+      )
+      .subscribe()
+
+    refCanal.current = canal
+
+    return () => {
+      supabase.removeChannel(canal)
+      refCanal.current = null
+    }
+  }, [usuarioActual, vecinoSeleccionado])
+
+  // scroll automatico al ultimo mensaje
+  useEffect(() => {
+    refFinal.current?.scrollIntoView({ behavior: "smooth" })
+  }, [listaMensajes])
+
+  // funcion para enviar mensaje
+  const enviarMensaje = async (e) => {
+    e.preventDefault()
+    if (!mensajeEscrito.trim() || !vecinoSeleccionado || !usuarioActual) return
+
+    const contenido = mensajeEscrito.trim()
+    setMensajeEscrito("")
+
+    const { data } = await supabase
+      .from("messages")
+      .insert({
+        sender_id: usuarioActual.id,
+        receiver_id: vecinoSeleccionado.id,
+        content: contenido,
+      })
+      .select()
+      .single()
+
+    // actualizo el timestamp del ultimo mensaje que he mandado yo
+    if (data) {
+      setDatosConversacion((prev) => ({
+        ...prev,
+        [vecinoSeleccionado.id]: {
+          ...(prev[vecinoSeleccionado.id] || {}),
+          ultimoMensaje: data.created_at,
+          noLeidos: 0,
+        },
+      }))
+    }
+  }
+
+  // saco el nombre del usuario para mostrarlo
+  const getNombre = (u) =>
+    u?.full_name || u?.username || u?.email?.split("@")[0] || "Usuario"
+
+  // formateo la hora del mensaje
+  const getHora = (ts) =>
+    new Date(ts).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })
+
+  // ordeno los vecinos por ultimo mensaje, el mas reciente arriba
+  const vecinosOrdenados = [...listaVecinos].sort((a, b) => {
+    const tsA = datosConversacion[a.id]?.ultimoMensaje || null
+    const tsB = datosConversacion[b.id]?.ultimoMensaje || null
+    if (!tsA && !tsB) return 0
+    if (!tsA) return 1
+    if (!tsB) return -1
+    return new Date(tsB) - new Date(tsA)
+  })
 
   return (
     <div className="bc-wrapper">
 
-      {/* ── LISTA DE VECINOS ── */}
-      <div className={`bc-panel${vistaMovil === "chat" ? " oculto" : ""}`}>
+      {/* lista de vecinos */}
+      <div className={`bc-panel${pantallaMovil === "chat" ? " oculto" : ""}`}>
         <div className="bc-panel-header">
-          <button className="bc-back-btn" onClick={() => setVistaMovil("lista")}>≡</button>
+          <button className="bc-back-btn" onClick={() => setPantallaMovil("lista")}>≡</button>
           <h2 className="bc-panel-title">BarrioChat</h2>
         </div>
         <ul className="bc-user-list">
-          {vecinos.length === 0 && (
+          {vecinosOrdenados.length === 0 && (
             <li className="bc-empty-panel">No hay vecinos disponibles</li>
           )}
-          {vecinos.map((v) => (
-            <li
-              key={v.id}
-              className={`bc-user-item${vecinoActivo?.id === v.id ? " activo" : ""}`}
-              onClick={() => { setVecinoActivo(v); setVistaMovil("chat"); }}
-            >
-              <div className="bc-avatar">{nombre(v)[0].toUpperCase()}</div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div className="bc-user-name">{nombre(v)}</div>
-                <div className="bc-user-rol">{v.role || "Vecino"}</div>
-              </div>
-            </li>
-          ))}
+          {vecinosOrdenados.map((v) => {
+            const datos = datosConversacion[v.id] || {}
+            const noLeidos = datos.noLeidos || 0
+            return (
+              <li
+                key={v.id}
+                className={`bc-user-item${vecinoSeleccionado?.id === v.id ? " activo" : ""}`}
+                onClick={() => { setVecinoSeleccionado(v); setPantallaMovil("chat") }}
+              >
+                <div className="bc-avatar-wrap">
+                  <div className="bc-avatar">{getNombre(v)[0].toUpperCase()}</div>
+                  {noLeidos > 0 && (
+                    <span className="bc-badge">{noLeidos > 99 ? "99+" : noLeidos}</span>
+                  )}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div className="bc-user-name">{getNombre(v)}</div>
+                  <div className="bc-user-rol">{v.role || "Vecino"}</div>
+                </div>
+              </li>
+            )
+          })}
         </ul>
       </div>
 
-      {/* ── ÁREA DE MENSAJES ── */}
+      {/* zona de mensajes */}
       <div
-        className={`bc-chat${vistaMovil === "lista" ? " oculto" : ""}`}
+        className={`bc-chat${pantallaMovil === "lista" ? " oculto" : ""}`}
         style={{ display: window.innerWidth > 640 ? "flex" : undefined }}
       >
         <div className="bc-chat-box">
-          {vecinoActivo ? (
+          {vecinoSeleccionado ? (
             <>
-              {/* Header */}
+              {/* cabecera con el nombre del vecino */}
               <div className="bc-chat-header">
-                <button className="bc-back-btn" onClick={() => setVistaMovil("lista")}>←</button>
+                <button className="bc-back-btn" onClick={() => setPantallaMovil("lista")}>←</button>
                 <div className="bc-avatar" style={{ background: "#eef2ff", color: "#2f6bff" }}>
-                  {nombre(vecinoActivo)[0].toUpperCase()}
+                  {getNombre(vecinoSeleccionado)[0].toUpperCase()}
                 </div>
                 <div>
-                  <div className="bc-chat-header-name">{nombre(vecinoActivo)}</div>
-                  <div className="bc-chat-header-rol">{vecinoActivo.role || "Vecino"}</div>
+                  <div className="bc-chat-header-name">{getNombre(vecinoSeleccionado)}</div>
+                  <div className="bc-chat-header-rol">{vecinoSeleccionado.role || "Vecino"}</div>
                 </div>
               </div>
 
-              {/* Mensajes */}
+              {/* mensajes */}
               <ul className="bc-messages">
-                {mensajes.length === 0 && (
-                  <li className="bc-hello">Di hola a {nombre(vecinoActivo)} 👋</li>
+                {listaMensajes.length === 0 && (
+                  <li className="bc-hello">Di hola a {getNombre(vecinoSeleccionado)} 👋</li>
                 )}
-                {mensajes.map((msg) => {
-                  const esMio = msg.sender_id === yo?.id;
+                {listaMensajes.map((msg) => {
+                  const esMio = msg.sender_id === usuarioActual?.id
                   return (
                     <li key={msg.id} className={`bc-msg-row${esMio ? " mio" : " otro"}`}>
                       <div className={`bc-bubble${esMio ? " mio" : " otro"}`}>
                         {!esMio && (
-                          <div className="bc-bubble-remitente">{nombre(vecinoActivo)}</div>
+                          <div className="bc-bubble-remitente">{getNombre(vecinoSeleccionado)}</div>
                         )}
                         {msg.content}
-                        <div className="bc-bubble-hora">{hora(msg.created_at)}</div>
+                        <div className="bc-bubble-hora">{getHora(msg.created_at)}</div>
                       </div>
                     </li>
-                  );
+                  )
                 })}
-                <li ref={bottomRef} style={{ listStyle: "none" }} />
+                <li ref={refFinal} style={{ listStyle: "none" }} />
               </ul>
 
-              {/* Input */}
-              <form className="bc-form" onSubmit={enviar}>
+              {/* input para escribir */}
+              <form className="bc-form" onSubmit={enviarMensaje}>
                 <div className="bc-input-row">
                   <input
                     className="bc-input"
-                    value={texto}
-                    onChange={(e) => setTexto(e.target.value)}
+                    value={mensajeEscrito}
+                    onChange={(e) => setMensajeEscrito(e.target.value)}
                     placeholder="Escribe tu mensaje..."
                     autoComplete="off"
                   />
-                  <button type="submit" className="bc-send-btn" disabled={!texto.trim()}>
+                  <button type="submit" className="bc-send-btn" disabled={!mensajeEscrito.trim()}>
                     Enviar
                   </button>
                 </div>
               </form>
             </>
           ) : (
+            /* si no hay vecino seleccionado muestro esto */
             <div className="bc-empty-chat">
-      <div className="bc-empty-icon">💬</div>
-       <p>Selecciona un vecino</p>
-        <span>para empezar a chatear</span>
-      </div>
+              <div className="bc-empty-icon">💬</div>
+              <p>Selecciona un vecino</p>
+              <span>para empezar a chatear</span>
+            </div>
           )}
         </div>
       </div>
 
     </div>
-  );
+  )
 }

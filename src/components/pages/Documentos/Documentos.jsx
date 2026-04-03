@@ -43,12 +43,6 @@ export default function Documentos() {
   return (
     <div className="documentos-page">
 
-      <div className="marquee-container">
-        <div className="marquee-content">
-          Gestión documental: sube, consulta y descarga los documentos de tu comunidad en formato PDF • Gestión documental: sube, consulta y descarga los documentos de tu comunidad en formato PDF •
-        </div>
-      </div>
-
       <h2 className="mb-2 fw-bold documentos-titulo">Documentos</h2>
       <p className="documentos-subtitulo mb-5">Sube y gestiona los documentos PDF de la comunidad</p>
 
