@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { supabase } from "../../../lib/supabase.js"
 import "./Dashboard.css"
 
 // ─── Constantes ────────────────────────────────────────────────────────────
@@ -15,13 +16,6 @@ const EVENT_COLORS = {
   nota:       "#a78bfa",
 }
 
-// ─── DEMO: usuario actual (sustituir por useAuth() cuando haya backend) ────
-const CURRENT_USER = {
-  name:      "Torrente", // se usará para mostrar el nombre y las iniciales del avatar
-  role:      "presidente",           // vecino | presidente | administrador | ayuntamiento
-  community: "Comunidad de Madrid", // se muestra debajo del nombre en la barra de bienvenida
-}
-
 const ROLE_LABELS = {
   vecino:         "Vecino",
   presidente:     "Presidente",
@@ -29,32 +23,13 @@ const ROLE_LABELS = {
   ayuntamiento:   "Ayuntamiento",
 }
 
-// ─── Datos mock (se sustituirán por BD) ────────────────────────────────────
-const INITIAL_EVENTS = {
-  14: [
-    { time: "10:00h", title: "Reunión comunidad",   type: "reunion"    },
-    { time: "17:30h", title: "Reserva piscina",     type: "reserva"    },
-    { time: "19:00h", title: "Incidencia ascensor", type: "incidencia" },
-  ],
-  20: [{ time: "11:00h", title: "Junta de propietarios", type: "reunion" }],
-  25: [
-    { time: "09:00h", title: "Mantenimiento jardín", type: "reserva" },
-    { time: "18:00h", title: "Taller vecinal",        type: "nota"    },
-  ],
+const ESTADO_COLORS = {
+  abierta:    "#f59e0b",
+  "en curso": "#3b82f6",
+  resuelta:   "#10b981",
 }
 
-const MOCK_INCIDENCIAS = [
-  { id: 1, title: "Ascensor bloqueado",     estado: "abierta",  color: "#f59e0b" },
-  { id: 2, title: "Fuga de agua portal 2",  estado: "en curso", color: "#3b82f6" },
-  { id: 3, title: "Luz escalera fundida",   estado: "resuelta", color: "#10b981" },
-]
-
-const MOCK_ANUNCIO = {
-  autor:  "Ayuntamiento de Fuenlabrada",
-  fecha:  "12 mar 2026",
-  titulo: "Corte de agua el 17 de marzo",
-  cuerpo: "Se informa a todos los vecinos que el próximo lunes 17 de marzo se realizarán trabajos de mantenimiento en la red de suministro. El corte afectará de 9:00h a 14:00h.",
-}
+const CURRENT_USER_FALLBACK = { name: "Usuario", role: "vecino", community: "" }
 
 const ACCESOS = [
   { label: "Incidencias",  icon: "fa-triangle-exclamation", to: "/incidencias", color: "#f59e0b" },
@@ -63,7 +38,7 @@ const ACCESOS = [
   { label: "Chat",         icon: "fa-comments",             to: "/chat",        color: "#a78bfa" },
 ]
 
-// ─── Códigos WMO → descripción + icono ────────────────────────────────────
+
 function weatherInfo(code) {
   if (code === 0)                      return { desc: "Despejado",   icon: "fa-sun" }
   if ([1, 2].includes(code))           return { desc: "Poco nuboso", icon: "fa-cloud-sun" }
@@ -77,7 +52,7 @@ function weatherInfo(code) {
   return { desc: "Variable", icon: "fa-cloud" }
 }
 
-// ─── Helper: celdas del mes ────────────────────────────────────────────────
+//Calendario
 function getDays(year, month) {
   const first     = new Date(year, month, 1).getDay()
   const offset    = first === 0 ? 6 : first - 1
@@ -90,9 +65,7 @@ function getDays(year, month) {
   return cells
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-//  WIDGET TIEMPO
-// ═══════════════════════════════════════════════════════════════════════════
+//Tiempo
 function WeatherCard() {
   const [weather, setWeather] = useState(null)
   const [status,  setStatus]  = useState("loading")
@@ -171,20 +144,62 @@ function WeatherCard() {
   )
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-//  DASHBOARD PRINCIPAL
-// ═══════════════════════════════════════════════════════════════════════════
 export default function Dashboard() {
   const navigate = useNavigate()
   const now      = new Date()
 
-  const [year,  setYear]    = useState(now.getFullYear())
-  const [month, setMonth]   = useState(now.getMonth())
-  const [selected, setSel]  = useState(now.getDate())
-  const [events, setEvents] = useState(INITIAL_EVENTS)
+  const [year,        setYear]        = useState(now.getFullYear())
+  const [month,       setMonth]       = useState(now.getMonth())
+  const [selected,    setSel]         = useState(now.getDate())
+ const [events, setEvents] = useState({})
   const [showSummary, setShowSummary] = useState(false)
   const [showAdd,     setShowAdd]     = useState(false)
-  const [form, setForm] = useState({ type: "nota", title: "", time: "" })
+  const [form,        setForm]        = useState({ type: "nota", title: "", time: "" })
+
+  const [currentUser, setCurrentUser] = useState(CURRENT_USER_FALLBACK)
+  const [incidencias, setIncidencias] = useState([])
+  const [loadingData, setLoadingData] = useState(true)
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoadingData(true)
+      try {
+        // 1. Usuario autenticado
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          // 2. Perfil 
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("full_name, username, email, role, comunidad_id, comunidades(nombre)")
+            .eq("id", user.id)
+            .single()
+
+          if (profile) {
+            setCurrentUser({
+              name:      profile.full_name || profile.username || user.email,
+              role:      profile.role      || "vecino",
+              community: profile.comunidades?.nombre || "",
+            })
+          }
+        }
+
+        // 3. Últimas 3 incidencias — columnas: titulo, estado
+        const { data: incs } = await supabase
+          .from("incidencias")
+          .select("id, titulo, estado")
+          .order("created_at", { ascending: false })
+          .limit(3)
+
+        if (incs) setIncidencias(incs)
+
+      } catch (err) {
+        console.error("Error cargando datos dashboard:", err)
+      } finally {
+        setLoadingData(false)
+      }
+    }
+    fetchData()
+  }, [])
 
   const isCurrentMonth = year === now.getFullYear() && month === now.getMonth()
   const cells          = getDays(year, month)
@@ -221,14 +236,14 @@ export default function Dashboard() {
       <div className="welcome-bar">
         <div className="welcome-left">
           <div className="welcome-avatar">
-            {CURRENT_USER.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+            {currentUser.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
           </div>
           <div>
-            <p className="welcome-name">Bienvenido, {CURRENT_USER.name.split(" ")[0]}</p>
-            <p className="welcome-meta">{CURRENT_USER.community}</p>
+            <p className="welcome-name">Bienvenido, {currentUser.name.split(" ")[0]}</p>
+            <p className="welcome-meta">{currentUser.community}</p>
           </div>
         </div>
-        <span className="welcome-role">{ROLE_LABELS[CURRENT_USER.role]}</span>
+        <span className="welcome-role">{ROLE_LABELS[currentUser.role] || currentUser.role}</span>
       </div>
 
       {/* ── Grid principal ── */}
@@ -328,11 +343,27 @@ export default function Dashboard() {
               <span>Últimas incidencias</span>
             </div>
             <div className="dash-list">
-              {MOCK_INCIDENCIAS.map(inc => (
+              {loadingData && (
+                <p style={{ fontSize: 12, color: "var(--text-secondary)", opacity: 0.6 }}>
+                  Cargando…
+                </p>
+              )}
+              {!loadingData && incidencias.length === 0 && (
+                <p style={{ fontSize: 12, color: "var(--text-secondary)", opacity: 0.6 }}>
+                  No hay incidencias registradas.
+                </p>
+              )}
+              {incidencias.map(inc => (
                 <div key={inc.id} className="dash-list-item">
-                  <div className="dash-list-bar" style={{ background: inc.color }} />
-                  <span className="dash-list-title">{inc.title}</span>
-                  <span className="dash-badge" style={{ background: inc.color + "22", color: inc.color }}>
+                  <div className="dash-list-bar"
+                    style={{ background: ESTADO_COLORS[inc.estado] || "#a78bfa" }} />
+                  {/* ← inc.titulo en vez de inc.title */}
+                  <span className="dash-list-title">{inc.titulo}</span>
+                  <span className="dash-badge"
+                    style={{
+                      background: (ESTADO_COLORS[inc.estado] || "#a78bfa") + "22",
+                      color:      ESTADO_COLORS[inc.estado] || "#a78bfa",
+                    }}>
                     {inc.estado}
                   </span>
                 </div>
@@ -340,15 +371,18 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Anuncio del ayuntamiento */}
+          {/* Anuncio — sin tabla aún, se mantiene estático */}
           <div className="anuncio-card">
             <div className="anuncio-header">
               <i className="fa-solid fa-bullhorn"></i>
               <span>Anuncio oficial</span>
             </div>
-            <p className="anuncio-autor">{MOCK_ANUNCIO.autor} · {MOCK_ANUNCIO.fecha}</p>
-            <p className="anuncio-titulo">{MOCK_ANUNCIO.titulo}</p>
-            <p className="anuncio-cuerpo">{MOCK_ANUNCIO.cuerpo}</p>
+            <p className="anuncio-autor">Ayuntamiento · 12 mar 2026</p>
+            <p className="anuncio-titulo">Corte de agua el 17 de marzo</p>
+            <p className="anuncio-cuerpo">
+              Se informa a todos los vecinos que el próximo lunes 17 de marzo se realizarán
+              trabajos de mantenimiento en la red de suministro. El corte afectará de 9:00h a 14:00h.
+            </p>
           </div>
 
         </div>
