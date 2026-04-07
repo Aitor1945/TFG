@@ -139,29 +139,19 @@ body.light-mode .tablon-textarea {
   text-align: right;
 }
 
-/* ─── Badge tipo (opcional) ───────────────────────────── */
-.tablon-tipo {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--accent);
-  background: rgba(59,130,246,0.12);
-  padding: 3px 8px;
-  border-radius: 20px;
-  width: fit-content;
-}
-
 input,
 textarea {
   width: 100%;
   background: var(--bg-sidebar);
   color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1.5px solid;
   border-radius: 12px;
   padding: 12px 16px;
   font-size: 14px;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  border-color: var(--bg-sidebar-hover);
+  transition:  0.2s, box-shadow 0.2s;
 }
 
 input:focus,
@@ -202,7 +192,7 @@ button:active {
 
 input::placeholder,
 textarea::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
 }
 
 h2{
