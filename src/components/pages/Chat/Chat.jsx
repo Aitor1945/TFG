@@ -304,7 +304,7 @@ export default function Chat() {
               {/* cabecera con el nombre del vecino */}
               <div className="bc-chat-header">
                 <button className="bc-back-btn" onClick={() => setPantallaMovil("lista")}>←</button>
-                <div className="bc-avatar" style={{ background: "#eef2ff", color: "#2f6bff" }}>
+                <div className="bc-avatar">
                   {getNombre(vecinoSeleccionado)[0].toUpperCase()}
                 </div>
                 <div>

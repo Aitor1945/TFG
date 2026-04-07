@@ -1,66 +1,237 @@
-/* tablon.css - VERSIÓN MODIFICADA */
+/* ── Tablon.css ── */
+/* Usa mismas variables que Dashboard.css */
 
+/* ─── Contenedor ───────────────────────────────────────── */
 .tablon-container {
-  /* Hacemos el fondo transparente para que se vea el color del .main */
-  /* Esto elimina el "recuadro" que veías en la transición */
-  background-color: transparent !important; 
-  transition: background-color var(--transition);
+  min-height: 100vh;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  color: var(--text-primary);
+}
+
+
+h1 {
+  font-size: 20px;
+  color: var(--text-primary);
+}
+
+/* ─── Formulario ───────────────────────────────────────── */
+.tablon-form {
   width: 100%;
+  max-width: 600px;
+  background: var(--bg-sidebar);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.tablon-card {
-  /* Usamos la variable de fondo de tarjeta definida en SideBar.css */
-  background-color: var(--bg-card);
-  
-  /* Sincronizamos el tiempo de la transición (0.3s) con el Sidebar */
-  transition: 
-    transform 0.2s, 
-    background-color var(--transition), 
-    box-shadow 0.2s,
-    border-color var(--transition);
-    
-  cursor: pointer;
-  border-radius: 1rem;
-  /* Un borde sutil que se adapta al modo */
-  border: 1px solid rgba(59, 130, 246, 0.2); 
+.tablon-form h5 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
-.tablon-card:hover {
-  transform: translateY(-5px);
-  /* Sombra más suave para que no parezca un parche */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+/* Inputs */
+.tablon-input,
+.tablon-textarea {
+  background: var(--bg-sidebar-hover);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+body.light-mode .tablon-input,
+body.light-mode .tablon-textarea {
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.tablon-input:focus,
+.tablon-textarea:focus {
   border-color: var(--accent);
 }
 
-.tablon-card .card-title {
+.tablon-textarea {
+  min-height: 90px;
+  resize: none;
+}
+
+/* Botón */
+.tablon-btn {
+  margin-top: 5px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition), transform 0.1s;
+}
+
+.tablon-btn:hover {
+  background: #2563eb;
+}
+
+.tablon-btn:active {
+  transform: scale(0.97);
+}
+
+/* ─── Grid publicaciones ───────────────────────────────── */
+.tablon-grid {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ─── Card publicación ─────────────────────────────────── */
+.tablon-card {
+  background: var(--bg-sidebar);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.tablon-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+}
+
+/* Título */
+.tablon-card h5 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--text-primary);
-  transition: color var(--transition);
 }
 
-.tablon-card .card-text {
-  /* El !important asegura que Bootstrap no lo fuerce a gris oscuro fijo */
-  color: var(--text-secondary) !important;
-  transition: color var(--transition);
+/* Contenido */
+.tablon-card p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
 }
 
-.tablon-card .card-date {
+/* Fecha */
+.tablon-date {
+  font-size: 11px;
   color: var(--text-secondary);
   opacity: 0.6;
-  font-size: 0.8rem;
+  text-align: right;
 }
 
-/* Ajuste para el título principal del muro */
-.tablon-container h2 {
+/* ─── Badge tipo (opcional) ───────────────────────────── */
+.tablon-tipo {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(59,130,246,0.12);
+  padding: 3px 8px;
+  border-radius: 20px;
+  width: fit-content;
+}
+
+input,
+textarea {
+  width: 100%;
+  background: var(--bg-sidebar);
   color: var(--text-primary);
-  transition: color var(--transition);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Animación limpia */
-@keyframes marquee {
-  0% {
-    transform: translateX(100%);
+input:focus,
+textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+
+button {
+  background-color: var(--accent);
+  border: none;
+  border-radius: 30px;
+  color: white;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+  background-color: #2563eb; 
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+  transform: translateY(0px) scale(0.98);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+h2{
+  font-size: medium;
+  color: var(--text-secondary);
+}
+
+.tablon-autor, .tablon-fecha{
+  font-size: smaller;
+    color: var(--text-secondary);
+  font-size: 0.78rem;
+  opacity: 0.6;
+}
+
+.tablon-card-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #666;
+  font-weight: 600;
+}
+
+/* ─── Responsive ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .tablon-form {
+    padding: 15px;
   }
-  100% {
-    transform: translateX(-100%);
+
+  .tablon-card {
+    padding: 14px;
   }
 }
