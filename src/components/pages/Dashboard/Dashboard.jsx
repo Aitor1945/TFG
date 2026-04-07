@@ -33,7 +33,7 @@ const CURRENT_USER_FALLBACK = { name: "Usuario", role: "vecino", community: "" }
 
 const ACCESOS = [
   { label: "Incidencias",  icon: "fa-triangle-exclamation", to: "/incidencias", color: "#f59e0b" },
-  { label: "Reservas",     icon: "fa-calendar-check",       to: "/reservas",    color: "#10b981" },
+  { label: "Muro",     icon: "fa-thumbtack",       to: "/muro",    color: "#10b981" },
   { label: "Documentos",   icon: "fa-folder-open",          to: "/documentos",  color: "#3b82f6" },
   { label: "Chat",         icon: "fa-comments",             to: "/chat",        color: "#a78bfa" },
 ]
@@ -160,6 +160,8 @@ export default function Dashboard() {
   const [incidencias, setIncidencias] = useState([])
   const [loadingData, setLoadingData] = useState(true)
 
+  const [muroPosts, setMuroPosts] = useState([])
+
   useEffect(() => {
     async function fetchData() {
       setLoadingData(true)
@@ -181,6 +183,26 @@ export default function Dashboard() {
               community: profile.comunidades?.nombre || "",
             })
           }
+
+          //3. ultimo post del muro
+const { data: posts } = await supabase
+  .from("muro_publicaciones")
+  .select("id, titulo, contenido, autor_id, created_at")
+  .order("created_at", { ascending: false })
+  .limit(1);
+
+if (posts && posts.length > 0) {
+  const post = posts[0]; // ✅ definir post
+  const { data: author } = await supabase
+    .from("profiles")
+    .select("full_name")
+    .eq("id", post.autor_id)
+    .single();
+
+  setMuroPosts([{ ...post, autor_name: author?.full_name || "Usuario" }]);
+} else {
+  setMuroPosts([]); // Si no hay posts
+}
         }
 
         // 3. Últimas 3 incidencias — columnas: titulo, estado
@@ -206,6 +228,7 @@ export default function Dashboard() {
   const selDay         = new Date(year, month, selected)
   const dayEvents      = events[selected] || []
   const totalEvents    = Object.values(events).reduce((acc, a) => acc + a.length, 0)
+
 
   function prevMonth() {
     if (month === 0) { setMonth(11); setYear(y => y - 1) } else setMonth(m => m - 1)
@@ -371,19 +394,32 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Anuncio — sin tabla aún, se mantiene estático */}
-          <div className="anuncio-card">
-            <div className="anuncio-header">
-              <i className="fa-solid fa-bullhorn"></i>
-              <span>Anuncio oficial</span>
-            </div>
-            <p className="anuncio-autor">Ayuntamiento · 12 mar 2026</p>
-            <p className="anuncio-titulo">Corte de agua el 17 de marzo</p>
-            <p className="anuncio-cuerpo">
-              Se informa a todos los vecinos que el próximo lunes 17 de marzo se realizarán
-              trabajos de mantenimiento en la red de suministro. El corte afectará de 9:00h a 14:00h.
-            </p>
-          </div>
+              {/*Ultimo aviso del muro comunitarioo*/}
+           {muroPosts.length > 0 ? (
+    <div className="anuncio-card">
+      <div className="anuncio-header">
+        <i className="fa-solid fa-thumbtack"></i>
+        <span>Último anuncio del muro</span>
+      </div>
+      <p className="anuncio-autor">
+        {muroPosts[0].autor_name} · {new Date(muroPosts[0].created_at).toLocaleDateString("es-ES", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        })}
+      </p>
+      <p className="anuncio-titulo">{muroPosts[0].titulo}</p>
+      <p className="anuncio-cuerpo">{muroPosts[0].contenido}</p>
+    </div>
+  ) : (
+    <div className="anuncio-card">
+      <div className="anuncio-header">
+        <i className="fa-solid fa-thumbtack"></i>
+        <span>Muro vacío</span>
+      </div>
+      <p className="anuncio-cuerpo">No hay anuncios publicados todavía.</p>
+    </div>
+  )}
 
         </div>
       </div>
