@@ -60,7 +60,7 @@
   transition: 0.15s;
 }
 
-.filtro-btn:hover { border-color: var(--accent); color: var(--text-primary); transform: translateY(-2px); }
+.filtro-btn:hover { color: var(--text-primary); transform: translateY(-2px); }
 .filtro-btn.filtro-activo { background-color: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
 
 /* ── BOTÓN NUEVA INCIDENCIA ── */
@@ -105,10 +105,10 @@
   font-size: 0.9rem;
   color: var(--text-primary);
   outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:  0.15s, box-shadow 0.15s;
 }
 
-.inc-input:focus, .inc-textarea:focus, .inc-select:focus { border-color: var(--accent); box-shadow: 0 0 8px rgba(59,130,246,0.3); }
+.inc-input:focus, .inc-textarea:focus, .inc-select:focus {  box-shadow: 0 0 8px rgba(59,130,246,0.3); }
 
 .inc-textarea { min-height: 80px; resize: none; }
 
@@ -138,9 +138,8 @@ h2{
 .incidencia-card {
   background-color: var(--bg-sidebar);
   border-radius: 1rem;
-  border: 1px solid rgba(59,130,246,0.2);
   padding: 1rem;
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, 0.2s;
 }
 
 .incidencia-card:hover {

@@ -1,224 +1,99 @@
-/* ── Layout ── */
 .documentos-page {
+  min-height: 100vh;
+  padding: 30px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  min-height: 100vh;
-  padding: 1.5rem 2rem 3rem;
-  box-sizing: border-box;
-}
-
-@keyframes marquee {
-  0%   { transform: translateX(100vw); }
-  100% { transform: translateX(-100%); }
-}
-
-/* ── Títulos ── */
-.documentos-titulo {
   color: var(--text-primary);
-  transition: color var(--transition);
+}
+
+.documentos-titulo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 5px;
 }
 
 .documentos-subtitulo {
-  color: var(--text-secondary);
   font-size: 0.95rem;
-  transition: color var(--transition);
+  color: var(--text-secondary);
+  margin-bottom: 30px;
 }
-
-/* ── Zona de subida ── */
-.upload-area-wrapper {
+.drive-container {
   width: 100%;
-  max-width: 680px;
-  padding: 0 2rem;
-}
-
-.upload-zone {
-  background-color: var(--bg-card, rgba(255,255,255,0.04));
-  border: 2px dashed rgba(59, 130, 246, 0.35);
-  border-radius: 1.25rem;
-  padding: 2.5rem 2rem;
+  max-width: 600px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  cursor: pointer;
-  transition:
-    border-color var(--transition),
-    background-color var(--transition),
-    transform 0.2s;
+  justify-content: center;
 }
 
-.upload-zone:hover {
-  border-color: var(--accent, #3b82f6);
-  background-color: rgba(59, 130, 246, 0.06);
-  transform: translateY(-3px);
-}
-
-.upload-zone.dragging {
-  border-color: var(--accent, #3b82f6);
-  background-color: rgba(59, 130, 246, 0.1);
-  transform: scale(1.02);
-}
-
-.upload-icon {
-  font-size: 2.8rem;
-  color: #ef4444;
-  line-height: 1;
-  margin-bottom: 0.25rem;
-  transition: transform 0.2s;
-}
-
-.upload-zone:hover .upload-icon,
-.upload-zone.dragging .upload-icon {
-  transform: scale(1.1);
-}
-
-.upload-text-main {
-  color: var(--text-primary);
-  font-weight: 600;
-  font-size: 1rem;
-  margin: 0;
-  transition: color var(--transition);
-}
-
-.upload-text-sub {
-  color: var(--text-secondary);
-  font-size: 0.82rem;
-  margin: 0;
-  opacity: 0.75;
-}
-
-.upload-btn {
-  margin-top: 0.5rem;
-  background-color: var(--accent, #3b82f6);
-  color: #fff;
-  border: none;
-  border-radius: 2rem;
-  padding: 0.5rem 1.4rem;
-  font-size: 0.88rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.upload-btn:hover {
-  background-color: #2563eb;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
-}
-
-/* ── Lista de archivos ── */
-.archivos-lista {
-  max-width: 680px;
-  padding: 0 2rem;
-}
-
-.archivos-count {
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  opacity: 0.75;
+.drive-card {
+  width: 100%;
+  background: var(--bg-sidebar);
+  border-radius: 16px;
+  padding: 30px 25px;
   text-align: center;
+  box-shadow: 0 6px 25px rgba(0,0,0,0.10);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-/* ── Tarjeta de archivo ── */
-.archivo-card {
-  background-color: var(--bg-card, rgba(255,255,255,0.04));
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  border-radius: 1rem;
-  transition:
-    transform 0.2s,
-    background-color var(--transition),
-    box-shadow 0.2s,
-    border-color var(--transition);
+.drive-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
 
-.archivo-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
-  border-color: var(--accent, #3b82f6);
+.drive-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
 }
 
-.pdf-icon-wrapper {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.25);
-  display: flex;
+.drive-card p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.drive-btn {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 1.3rem;
-  color: #ef4444;
-  transition: background var(--transition);
-}
-
-.archivo-nombre {
-  color: var(--text-primary);
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 30px;
+  background-color: var(--accent);
+  color: white;
   font-weight: 600;
-  font-size: 0.92rem;
-  transition: color var(--transition);
-}
-
-.archivo-meta {
-  color: var(--text-secondary);
-  font-size: 0.77rem;
-  opacity: 0.7;
-}
-
-/* ── Botones de acción ── */
-.accion-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s, transform 0.15s;
+  font-size: 0.9rem;
   text-decoration: none;
+  transition: all 0.2s;
 }
 
-.accion-descargar {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--accent, #3b82f6);
-  border-color: rgba(59, 130, 246, 0.2);
+.drive-btn:hover {
+  background-color: #2563eb;
+  transform: translateY(-2px);
 }
 
-.accion-descargar:hover {
-  background: var(--accent, #3b82f6);
-  color: #fff;
-  transform: translateY(-1px);
+.drive-btn:active {
+  transform: scale(0.97);
+}
+.drive-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.accion-eliminar {
-  background: rgba(239, 68, 68, 0.08);
-  color: #ef4444;
-  border-color: rgba(239, 68, 68, 0.2);
+.drive-img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
-.accion-eliminar:hover {
-  background: #ef4444;
-  color: #fff;
-  transform: translateY(-1px);
+.drive-card:hover .drive-img {
+  transform: scale(1.1);
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2));
 }
 
-/* ── Estado vacío ── */
-.empty-state {
-  opacity: 0.4;
-  pointer-events: none;
-}
-
-.empty-icon {
-  font-size: 3.5rem;
-  color: var(--text-secondary);
-}
-
-.empty-text {
-  color: var(--text-secondary);
-  font-size: 0.95rem;
+@media (max-width: 768px) {
+  .drive-card {
+    padding: 25px 18px;
+  }
 }
