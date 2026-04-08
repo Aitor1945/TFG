@@ -1,14 +1,14 @@
 /* ── Dashboard.css ── */
-/* Hereda variables de SideBar.css (:root y body.light-mode) */
 
 /* ─── Página ─────────────────────────────────────────────────────────────── */
 .dashboard-page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
   min-height: 100vh;
   font-family: 'Segoe UI', sans-serif;
   color: var(--text-primary);
+  max-width: 1050px; /* deja espacio derecho para futuro chat IA */
 }
 
 /* ─── Bienvenida ─────────────────────────────────────────────────────────── */
@@ -18,7 +18,7 @@
   justify-content: space-between;
   background: var(--bg-sidebar);
   border-radius: 14px;
-  padding: 16px 20px;
+  padding: 14px 20px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.10);
 }
 
@@ -29,12 +29,12 @@
 }
 
 .welcome-avatar {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: rgba(59,130,246,0.18);
   color: var(--accent);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -43,14 +43,14 @@
 }
 
 .welcome-name {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 2px;
 }
 
 .welcome-meta {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-secondary);
   margin: 0;
 }
@@ -66,71 +66,122 @@
   border-radius: 20px;
 }
 
-/* ─── Grid principal ─────────────────────────────────────────────────────── */
+/* ─── Grid principal: 3 columnas ─────────────────────────────────────────── */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 360px 1fr;
-  gap: 20px;
+  grid-template-columns: 300px 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 16px;
   align-items: start;
-  flex: 1;
 }
 
-/* ─── Columna derecha ────────────────────────────────────────────────────── */
-.right-col {
+/* Calendario ocupa col 1, filas 1+2 */
+.cal-card {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  background: var(--bg-sidebar);
+  border-radius: 14px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-/* ─── Calendario ─────────────────────────────────────────────────────────── */
-.cal-card {
-  background: var(--bg-sidebar);
-  border-radius: 14px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.10);
 }
 
+/* Tiempo ocupa col 2, fila 1 */
+.weather-card {
+  grid-column: 2;
+  grid-row: 1;
+  background: var(--bg-sidebar);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+}
+
+/* Accesos rápidos ocupa col 3, fila 1 */
+.dash-card-accesos {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+/* Incidencias ocupa col 2, fila 2 */
+.dash-card-incidencias {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* Anuncio ocupa col 3, fila 2 */
+.anuncio-card {
+  grid-column: 3;
+  grid-row: 2;
+  background: var(--bg-sidebar);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  border-left: 4px solid var(--accent);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ─── Cards genéricas ────────────────────────────────────────────────────── */
+.dash-card {
+  background: var(--bg-sidebar);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+}
+
+.dash-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+.dash-card-header i { color: var(--accent); font-size: 14px; }
+
+/* ─── Calendario ─────────────────────────────────────────────────────────── */
 .big-date-row {
   display: flex;
   align-items: flex-end;
-  gap: 12px;
+  gap: 10px;
 }
 
 .big-num {
-  font-size: 68px;
+  font-size: 58px;
   font-weight: 700;
   color: var(--accent);
   line-height: 1;
 }
 
-.big-info { padding-bottom: 6px; flex: 1; }
+.big-info { padding-bottom: 4px; flex: 1; }
 
 .big-day {
-  font-size: 16px;
+  font-size: 15px;
   color: var(--text-primary);
   font-weight: 600;
 }
 
 .big-mon {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-secondary);
   margin-top: 2px;
 }
 
-.nav-group { display: flex; gap: 4px; padding-bottom: 6px; }
+.nav-group { display: flex; gap: 4px; padding-bottom: 4px; }
 
 .nav-btn {
   background: var(--bg-sidebar-hover);
   border: none;
   color: var(--text-secondary);
   border-radius: 6px;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -138,27 +189,27 @@
 }
 .nav-btn:hover { background: var(--accent); color: #fff; }
 
-/* ─── Mini grid ──────────────────────────────────────────────────────────── */
+/* ─── Mini grid calendario ──────────────────────────────────────────────── */
 .mini-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 3px;
 }
 
 .day-name {
   text-align: center;
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-secondary);
   font-weight: 600;
-  padding: 3px 0;
+  padding: 2px 0;
   opacity: 0.6;
 }
 
 .day-cell {
   text-align: center;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-secondary);
-  padding: 7px 2px;
+  padding: 6px 2px;
   border-radius: 6px;
   cursor: pointer;
   position: relative;
@@ -190,7 +241,7 @@
 /* ─── Divider / Agenda ───────────────────────────────────────────────────── */
 .cal-divider { height: 1px; background: var(--bg-sidebar-hover); }
 
-.agenda-section { display: flex; flex-direction: column; gap: 10px; }
+.agenda-section { display: flex; flex-direction: column; gap: 8px; }
 
 .agenda-header {
   font-size: 10px;
@@ -203,10 +254,10 @@
 
 .agenda-empty { font-size: 12px; color: var(--text-secondary); opacity: 0.5; margin: 0; }
 
-.agenda-item   { display: flex; align-items: center; gap: 12px; }
-.agenda-bar    { width: 3px; height: 34px; border-radius: 2px; flex-shrink: 0; }
+.agenda-item   { display: flex; align-items: center; gap: 10px; }
+.agenda-bar    { width: 3px; height: 32px; border-radius: 2px; flex-shrink: 0; }
 .agenda-time   { font-size: 10px; color: var(--text-secondary); }
-.agenda-title  { font-size: 13px; color: var(--text-primary); font-weight: 500; }
+.agenda-title  { font-size: 12px; color: var(--text-primary); font-weight: 500; }
 
 /* ─── Botones calendario ─────────────────────────────────────────────────── */
 .cal-actions { display: flex; gap: 8px; }
@@ -217,10 +268,10 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 10px;
+  padding: 9px;
   border-radius: 8px;
   border: none;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   transition: background var(--transition), color var(--transition), transform 0.1s;
@@ -233,13 +284,6 @@
 .cal-action-btn--add:hover { background: #2563eb; }
 
 /* ─── Tiempo ─────────────────────────────────────────────────────────────── */
-.weather-card {
-  background: var(--bg-sidebar);
-  border-radius: 14px;
-  padding: 22px 24px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
-}
-
 .weather-loading,
 .weather-error {
   display: flex;
@@ -247,7 +291,7 @@
   gap: 12px;
   color: var(--text-secondary);
   font-size: 13px;
-  min-height: 90px;
+  min-height: 80px;
 }
 .weather-error { color: #f59e0b; }
 
@@ -255,13 +299,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .weather-city {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-secondary);
-  margin: 0 0 6px;
+  margin: 0 0 5px;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -269,57 +313,38 @@
 .weather-city i { color: var(--accent); font-size: 11px; }
 
 .weather-temp {
-  font-size: 48px;
+  font-size: 40px;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1;
-  margin: 0 0 4px;
+  margin: 0 0 3px;
 }
 
-.weather-desc { font-size: 14px; color: var(--text-secondary); margin: 0; }
+.weather-desc { font-size: 13px; color: var(--text-secondary); margin: 0; }
 
-.weather-icon { font-size: 54px; color: var(--accent); opacity: 0.85; }
+.weather-icon { font-size: 44px; color: var(--accent); opacity: 0.85; }
 
 .weather-stats {
   display: flex;
-  gap: 24px;
+  gap: 20px;
   border-top: 1px solid var(--bg-sidebar-hover);
-  padding-top: 14px;
+  padding-top: 12px;
 }
 
 .weather-stat {
   display: flex;
   align-items: center;
-  gap: 7px;
-  font-size: 13px;
+  gap: 6px;
+  font-size: 12px;
   color: var(--text-secondary);
 }
-.weather-stat i { color: var(--accent); font-size: 13px; }
-
-/* ─── Cards genéricas ────────────────────────────────────────────────────── */
-.dash-card {
-  background: var(--bg-sidebar);
-  border-radius: 14px;
-  padding: 18px 20px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
-}
-
-.dash-card-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 14px;
-}
-.dash-card-header i { color: var(--accent); font-size: 14px; }
+.weather-stat i { color: var(--accent); font-size: 12px; }
 
 /* ─── Accesos rápidos ────────────────────────────────────────────────────── */
 .accesos-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
 }
 
 .acceso-btn {
@@ -327,8 +352,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 16px 8px;
+  gap: 7px;
+  padding: 14px 6px;
   border-radius: 10px;
   border: none;
   background: var(--bg-sidebar-hover);
@@ -340,7 +365,7 @@
 }
 
 .acceso-btn i {
-  font-size: 20px;
+  font-size: 18px;
   color: var(--acceso-color);
   transition: transform 0.15s;
 }
@@ -354,56 +379,54 @@
 .acceso-btn:active { transform: scale(0.96); }
 
 /* ─── Lista incidencias ──────────────────────────────────────────────────── */
-.dash-list { display: flex; flex-direction: column; gap: 8px; }
+.dash-list { display: flex; flex-direction: column; gap: 7px; }
 
 .dash-list-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 9px 12px;
   border-radius: 8px;
   background: var(--bg-sidebar-hover);
 }
 
-.dash-list-bar  { width: 3px; height: 28px; border-radius: 2px; flex-shrink: 0; }
-.dash-list-title { flex: 1; font-size: 13px; color: var(--text-primary); font-weight: 500; }
+.dash-list-bar  { width: 3px; height: 26px; border-radius: 2px; flex-shrink: 0; }
+.dash-list-title { flex: 1; font-size: 12px; color: var(--text-primary); font-weight: 500; }
 
 .dash-badge {
   font-size: 10px;
   font-weight: 700;
-  padding: 3px 9px;
+  padding: 3px 8px;
   border-radius: 20px;
   white-space: nowrap;
 }
 
-/* ─── Anuncio ayuntamiento ───────────────────────────────────────────────── */
-.anuncio-card {
-  background: var(--bg-sidebar);
-  border-radius: 14px;
-  padding: 18px 20px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
-  border-left: 4px solid var(--accent);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
+/* ─── Anuncio ─────────────────────────────────────────────────────────────── */
 .anuncio-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--accent);
   margin-bottom: 2px;
 }
-.anuncio-header i { font-size: 13px; }
+.anuncio-header i { font-size: 12px; }
 
 .anuncio-autor { font-size: 11px; color: var(--text-secondary); margin: 0; }
-.anuncio-titulo { font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0; }
-.anuncio-cuerpo { font-size: 12px; color: var(--text-secondary); margin: 0; line-height: 1.6; }
+.anuncio-titulo { font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0; }
+.anuncio-cuerpo {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
 /* ─── Modales ────────────────────────────────────────────────────────────── */
 .modal-overlay {
@@ -512,3 +535,22 @@ body.light-mode .modal-input { border: 1px solid rgba(0,0,0,0.1); }
   transition: background var(--transition);
 }
 .modal-save-btn:hover { background: #2563eb; }
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cal-card { grid-column: 1 / 3; grid-row: 1; }
+  .weather-card { grid-column: 1; grid-row: 2; }
+  .dash-card-accesos { grid-column: 2; grid-row: 2; }
+  .dash-card-incidencias { grid-column: 1; grid-row: 3; }
+  .anuncio-card { grid-column: 2; grid-row: 3; }
+}
+
+@media (max-width: 600px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .cal-card, .weather-card, .dash-card-accesos,
+  .dash-card-incidencias, .anuncio-card { grid-column: 1; grid-row: auto; }
+  .accesos-grid { grid-template-columns: repeat(4, 1fr); }
+}

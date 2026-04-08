@@ -21,23 +21,25 @@ const ROLE_LABELS = {
   presidente:     "Presidente",
   administrador:  "Administrador",
   ayuntamiento:   "Ayuntamiento",
+  admin:          "Admin",
 }
 
 const ESTADO_COLORS = {
   abierta:    "#f59e0b",
   "en curso": "#3b82f6",
   resuelta:   "#10b981",
+  pendiente:  "#f59e0b",
+  en_proceso: "#3b82f6",
 }
 
 const CURRENT_USER_FALLBACK = { name: "Usuario", role: "vecino", community: "" }
 
 const ACCESOS = [
-  { label: "Incidencias",  icon: "fa-triangle-exclamation", to: "/incidencias", color: "#f59e0b" },
-  { label: "Muro",     icon: "fa-thumbtack",       to: "/muro",    color: "#10b981" },
-  { label: "Documentos",   icon: "fa-folder-open",          to: "/documentos",  color: "#3b82f6" },
-  { label: "Chat",         icon: "fa-comments",             to: "/chat",        color: "#a78bfa" },
+  { label: "Incidencias", icon: "fa-triangle-exclamation", to: "/incidencias", color: "#f59e0b" },
+  { label: "Muro",        icon: "fa-thumbtack",            to: "/muro",        color: "#10b981" },
+  { label: "Documentos",  icon: "fa-folder-open",          to: "/documentos",  color: "#3b82f6" },
+  { label: "Chat",        icon: "fa-comments",             to: "/chat",        color: "#a78bfa" },
 ]
-
 
 function weatherInfo(code) {
   if (code === 0)                      return { desc: "Despejado",   icon: "fa-sun" }
@@ -52,7 +54,6 @@ function weatherInfo(code) {
   return { desc: "Variable", icon: "fa-cloud" }
 }
 
-//Calendario
 function getDays(year, month) {
   const first     = new Date(year, month, 1).getDay()
   const offset    = first === 0 ? 6 : first - 1
@@ -65,7 +66,6 @@ function getDays(year, month) {
   return cells
 }
 
-//Tiempo
 function WeatherCard() {
   const [weather, setWeather] = useState(null)
   const [status,  setStatus]  = useState("loading")
@@ -96,7 +96,6 @@ function WeatherCard() {
                || geoData.address?.town
                || geoData.address?.city
                || geoData.address?.municipality
-               || geoData.address?.county
                || "Tu ubicación",
           })
           setStatus("ok")
@@ -115,7 +114,7 @@ function WeatherCard() {
   if (status === "error") return (
     <div className="weather-card weather-error">
       <i className="fa-solid fa-location-slash"></i>
-      <span>Activa los permisos de ubicación para ver el tiempo.</span>
+      <span>Activa los permisos de ubicación.</span>
     </div>
   )
 
@@ -151,7 +150,7 @@ export default function Dashboard() {
   const [year,        setYear]        = useState(now.getFullYear())
   const [month,       setMonth]       = useState(now.getMonth())
   const [selected,    setSel]         = useState(now.getDate())
- const [events, setEvents] = useState({})
+  const [events,      setEvents]      = useState({})
   const [showSummary, setShowSummary] = useState(false)
   const [showAdd,     setShowAdd]     = useState(false)
   const [form,        setForm]        = useState({ type: "nota", title: "", time: "" })
@@ -159,17 +158,14 @@ export default function Dashboard() {
   const [currentUser, setCurrentUser] = useState(CURRENT_USER_FALLBACK)
   const [incidencias, setIncidencias] = useState([])
   const [loadingData, setLoadingData] = useState(true)
-
-  const [muroPosts, setMuroPosts] = useState([])
+  const [muroPosts,   setMuroPosts]   = useState([])
 
   useEffect(() => {
     async function fetchData() {
       setLoadingData(true)
       try {
-        // 1. Usuario autenticado
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
-          // 2. Perfil 
           const { data: profile } = await supabase
             .from("profiles")
             .select("full_name, username, email, role, comunidad_id, comunidades(nombre)")
@@ -184,28 +180,25 @@ export default function Dashboard() {
             })
           }
 
-          //3. ultimo post del muro
-const { data: posts } = await supabase
-  .from("muro_publicaciones")
-  .select("id, titulo, contenido, autor_id, created_at")
-  .order("created_at", { ascending: false })
-  .limit(1);
+          const { data: posts } = await supabase
+            .from("muro_publicaciones")
+            .select("id, titulo, contenido, autor_id, created_at")
+            .order("created_at", { ascending: false })
+            .limit(1)
 
-if (posts && posts.length > 0) {
-  const post = posts[0]; // ✅ definir post
-  const { data: author } = await supabase
-    .from("profiles")
-    .select("full_name")
-    .eq("id", post.autor_id)
-    .single();
-
-  setMuroPosts([{ ...post, autor_name: author?.full_name || "Usuario" }]);
-} else {
-  setMuroPosts([]); // Si no hay posts
-}
+          if (posts && posts.length > 0) {
+            const post = posts[0]
+            const { data: author } = await supabase
+              .from("profiles")
+              .select("full_name")
+              .eq("id", post.autor_id)
+              .single()
+            setMuroPosts([{ ...post, autor_name: author?.full_name || "Usuario" }])
+          } else {
+            setMuroPosts([])
+          }
         }
 
-        // 3. Últimas 3 incidencias — columnas: titulo, estado
         const { data: incs } = await supabase
           .from("incidencias")
           .select("id, titulo, estado")
@@ -213,7 +206,6 @@ if (posts && posts.length > 0) {
           .limit(3)
 
         if (incs) setIncidencias(incs)
-
       } catch (err) {
         console.error("Error cargando datos dashboard:", err)
       } finally {
@@ -228,7 +220,6 @@ if (posts && posts.length > 0) {
   const selDay         = new Date(year, month, selected)
   const dayEvents      = events[selected] || []
   const totalEvents    = Object.values(events).reduce((acc, a) => acc + a.length, 0)
-
 
   function prevMonth() {
     if (month === 0) { setMonth(11); setYear(y => y - 1) } else setMonth(m => m - 1)
@@ -255,7 +246,7 @@ if (posts && posts.length > 0) {
   return (
     <div className="dashboard-page">
 
-      {/* ── Bienvenida con rol ── */}
+      {/* ── Bienvenida ── */}
       <div className="welcome-bar">
         <div className="welcome-left">
           <div className="welcome-avatar">
@@ -269,12 +260,11 @@ if (posts && posts.length > 0) {
         <span className="welcome-role">{ROLE_LABELS[currentUser.role] || currentUser.role}</span>
       </div>
 
-      {/* ── Grid principal ── */}
+      {/* ── Grid 3 columnas ── */}
       <div className="dashboard-grid">
 
-        {/* ══ IZQUIERDA: Calendario ══ */}
+        {/* ══ COL 1: Calendario ══ */}
         <div className="cal-card">
-
           <div className="big-date-row">
             <div className="big-num">{String(selected).padStart(2, "0")}</div>
             <div className="big-info">
@@ -310,9 +300,13 @@ if (posts && posts.length > 0) {
 
           <div className="agenda-section">
             <p className="agenda-header">
-              {dayEvents.length > 0 ? `${dayEvents.length} evento${dayEvents.length > 1 ? "s" : ""}` : "Sin eventos"}
+              {dayEvents.length > 0
+                ? `${dayEvents.length} evento${dayEvents.length > 1 ? "s" : ""}`
+                : "Sin eventos"}
             </p>
-            {dayEvents.length === 0 && <p className="agenda-empty">No hay nada programado para este día.</p>}
+            {dayEvents.length === 0 && (
+              <p className="agenda-empty">No hay nada programado para este día.</p>
+            )}
             {dayEvents.map((ev, i) => (
               <div key={i} className="agenda-item">
                 <div className="agenda-bar" style={{ background: EVENT_COLORS[ev.type] || EVENT_COLORS.nota }} />
@@ -336,92 +330,89 @@ if (posts && posts.length > 0) {
           </div>
         </div>
 
-        {/* ══ DERECHA: columna de widgets ══ */}
-        <div className="right-col">
+        {/* ══ COL 2 FILA 1: Tiempo ══ */}
+        <WeatherCard />
 
-          {/* Tiempo */}
-          <WeatherCard />
-
-          {/* Accesos rápidos */}
-          <div className="dash-card">
-            <div className="dash-card-header">
-              <i className="fa-solid fa-bolt"></i>
-              <span>Accesos rápidos</span>
-            </div>
-            <div className="accesos-grid">
-              {ACCESOS.map(a => (
-                <button key={a.to} className="acceso-btn" onClick={() => navigate(a.to)}
-                  style={{ "--acceso-color": a.color }}>
-                  <i className={`fa-solid ${a.icon}`}></i>
-                  <span>{a.label}</span>
-                </button>
-              ))}
-            </div>
+        {/* ══ COL 3 FILA 1: Accesos rápidos ══ */}
+        <div className="dash-card dash-card-accesos">
+          <div className="dash-card-header">
+            <i className="fa-solid fa-bolt"></i>
+            <span>Accesos rápidos</span>
           </div>
-
-          {/* Últimas incidencias */}
-          <div className="dash-card">
-            <div className="dash-card-header">
-              <i className="fa-solid fa-triangle-exclamation"></i>
-              <span>Últimas incidencias</span>
-            </div>
-            <div className="dash-list">
-              {loadingData && (
-                <p style={{ fontSize: 12, color: "var(--text-secondary)", opacity: 0.6 }}>
-                  Cargando…
-                </p>
-              )}
-              {!loadingData && incidencias.length === 0 && (
-                <p style={{ fontSize: 12, color: "var(--text-secondary)", opacity: 0.6 }}>
-                  No hay incidencias registradas.
-                </p>
-              )}
-              {incidencias.map(inc => (
-                <div key={inc.id} className="dash-list-item">
-                  <div className="dash-list-bar"
-                    style={{ background: ESTADO_COLORS[inc.estado] || "#a78bfa" }} />
-                  {/* ← inc.titulo en vez de inc.title */}
-                  <span className="dash-list-title">{inc.titulo}</span>
-                  <span className="dash-badge"
-                    style={{
-                      background: (ESTADO_COLORS[inc.estado] || "#a78bfa") + "22",
-                      color:      ESTADO_COLORS[inc.estado] || "#a78bfa",
-                    }}>
-                    {inc.estado}
-                  </span>
-                </div>
-              ))}
-            </div>
+          <div className="accesos-grid">
+            {ACCESOS.map(a => (
+              <button
+                key={a.to}
+                className="acceso-btn"
+                onClick={() => navigate(a.to)}
+                style={{ "--acceso-color": a.color }}
+              >
+                <i className={`fa-solid ${a.icon}`}></i>
+                <span>{a.label}</span>
+              </button>
+            ))}
           </div>
-
-              {/*Ultimo aviso del muro comunitarioo*/}
-           {muroPosts.length > 0 ? (
-    <div className="anuncio-card">
-      <div className="anuncio-header">
-        <i className="fa-solid fa-thumbtack"></i>
-        <span>Último anuncio del muro</span>
-      </div>
-      <p className="anuncio-autor">
-        {muroPosts[0].autor_name} · {new Date(muroPosts[0].created_at).toLocaleDateString("es-ES", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric"
-        })}
-      </p>
-      <p className="anuncio-titulo">{muroPosts[0].titulo}</p>
-      <p className="anuncio-cuerpo">{muroPosts[0].contenido}</p>
-    </div>
-  ) : (
-    <div className="anuncio-card">
-      <div className="anuncio-header">
-        <i className="fa-solid fa-thumbtack"></i>
-        <span>Muro vacío</span>
-      </div>
-      <p className="anuncio-cuerpo">No hay anuncios publicados todavía.</p>
-    </div>
-  )}
-
         </div>
+
+        {/* ══ COL 2 FILA 2: Últimas incidencias ══ */}
+        <div className="dash-card dash-card-incidencias">
+          <div className="dash-card-header">
+            <i className="fa-solid fa-triangle-exclamation"></i>
+            <span>Últimas incidencias</span>
+          </div>
+          <div className="dash-list">
+            {loadingData && (
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", opacity: 0.6 }}>
+                Cargando…
+              </p>
+            )}
+            {!loadingData && incidencias.length === 0 && (
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", opacity: 0.6 }}>
+                No hay incidencias registradas.
+              </p>
+            )}
+            {incidencias.map(inc => (
+              <div key={inc.id} className="dash-list-item">
+                <div className="dash-list-bar"
+                  style={{ background: ESTADO_COLORS[inc.estado] || "#a78bfa" }} />
+                <span className="dash-list-title">{inc.titulo}</span>
+                <span className="dash-badge"
+                  style={{
+                    background: (ESTADO_COLORS[inc.estado] || "#a78bfa") + "22",
+                    color:      ESTADO_COLORS[inc.estado] || "#a78bfa",
+                  }}>
+                  {inc.estado}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ══ COL 3 FILA 2: Último anuncio ══ */}
+        {muroPosts.length > 0 ? (
+          <div className="anuncio-card">
+            <div className="anuncio-header">
+              <i className="fa-solid fa-thumbtack"></i>
+              <span>Último anuncio del muro</span>
+            </div>
+            <p className="anuncio-autor">
+              {muroPosts[0].autor_name} · {new Date(muroPosts[0].created_at).toLocaleDateString("es-ES", {
+                day: "2-digit", month: "short", year: "numeric"
+              })}
+            </p>
+            <p className="anuncio-titulo">{muroPosts[0].titulo}</p>
+            <p className="anuncio-cuerpo">{muroPosts[0].contenido}</p>
+          </div>
+        ) : (
+          <div className="anuncio-card">
+            <div className="anuncio-header">
+              <i className="fa-solid fa-thumbtack"></i>
+              <span>Muro vacío</span>
+            </div>
+            <p className="anuncio-cuerpo">No hay anuncios publicados todavía.</p>
+          </div>
+        )}
+
       </div>
 
       {/* ── Modal Resumen ── */}
