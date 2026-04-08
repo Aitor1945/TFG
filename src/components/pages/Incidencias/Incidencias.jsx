@@ -245,7 +245,7 @@ export default function Incidencias() {
                 {incidencia.estado !== "resuelta" && (
                   <button
                     className="boton-gestion gestion-resuelta"
-                    onClick={() => actualizarEstado(inc.id, "resuelta")}
+                    onClick={() => actualizarEstado(incidencia.id, "resuelta")}
                   >
                     Marcar como resuelta
                   </button>

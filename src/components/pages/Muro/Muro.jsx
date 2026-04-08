@@ -136,7 +136,7 @@ const Tablon = () => {
             <p>{anuncio.contenido}</p>
             <div className="tablon-card-header">
               <span className="tablon-autor">👤 {anuncio.autor_nombre}</span>
-              <span className="tablon-fecha">{new Date(anuncio.created_at).toLocaleDateString()}</span>
+              <span className="tablon-fecha"> {new Date(anuncio.created_at).toLocaleDateString('es-ES')}</span>
             </div>
           </div>
         ))}

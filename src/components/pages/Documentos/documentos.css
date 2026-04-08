@@ -3,18 +3,17 @@
   padding: 30px 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   color: var(--text-primary);
 }
 
 .documentos-titulo {
-  font-size: 1.8rem;
+  font-size: 30px;
   font-weight: 700;
-  margin-bottom: 5px;
+  margin:0;
 }
 
 .documentos-subtitulo {
-  font-size: 0.95rem;
+  font-size: 15px;
   color: var(--text-secondary);
   margin-bottom: 30px;
 }
