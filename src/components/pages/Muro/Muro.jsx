@@ -92,8 +92,8 @@ const Tablon = () => {
 
   return (
     <div className="container-fluid tablon-container">
-      <h1 className="mb-2 fw-bold ">Muro Comunitario 📌</h1>
-      <h2 className=" fw-bold"> Novedades y anuncios de la comunidad</h2>
+      <h1 className="fw-bold">Muro Comunitario 📌</h1>
+      <h2> Novedades y anuncios de la comunidad</h2>
 
       {/* FORMULARIO SOLO PARA ROLES PERMITIDOS */}
       {rol && rolesPermitidos.includes(rol) && (

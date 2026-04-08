@@ -2,57 +2,57 @@ import React, { useEffect, useState } from "react";
 import "./incidencias.css";
 import { supabase } from "../../../lib/supabase";
 
-const estadoConfig = {
-  pendiente:  { label: "Pendiente",  clase: "estado-pendiente" },
-  en_proceso: { label: "En proceso", clase: "estado-proceso" },
-  resuelta:   { label: "Resuelta",   clase: "estado-resuelta" },
+const configuracionPrioridad = {
+  alta:  { etiqueta: "Alta",  clase: "prioridad-alta"  },
+  media: { etiqueta: "Media", clase: "prioridad-media" },
+  baja:  { etiqueta: "Baja",  clase: "prioridad-baja"  },
 };
 
-const prioridadConfig = {
-  alta:  { label: "Alta",  clase: "prioridad-alta"  },
-  media: { label: "Media", clase: "prioridad-media" },
-  baja:  { label: "Baja",  clase: "prioridad-baja"  },
+const configuracionEstado = {
+  pendiente:  { etiqueta: "Pendiente",  clase: "estado-pendiente" },
+  en_proceso: { etiqueta: "En proceso", clase: "estado-proceso"   },
+  resuelta:   { etiqueta: "Resuelta",   clase: "estado-resuelta"  },
 };
+
+
 
 const ROLES_GESTION = ["ayuntamiento", "presidente", "admin"];
 
 export default function Incidencias() {
-  const [incidencias, setIncidencias] = useState([]);
-  const [filtro, setFiltro] = useState("todas");
-  const [rol, setRol] = useState("");
+  const [avisos, setAvisos]           = useState([]);
+  const [filtroActual, setFiltroActual] = useState("todas");
+  const [rolUsuario, setRolUsuario]   = useState("");
   const [comunidadId, setComunidadId] = useState(null);
-  const [userId, setUserId] = useState(null);
-  const [username, setUsername] = useState("");
-  const [mostrarForm, setMostrarForm] = useState(false);
-  const [cargando, setCargando] = useState(false);
+  const [idUsuario, setIdUsuario]     = useState(null);
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [enviando, setEnviando]       = useState(false);
 
-  const [form, setForm] = useState({
-    titulo: "",
+  const [campos, setCampos] = useState({
+    titulo:      "",
     descripcion: "",
-    prioridad: "media",
+    prioridad:   "media",
   });
 
-  // ── Perfil del usuario
-  const getUserProfile = async () => {
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData?.user) return;
-    setUserId(userData.user.id);
+  // Cargamos el perfil del usuario
+  const cargarPerfil = async () => {
+    const { data: datosAuth } = await supabase.auth.getUser();
+    if (!datosAuth?.user) return;
+    setIdUsuario(datosAuth.user.id);
 
-    const { data: profile } = await supabase
+    const { data: perfil } = await supabase
       .from("profiles")
       .select("role, comunidad_id, username")
-      .eq("id", userData.user.id)
+      .eq("id", datosAuth.user.id)
       .single();
 
-    if (profile) {
-      setRol(profile.role);
-      setComunidadId(profile.comunidad_id);
-      setUsername(profile.username || "Vecino");
+    if (perfil) {
+      setRolUsuario(perfil.role);
+      setComunidadId(perfil.comunidad_id);
     }
   };
 
-  // ── Fetch incidencias
-  const fetchIncidencias = async () => {
+  //Cargamos las incidencias
+  const cargarAvisos = async () => {
     const { data, error } = await supabase
       .from("incidencias")
       .select("*")
@@ -60,221 +60,218 @@ export default function Incidencias() {
 
     if (error) return console.error("Error al cargar incidencias:", error);
 
-    const autorIds = data.map((i) => i.autor_id).filter(Boolean);
+    const idsAutores = data.map((i) => i.autor_id).filter(Boolean);
     const { data: perfiles } = await supabase
       .from("profiles")
       .select("id, username, full_name")
-      .in("id", autorIds);
+      .in("id", idsAutores);
 
-    setIncidencias(
+    setAvisos(
       data.map((i) => ({
         ...i,
-        autor_nombre:
+        nombre_autor:
           perfiles?.find((p) => p.id === i.autor_id)?.full_name || "Vecino",
-        fecha: new Date(i.created_at).toLocaleDateString("es-ES", {
+        fecha_formateada: new Date(i.created_at).toLocaleDateString("es-ES", {
           day: "2-digit", month: "2-digit", year: "numeric",
         }),
       }))
     );
   };
 
-  // ── Crear incidencia
-  const crearIncidencia = async () => {
-    if (!form.titulo.trim() || !form.descripcion.trim()) return;
+  // Panel para crear incidencias
+  const enviarIncidencia = async () => {
+    if (!campos.titulo.trim() || !campos.descripcion.trim()) return;
     if (!comunidadId) return;
 
-    setCargando(true);
+    setEnviando(true);
     const { error } = await supabase.from("incidencias").insert([{
-      titulo:       form.titulo,
-      descripcion:  form.descripcion,
-      prioridad:    form.prioridad,
+      titulo:       campos.titulo,
+      descripcion:  campos.descripcion,
+      prioridad:    campos.prioridad,
       estado:       "pendiente",
-      autor_id:     userId,
+      autor_id:     idUsuario,
       comunidad_id: comunidadId,
     }]);
-    setCargando(false);
+    setEnviando(false);
 
     if (error) {
       console.error("Error al crear incidencia:", error);
       return alert("No se pudo crear la incidencia.");
     }
 
-    setForm({ titulo: "", descripcion: "", prioridad: "media" });
-    setMostrarForm(false);
-    fetchIncidencias();
+    setCampos({ titulo: "", descripcion: "", prioridad: "media" });
+    setMostrarFormulario(false);
+    cargarAvisos();
   };
 
-  // ── Cambiar estado
-  const cambiarEstado = async (id, nuevoEstado) => {
+  // Cambiar estado de incidencia
+  const actualizarEstado = async (id, nuevoEstado) => {
     const { error } = await supabase
       .from("incidencias")
       .update({ estado: nuevoEstado })
       .eq("id", id);
 
     if (error) return console.error("Error al actualizar estado:", error);
-    fetchIncidencias();
+    cargarAvisos();
   };
 
-  // ── Eliminar incidencia
-  const eliminarIncidencia = async (id) => {
+  // Eliminar incidencia
+  const borrarAviso = async (id) => {
     const { error } = await supabase
       .from("incidencias")
       .delete()
       .eq("id", id);
 
     if (error) return console.error("Error al eliminar incidencia:", error);
-    fetchIncidencias();
+    cargarAvisos();
   };
 
   useEffect(() => {
-    getUserProfile();
-    fetchIncidencias();
+    cargarPerfil();
+    cargarAvisos();
   }, []);
 
-  const incidenciasFiltradas =
-    filtro === "todas"
-      ? incidencias
-      : incidencias.filter((i) => i.estado === filtro);
+  const avisosFiltrados =
+    filtroActual === "todas"
+      ? avisos
+      : avisos.filter((i) => i.estado === filtroActual);
 
-  const puedeGestionar = ROLES_GESTION.includes(rol);
+  const puedeGestionar = ROLES_GESTION.includes(rolUsuario);
 
   return (
-    <div className="incidencias-page">
+    <div className="pagina-incidencias">
 
-      {/* ── BLOQUE SUPERIOR ── */}
-      <div className="incidencias-top">
-        <h2 className="incidencias-titulo">Incidencias</h2>
-        <p className="incidencias-subtitulo">
+      <div className="cabecera-seccion">
+        <h1 className="titulo-pagina">Incidencias</h1>
+        <h2 className="subtitulo-pagina">
           Consulta y seguimiento de incidencias de la comunidad
-        </p>
+        </h2>
+      </div>
 
-        {/* Botón nueva incidencia */}
-        {userId && (
-          <button
-            className="inc-nueva-btn"
-            onClick={() => setMostrarForm((v) => !v)}
-          >
-            {mostrarForm ? "Cancelar" : "+ Nueva incidencia"}
-          </button>
-        )}
-
-        {/* Formulario */}
-        {mostrarForm && (
-          <div className="inc-form">
-            <span className="inc-form-label">Nueva incidencia</span>
-            <input
-              className="inc-input"
-              type="text"
-              placeholder="Título…"
-              value={form.titulo}
-              onChange={(e) => setForm({ ...form, titulo: e.target.value })}
-            />
-            <textarea
-              className="inc-input inc-textarea"
-              placeholder="Descripción del problema…"
-              value={form.descripcion}
-              onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
-            />
-            <select
-              className="inc-input"
-              value={form.prioridad}
-              onChange={(e) => setForm({ ...form, prioridad: e.target.value })}
-            >
-              <option value="alta">Prioridad: Alta</option>
-              <option value="media">Prioridad: Media</option>
-              <option value="baja">Prioridad: Baja</option>
-            </select>
-            <button
-              className="inc-submit-btn"
-              onClick={crearIncidencia}
-              disabled={cargando || !form.titulo.trim() || !form.descripcion.trim()}
-            >
-              {cargando ? "Enviando…" : "Enviar incidencia"}
-            </button>
-          </div>
-        )}
-
-        {/* Filtros */}
-        <div className="filtros-bar">
+      <div className="fila-controles">
+        <div className="barra-filtros">
           {["todas", "pendiente", "en_proceso", "resuelta"].map((f) => (
             <button
               key={f}
-              className={`filtro-btn ${filtro === f ? "filtro-activo" : ""}`}
-              onClick={() => setFiltro(f)}
+              className={`boton-filtro ${filtroActual === f ? "seleccionado" : ""}`}
+              onClick={() => setFiltroActual(f)}
             >
-              {f === "todas" ? "Todas" : estadoConfig[f]?.label}
+              {f === "todas" ? "Todas" : configuracionEstado[f]?.etiqueta}
             </button>
           ))}
         </div>
 
-        <p className="incidencias-count">
-          {incidenciasFiltradas.length} incidencia
-          {incidenciasFiltradas.length !== 1 ? "s" : ""}
-        </p>
+        {idUsuario && (
+          <button
+            className="boton-nueva-incidencia"
+            onClick={() => setMostrarFormulario((v) => !v)}
+          >
+            {mostrarFormulario ? "Cancelar" : "+ Nueva incidencia"}
+          </button>
+        )}
       </div>
 
-      {/* ── TARJETAS ── */}
-      <div className="incidencias-scroll">
-        <div className="inc-columna pb-5">
-          {incidenciasFiltradas.map((inc) => (
-            <div key={inc.id} className="incidencia-card">
-              <div className="card-body">
-                <div className="inc-card-head">
-                  <h5 className="card-title">{inc.titulo}</h5>
-                  <div className="inc-badges">
-                    <span className={`inc-badge ${prioridadConfig[inc.prioridad]?.clase}`}>
-                      {prioridadConfig[inc.prioridad]?.label}
-                    </span>
-                    <span className={`inc-badge ${estadoConfig[inc.estado]?.clase}`}>
-                      {estadoConfig[inc.estado]?.label}
-                    </span>
-                  </div>
-                </div>
+      {/* Formulario crear incidencia*/}
+      {mostrarFormulario && (
+        <div className="formulario-nueva">
+          <h5>Nueva incidencia</h5>
+          <input
+            className="campo-titulo"
+            type="text"
+            placeholder="Título…"
+            value={campos.titulo}
+            onChange={(e) => setCampos({ ...campos, titulo: e.target.value })}
+          />
+          <textarea
+            className="campo-descripcion"
+            placeholder="Descripción del problema…"
+            value={campos.descripcion}
+            onChange={(e) => setCampos({ ...campos, descripcion: e.target.value })}
+          />
+          <select
+            className="campo-prioridad"
+            value={campos.prioridad}
+            onChange={(e) => setCampos({ ...campos, prioridad: e.target.value })}
+          >
+            <option value="alta">Prioridad: Alta</option>
+            <option value="media">Prioridad: Media</option>
+            <option value="baja">Prioridad: Baja</option>
+          </select>
+          <button
+            className="boton-enviar"
+            onClick={enviarIncidencia}
+            disabled={enviando || !campos.titulo.trim() || !campos.descripcion.trim()}
+          >
+            {enviando ? "Enviando…" : "Enviar incidencia"}
+          </button>
+        </div>
+      )}
 
-                <p className="card-text">{inc.descripcion}</p>
+      {/* Contador de incidencias*/}
+      <p className="texto-contador">
+        {avisosFiltrados.length} incidencia
+        {avisosFiltrados.length !== 1 ? "s" : ""}
+      </p>
 
-                {/* Acciones de gestión */}
-                {puedeGestionar && (
-                  <div className="inc-acciones">
-                    {inc.estado === "pendiente" && (
-                      <button
-                        className="inc-accion-btn proceso"
-                        onClick={() => cambiarEstado(inc.id, "en_proceso")}
-                      >
-                        Marcar en proceso
-                      </button>
-                    )}
-                    {inc.estado !== "resuelta" && (
-                      <button
-                        className="inc-accion-btn resuelta"
-                        onClick={() => cambiarEstado(inc.id, "resuelta")}
-                      >
-                        Marcar como resuelta
-                      </button>
-                    )}
-                    <button
-                      className="inc-accion-btn resuelta"
-                      style={{ backgroundColor: "#ef4444", color: "#fff", border: "1px solid #ef4444" }}
-                      onClick={() => eliminarIncidencia(inc.id)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                )}
+      {/* Lista de todas las incidencias*/}
+      <div className="lista-avisos">
+        {avisosFiltrados.map((incidencia) => (
+          <div key={incidencia.id} className="aviso-comunidad">
 
-                <div className="inc-footer">
-                  <span className="inc-autor">👤 {inc.autor_nombre}</span>
-                  <span className="inc-fecha">{inc.fecha}</span>
-                </div>
+            <div className="encabezado-aviso">
+              <h5>{incidencia.titulo}</h5>
+              <div className="grupo-etiquetas">
+                <span className={`etiqueta-estado ${configuracionPrioridad[incidencia.prioridad]?.clase}`}>
+                  {configuracionPrioridad[incidencia.prioridad]?.etiqueta}
+                </span>
+                <span className={`etiqueta-estado ${configuracionEstado[incidencia.estado]?.clase}`}>
+                  {configuracionEstado[incidencia.estado]?.etiqueta}
+                </span>
               </div>
             </div>
-          ))}
 
-          {incidenciasFiltradas.length === 0 && (
-            <p className="inc-empty">No hay incidencias en esta categoría.</p>
-          )}
-        </div>
+            <p>{incidencia.descripcion}</p>
+
+            {puedeGestionar && (
+              <div className="zona-acciones">
+                {incidencia.estado === "pendiente" && (
+                  <button
+                    className="boton-gestion gestion-proceso"
+                    onClick={() => actualizarEstado(incidencia.id, "en_proceso")}
+                  >
+                    Marcar en proceso
+                  </button>
+                )}
+                {incidencia.estado !== "resuelta" && (
+                  <button
+                    className="boton-gestion gestion-resuelta"
+                    onClick={() => actualizarEstado(inc.id, "resuelta")}
+                  >
+                    Marcar como resuelta
+                  </button>
+                )}
+                <button
+                  className="boton-gestion gestion-eliminar"
+                  onClick={() => borrarAviso(incidencia.id)}
+                >
+                  Eliminar
+                </button>
+              </div>
+            )}
+
+            <div className="pie-aviso">
+              <span>👤 {incidencia.nombre_autor}</span>
+              <span>{incidencia.fecha_formateada}</span>
+            </div>
+
+          </div>
+        ))}
+
+        {avisosFiltrados.length === 0 && (
+          <p className="aviso-vacio">No hay incidencias en esta categoría.</p>
+        )}
       </div>
+
     </div>
   );
 }
