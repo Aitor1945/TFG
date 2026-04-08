@@ -1,5 +1,5 @@
-/* ── Tablon.css ── */
-/* Usa mismas variables que Dashboard.css */
+/* ── Tablon.css (Corregido y encapsulado) ── */
+/* Todos los estilos solo afectan al muro/tablon */
 
 /* ─── Contenedor ───────────────────────────────────────── */
 .tablon-container {
@@ -12,14 +12,18 @@
   color: var(--text-primary);
 }
 
-
-h1 {
+.tablon-container h1 {
   font-size: 20px;
   color: var(--text-primary);
 }
 
+.tablon-container h2 {
+  font-size: medium;
+  color: var(--text-secondary);
+}
+
 /* ─── Formulario ───────────────────────────────────────── */
-.tablon-form {
+.tablon-container .tablon-form {
   width: 100%;
   max-width: 600px;
   background: var(--bg-sidebar);
@@ -31,16 +35,16 @@ h1 {
   gap: 10px;
 }
 
-.tablon-form h5 {
+.tablon-container .tablon-form h5 {
   margin: 0;
   font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
 }
 
-/* Inputs */
-.tablon-input,
-.tablon-textarea {
+/* Inputs y textarea */
+.tablon-container .tablon-input,
+.tablon-container .tablon-textarea {
   background: var(--bg-sidebar-hover);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 8px;
@@ -49,124 +53,33 @@ h1 {
   font-size: 13px;
   font-family: inherit;
   outline: none;
-  transition: border-color var(--transition);
+  transition: border-color var(--transition), box-shadow 0.2s;
 }
 
-body.light-mode .tablon-input,
-body.light-mode .tablon-textarea {
+body.light-mode .tablon-container .tablon-input,
+body.light-mode .tablon-container .tablon-textarea {
   border: 1px solid rgba(0,0,0,0.1);
 }
 
-.tablon-input:focus,
-.tablon-textarea:focus {
-  border-color: var(--accent);
-}
-
-.tablon-textarea {
-  min-height: 90px;
-  resize: none;
-}
-
-/* Botón */
-.tablon-btn {
-  margin-top: 5px;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  background: var(--accent);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background var(--transition), transform 0.1s;
-}
-
-.tablon-btn:hover {
-  background: #2563eb;
-}
-
-.tablon-btn:active {
-  transform: scale(0.97);
-}
-
-/* ─── Grid publicaciones ───────────────────────────────── */
-.tablon-grid {
-  width: 100%;
-  max-width: 800px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-/* ─── Card publicación ─────────────────────────────────── */
-.tablon-card {
-  background: var(--bg-sidebar);
-  border-radius: 14px;
-  padding: 16px 18px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  transition: transform 0.15s, box-shadow 0.15s;
-}
-
-.tablon-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 25px rgba(0,0,0,0.15);
-}
-
-/* Título */
-.tablon-card h5 {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-/* Contenido */
-.tablon-card p {
-  margin: 0;
-  font-size: 13px;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-/* Fecha */
-.tablon-date {
-  font-size: 11px;
-  color: var(--text-secondary);
-  opacity: 0.6;
-  text-align: right;
-}
-
-input,
-textarea {
-  width: 100%;
-  background: var(--bg-sidebar);
-  color: var(--text-primary);
-  border: 1.5px solid;
-  border-radius: 12px;
-  padding: 12px 16px;
-  font-size: 14px;
-  font-family: inherit;
-  outline: none;
-  border-color: var(--bg-sidebar-hover);
-  transition:  0.2s, box-shadow 0.2s;
-}
-
-input:focus,
-textarea:focus {
+.tablon-container .tablon-input:focus,
+.tablon-container .tablon-textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
 }
 
-textarea {
+.tablon-container .tablon-textarea {
   min-height: 100px;
   resize: vertical;
 }
 
+.tablon-container input::placeholder,
+.tablon-container textarea::placeholder {
+  color: var(--text-secondary);
+}
 
-button {
+/* ─── Botón ───────────────────────────────────────── */
+.tablon-container .tablon-btn,
+.tablon-container button {
   background-color: var(--accent);
   border: none;
   border-radius: 30px;
@@ -177,37 +90,65 @@ button {
   cursor: pointer;
   transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-button:hover {
-  background-color: #2563eb; 
+.tablon-container .tablon-btn:hover,
+.tablon-container button:hover {
+  background-color: #2563eb;
   transform: translateY(-2px);
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
 }
 
-button:active {
+.tablon-container .tablon-btn:active,
+.tablon-container button:active {
   transform: translateY(0px) scale(0.98);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-input::placeholder,
-textarea::placeholder {
+/* ─── Grid publicaciones ───────────────────────────────── */
+.tablon-container .tablon-grid {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ─── Card publicación ─────────────────────────────────── */
+.tablon-container .tablon-card {
+  background: var(--bg-sidebar);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.tablon-container .tablon-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+}
+
+.tablon-container .tablon-card h5 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.tablon-container .tablon-card p {
+  margin: 0;
+  font-size: 13px;
   color: var(--text-secondary);
+  line-height: 1.5;
 }
 
-h2{
-  font-size: medium;
-  color: var(--text-secondary);
-}
-
-.tablon-autor, .tablon-fecha{
-  font-size: smaller;
-    color: var(--text-secondary);
-  font-size: 0.78rem;
-  opacity: 0.6;
-}
-
-.tablon-card-header {
+.tablon-container .tablon-card-header {
   display: flex;
   justify-content: space-between;
   font-size: 12px;
@@ -215,13 +156,28 @@ h2{
   font-weight: 600;
 }
 
+.tablon-container .tablon-autor,
+.tablon-container .tablon-fecha {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+/* Fecha estilo */
+.tablon-container .tablon-date {
+  font-size: 11px;
+  color: var(--text-secondary);
+  opacity: 0.6;
+  text-align: right;
+}
+
 /* ─── Responsive ─────────────────────────────────────── */
 @media (max-width: 768px) {
-  .tablon-form {
+  .tablon-container .tablon-form {
     padding: 15px;
   }
 
-  .tablon-card {
+  .tablon-container .tablon-card {
     padding: 14px;
   }
 }
