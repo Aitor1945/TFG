@@ -131,7 +131,7 @@
 /* ── GRID / TARJETAS ── */
 .incidencias-scroll { flex: 1; width: 100%; padding: 1rem; }
 .inc-columna { display: flex; flex-direction: column; gap: 1rem; width: 90%; max-width: 620px; margin: 0 auto; }
-h2{
+.incidencias-titulo h1{
   font-size: medium;
   color: var(--text-primary);
 }
