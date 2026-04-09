@@ -1,0 +1,388 @@
+/* ══════════════════════════════════════════════
+   Ajustes.css — BarrioRed
+   Usa las variables de SideBar.css:
+   --bg-sidebar, --bg-sidebar-hover, --bg-body,
+   --text-primary, --text-secondary, --accent,
+   --transition
+   ══════════════════════════════════════════════ */
+
+/* ── Página ── */
+.aj-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-height: 100vh;
+  color: var(--text-primary);
+  max-width: 860px;
+  font-size: var(--app-font-size, 16px);
+}
+
+/* ── Cabecera ── */
+.aj-header {
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+body.light-mode .aj-header {
+  border-bottom-color: rgba(0,0,0,0.08);
+}
+
+.aj-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+}
+
+.aj-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ── Grid de bloques ── */
+.aj-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+@media (max-width: 700px) {
+  .aj-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Card ── */
+.aj-card {
+  background: var(--bg-sidebar);
+  border-radius: 16px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  border: 1px solid rgba(59,130,246,0.1);
+  transition: border-color var(--transition);
+}
+
+.aj-card:hover {
+  border-color: rgba(59,130,246,0.22);
+}
+
+/* ── Cabecera de card ── */
+.aj-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.aj-card-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(59,130,246,0.13);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.aj-card-title {
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 3px;
+}
+
+.aj-card-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ── Campo genérico ── */
+.aj-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.aj-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Input ── */
+.aj-input-wrap {
+  position: relative;
+}
+
+.aj-input {
+  width: 100%;
+  background: var(--bg-sidebar-hover);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--transition), box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+body.light-mode .aj-input {
+  border-color: rgba(0,0,0,0.1);
+}
+
+.aj-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+.aj-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+/* Input con ojo: padding extra para no solaparse */
+.aj-input-wrap .aj-input {
+  padding-right: 44px;
+}
+
+/* ── Botón ojo contraseña ── */
+.aj-eye {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 4px;
+  line-height: 1;
+  transition: color var(--transition);
+}
+
+.aj-eye:hover { color: var(--accent); }
+
+/* ── Grid del formulario ── */
+.aj-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.aj-form-grid--col1 {
+  grid-template-columns: 1fr;
+}
+
+/* ── Tamaño de fuente ── */
+.aj-font-group {
+  display: flex;
+  gap: 10px;
+}
+
+.aj-font-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(255,255,255,0.07);
+  background: var(--bg-sidebar-hover);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+body.light-mode .aj-font-btn {
+  border-color: rgba(0,0,0,0.08);
+}
+
+.aj-font-btn:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.aj-font-btn--active {
+  border-color: var(--accent);
+  background: rgba(59,130,246,0.12);
+  color: var(--accent);
+}
+
+.aj-font-sample {
+  font-weight: 700;
+  line-height: 1;
+  color: inherit;
+}
+
+.aj-font-sample--pequeño { font-size: 0.85rem; }
+.aj-font-sample--normal  { font-size: 1.15rem; }
+.aj-font-sample--grande  { font-size: 1.5rem; }
+
+.aj-font-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  color: inherit;
+}
+
+/* ── Toggle ── */
+.aj-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+body.light-mode .aj-toggle-row {
+  border-bottom-color: rgba(0,0,0,0.06);
+}
+
+.aj-toggle-row:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.aj-toggle-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(59,130,246,0.1);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  flex-shrink: 0;
+}
+
+.aj-toggle-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.aj-toggle-label {
+  font-size: 0.87rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.aj-toggle-desc {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Toggle pill */
+.aj-toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--bg-sidebar-hover);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background var(--transition);
+}
+
+.aj-toggle--on {
+  background: var(--accent);
+}
+
+.aj-toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform var(--transition);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+
+.aj-toggle--on .aj-toggle-knob {
+  transform: translateX(20px);
+}
+
+/* ── Alertas ── */
+.aj-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  margin-bottom: 14px;
+  animation: aj-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes aj-pop {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.aj-alert--error {
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: #ef4444;
+}
+
+.aj-alert--ok {
+  background: rgba(16,185,129,0.12);
+  border: 1px solid rgba(16,185,129,0.25);
+  color: #10b981;
+}
+
+/* ── Botón principal ── */
+.aj-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.87rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--transition), transform 0.1s, opacity var(--transition);
+}
+
+.aj-btn--primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(59,130,246,0.25);
+}
+
+.aj-btn--primary:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.aj-btn--primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.aj-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
