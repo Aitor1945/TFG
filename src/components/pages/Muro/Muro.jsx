@@ -11,7 +11,7 @@ const Tablon = () => {
 
   const rolesPermitidos = ["presidente", "admin", "ayuntamiento"];
 
-  // 🔹 Obtener rol y comunidad del usuario
+  // Obtener rol y comunidad del usuario
   const getUserProfile = async () => {
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (!userData?.user) return console.error(userError);
@@ -30,7 +30,7 @@ const Tablon = () => {
     }
   };
 
-  // 🔹 Obtener anuncios y unir con nombres de autores
+  // Obtener anuncios y unir con nombres de autores
   const fetchAnuncios = async () => {
     const { data: anunciosData, error: errorAnuncios } = await supabase
       .from("muro_publicaciones")
@@ -55,7 +55,7 @@ const Tablon = () => {
     setAnuncios(anunciosConNombre);
   };
 
-  // 🔹 Crear anuncio
+  // Crear anuncio
  const crearAnuncio = async () => {
   const { data: userData } = await supabase.auth.getUser();
   if (!userData?.user) return alert("Usuario no autenticado");
@@ -92,7 +92,7 @@ const Tablon = () => {
 
   return (
     <div className="container-fluid tablon-container">
-      <h1 className="fw-bold">Muro Comunitario 📌</h1>
+      <h1 className="fw-bold">Muro Comunitario</h1>
       <h2> Novedades y anuncios de la comunidad</h2>
 
       {/* FORMULARIO SOLO PARA ROLES PERMITIDOS */}
@@ -128,7 +128,7 @@ const Tablon = () => {
         </div>
       )}
 
-      {/* LISTADO DE ANUNCIOS */}
+      {/* Listado de anuncios*/}
       <div className="tablon-grid">
         {anuncios.map((anuncio) => (
           <div key={anuncio.id} className="tablon-card">
