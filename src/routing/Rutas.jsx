@@ -38,7 +38,7 @@ export default function Rutas() {
         </Route>
 
         {/* 404 */}
-        <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
+        <Route path="*" element={<h1 className="text-white">404 - Página no encontrada</h1>} />
       </Routes>
     </BrowserRouter>
   )
