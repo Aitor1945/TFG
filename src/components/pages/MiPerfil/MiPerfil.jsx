@@ -16,35 +16,30 @@ const permisosConfig = {
     { label: "Panel de control",    activo: true,  icono: "fa-solid fa-chart-line"           },
     { label: "Gestión incidencias", activo: true,  icono: "fa-solid fa-triangle-exclamation" },
     { label: "Subir documentos",    activo: true,  icono: "fa-solid fa-folder-open"          },
-    { label: "Gestión de pagos",    activo: true,  icono: "fa-solid fa-credit-card"          },
     { label: "Admin usuarios",      activo: true,  icono: "fa-solid fa-users-gear"           },
   ],
   presidente: [
     { label: "Panel de control",    activo: true,  icono: "fa-solid fa-chart-line"           },
     { label: "Gestión incidencias", activo: true,  icono: "fa-solid fa-triangle-exclamation" },
     { label: "Subir documentos",    activo: true,  icono: "fa-solid fa-folder-open"          },
-    { label: "Gestión de pagos",    activo: false, icono: "fa-solid fa-credit-card"          },
     { label: "Admin usuarios",      activo: false, icono: "fa-solid fa-users-gear"           },
   ],
   vecino: [
     { label: "Panel de control",    activo: false, icono: "fa-solid fa-chart-line"           },
     { label: "Gestión incidencias", activo: true,  icono: "fa-solid fa-triangle-exclamation" },
     { label: "Subir documentos",    activo: false, icono: "fa-solid fa-folder-open"          },
-    { label: "Gestión de pagos",    activo: false, icono: "fa-solid fa-credit-card"          },
     { label: "Admin usuarios",      activo: false, icono: "fa-solid fa-users-gear"           },
   ],
   conserje: [
     { label: "Panel de control",    activo: true,  icono: "fa-solid fa-chart-line"           },
     { label: "Gestión incidencias", activo: true,  icono: "fa-solid fa-triangle-exclamation" },
     { label: "Subir documentos",    activo: false, icono: "fa-solid fa-folder-open"          },
-    { label: "Gestión de pagos",    activo: false, icono: "fa-solid fa-credit-card"          },
     { label: "Admin usuarios",      activo: false, icono: "fa-solid fa-users-gear"           },
   ],
   ayuntamiento: [
     { label: "Panel de control",    activo: true,  icono: "fa-solid fa-chart-line"           },
     { label: "Gestión incidencias", activo: true,  icono: "fa-solid fa-triangle-exclamation" },
     { label: "Subir documentos",    activo: true,  icono: "fa-solid fa-folder-open"          },
-    { label: "Gestión de pagos",    activo: false, icono: "fa-solid fa-credit-card"          },
     { label: "Admin usuarios",      activo: false, icono: "fa-solid fa-users-gear"           },
   ],
 }
@@ -85,7 +80,7 @@ export default function MiPerfil() {
   const [perfil,    setPerfil]    = useState(null)
   const [comunidad, setComunidad] = useState(null)
   const [actividad, setActividad] = useState([])
-  const [stats,     setStats]     = useState({ incidencias: 0, documentos: 0 })
+  const [stats,     setStats]     = useState({ incidencias: 0})
   const [email,     setEmail]     = useState(null)
   const [cargando,  setCargando]  = useState(true)
   const [error,     setError]     = useState(null)
@@ -154,13 +149,9 @@ export default function MiPerfil() {
             .select("id", { count: "exact", head: true })
             .eq("autor_id", user.id)
         ),
-        safeCount(
-          supabase.from("documentos")
-            .select("id", { count: "exact", head: true })
-            .eq("subido_por", user.id)
-        ),
+
       ])
-      setStats({ incidencias: totalInc, documentos: totalDoc })
+      setStats({ incidencias: totalInc })
 
       /* ── 5. Actividad reciente (tabla opcional, no bloquea si no existe) ── */
       try {
@@ -188,7 +179,7 @@ export default function MiPerfil() {
     const camposRellenos = [perfil.full_name, perfil.telefono, perfil.piso, perfil.username, perfil.avatar_url]
       .filter(Boolean).length
     const perfilPct      = Math.round((camposRellenos / 5) * 100)
-    const actividadPct   = Math.min(100, (stats.incidencias  + stats.documentos) * 10)
+    const actividadPct   = Math.min(100, stats.incidencias * 10)
     const interaccionPct = Math.min(100, stats.incidencias * 15 )
     return [
       { label: "Perfil completado",   valor: perfilPct      },
@@ -220,7 +211,6 @@ export default function MiPerfil() {
 
   const STATS_LIST = [
     { valor: stats.incidencias, sufijo: "", label: "Incidencias gestionadas", clase: "accent"  },
-    { valor: stats.documentos,  sufijo: "", label: "Documentos subidos",      clase: "success" },
   ]
 
   return (

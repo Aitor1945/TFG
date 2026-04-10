@@ -2,12 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./incidencias.css";
 import { supabase } from "../../../lib/supabase";
 
-const configuracionPrioridad = {
-  alta:  { etiqueta: "Alta",  clase: "prioridad-alta"  },
-  media: { etiqueta: "Media", clase: "prioridad-media" },
-  baja:  { etiqueta: "Baja",  clase: "prioridad-baja"  },
-};
-
 const configuracionEstado = {
   pendiente:  { etiqueta: "Pendiente",  clase: "estado-pendiente" },
   en_proceso: { etiqueta: "En proceso", clase: "estado-proceso"   },
@@ -30,7 +24,6 @@ export default function Incidencias() {
   const [campos, setCampos] = useState({
     titulo:      "",
     descripcion: "",
-    prioridad:   "media",
   });
 
   // Cargamos el perfil del usuario
@@ -87,7 +80,6 @@ export default function Incidencias() {
     const { error } = await supabase.from("incidencias").insert([{
       titulo:       campos.titulo,
       descripcion:  campos.descripcion,
-      prioridad:    campos.prioridad,
       estado:       "pendiente",
       autor_id:     idUsuario,
       comunidad_id: comunidadId,
@@ -99,7 +91,7 @@ export default function Incidencias() {
       return alert("No se pudo crear la incidencia.");
     }
 
-    setCampos({ titulo: "", descripcion: "", prioridad: "media" });
+    setCampos({ titulo: "", descripcion: "" });
     setMostrarFormulario(false);
     cargarAvisos();
   };
@@ -188,15 +180,7 @@ export default function Incidencias() {
             value={campos.descripcion}
             onChange={(e) => setCampos({ ...campos, descripcion: e.target.value })}
           />
-          <select
-            className="campo-prioridad"
-            value={campos.prioridad}
-            onChange={(e) => setCampos({ ...campos, prioridad: e.target.value })}
-          >
-            <option value="alta">Prioridad: Alta</option>
-            <option value="media">Prioridad: Media</option>
-            <option value="baja">Prioridad: Baja</option>
-          </select>
+    
           <button
             className="boton-enviar"
             onClick={enviarIncidencia}
@@ -221,9 +205,6 @@ export default function Incidencias() {
             <div className="encabezado-aviso">
               <h5>{incidencia.titulo}</h5>
               <div className="grupo-etiquetas">
-                <span className={`etiqueta-estado ${configuracionPrioridad[incidencia.prioridad]?.clase}`}>
-                  {configuracionPrioridad[incidencia.prioridad]?.etiqueta}
-                </span>
                 <span className={`etiqueta-estado ${configuracionEstado[incidencia.estado]?.clase}`}>
                   {configuracionEstado[incidencia.estado]?.etiqueta}
                 </span>

@@ -241,9 +241,23 @@ export default function Chat() {
   const getNombre = (u) =>
     u?.full_name || u?.username || u?.email?.split("@")[0] || "Usuario"
 
-  // formateo la hora del mensaje
-  const getHora = (ts) =>
-    new Date(ts).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })
+  // formateo la fecha y hora del mensaje
+const getFechaHora = (ts) => {
+  const d = new Date(ts)
+
+  const fecha = d.toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+  })
+
+  const hora = d.toLocaleTimeString("es-ES", {
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+
+  return `${fecha} · ${hora}`
+}
 
   // ordeno los vecinos por ultimo mensaje, el mas reciente arriba
   const vecinosOrdenados = [...listaVecinos].sort((a, b) => {
@@ -326,7 +340,7 @@ export default function Chat() {
                           <div className="bc-bubble-remitente">{getNombre(vecinoSeleccionado)}</div>
                         )}
                         {msg.content}
-                        <div className="bc-bubble-hora">{getHora(msg.created_at)}</div>
+                        <div className="bc-bubble-hora">{getFechaHora(msg.created_at)}</div>
                       </div>
                     </li>
                   )
