@@ -261,7 +261,6 @@ export default function Chat() {
       {/* lista de vecinos */}
       <div className={`bc-panel${pantallaMovil === "chat" ? " oculto" : ""}`}>
         <div className="bc-panel-header">
-          <button className="bc-back-btn" onClick={() => setPantallaMovil("lista")}>≡</button>
           <h2 className="bc-panel-title">BarrioChat</h2>
         </div>
         <ul className="bc-user-list">
@@ -296,7 +295,7 @@ export default function Chat() {
       {/* zona de mensajes */}
       <div
         className={`bc-chat${pantallaMovil === "lista" ? " oculto" : ""}`}
-        style={{ display: window.innerWidth > 640 ? "flex" : undefined }}
+       
       >
         <div className="bc-chat-box">
           {vecinoSeleccionado ? (

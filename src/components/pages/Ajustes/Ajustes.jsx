@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { supabase } from "../../../lib/supabase"
-import "./Ajustes.css"
+import "./ajustes.css"
 
 export default function Ajustes() {
   // ── Fuente ──────────────────────────────────────────────────────────────

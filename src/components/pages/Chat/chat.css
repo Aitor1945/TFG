@@ -13,8 +13,10 @@
 }
 
 /* Cuando el sidebar está en hover se expande; el chat lo sigue */
-.sidebar:hover ~ .main .bc-wrapper {
-  left: var(--sidebar-width, 240px);
+@media (min-width: 641px) {
+  .sidebar:hover ~ .main .bc-wrapper {
+    left: var(--sidebar-width, 240px);
+  }
 }
 
 /* ── Panel izquierdo ── */
@@ -316,8 +318,25 @@
 
 /* Responsive */
 @media (max-width: 640px) {
-  .bc-wrapper { left: 0 !important; }
-  .bc-panel { position: absolute; inset: 0; width: 100%; z-index: 10; }
+  @media (max-width: 640px) {
+
+  .bc-panel.oculto {
+    display: none;
+  }
+
+  .bc-chat.oculto {
+    display: none;
+  }
+
+  .bc-back-btn {
+    display: block;
+  }
+
+  .bc-panel,
+  .bc-chat {
+    width: 100%;
+  }
+}
   .bc-panel.oculto { display: none; }
   .bc-chat.oculto  { display: none; }
   .bc-back-btn { display: block; }

@@ -95,7 +95,7 @@ const onRecovery = async (e) => {
     <div>
       <button
         id="themeToggle"
-        className="theme-btn shadow-sm"
+        className="theme-btn shadow-sm position-absolute top-0 end-0 m-3"
         aria-label="Cambiar tema"
         onClick={() => setTheme((t) => (t === "light" ? "dark" : "light"))}
         type="button"
@@ -106,11 +106,11 @@ const onRecovery = async (e) => {
       <div className="animated-bg" />
 
       <div className="container-fluid min-vh-100 d-flex align-items-center justify-content-center position-fixed z-1">
-        <div className="login-wrapper shadow-lg">
-          <div className="row g-0 h-100">
+        <div className="login-wrapper shadow-lg w-100 mx-auto" style={{ maxWidth: "900px" }}>
+          <div className="row g-0 ">
 
             {/* Branding */}
-            <div className="col-md-6 d-none d-md-flex flex-column justify-content-center align-items-center bg-branding text-white p-5">
+            <div className="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center bg-branding text-white p-4 p-md-5 text-center">
               <div className="text-center content-branding">
                 <img src="./public/BarrioRedLogo.png" alt="Logo BarrioRed" className="app-logo mb-3" />
                 <h2 className="fw-bold brand-title">BARRIORED</h2>
@@ -120,8 +120,8 @@ const onRecovery = async (e) => {
               </div>
             </div>
 
-            {/* Form — misma clase, mismo tamaño, solo fade dentro */}
-            <div className="col-md-6 form-side p-5 d-flex flex-column justify-content-center">
+            {/* Form */}
+            <div className="col-12 col-md-6 form-side p-3 p-md-5 d-flex flex-column justify-content-center">
               <div className={`fade-view ${transitioning ? "fade-out" : "fade-in"}`}>
 
                 {/* Vista Login */}
@@ -209,7 +209,7 @@ const onRecovery = async (e) => {
                     </form>
 
                     <div className="mt-5 text-center">
-                      <div className="alert alert-secondary d-flex align-items-center p-2 small text-muted" role="alert">
+                     <div className="alert alert-secondary d-none d-md-flex align-items-center p-2 small text-muted" role="alert">
                         <i className="fa-solid fa-circle-info me-2" />
                         <div>Contacta con tu administrador para recibir tus claves.</div>
                       </div>

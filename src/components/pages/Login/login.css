@@ -191,7 +191,7 @@ body.dark-mode .form-control {
   from { width: 0%; }
   to   { width: 100%; }
 }
-/* ── Altura fija para que no cambie al hacer fade ── */
+
 .col-md-6.form-side {
   height: 520px;
 }

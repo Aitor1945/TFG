@@ -354,3 +354,53 @@ body.light-mode .social-nodes {
   from { transform: scale(0); opacity: 0; }
   to   { transform: scale(1); opacity: 1; }
 }
+
+@media (max-width: 768px) {
+
+  /* nunca expandir */
+  .sidebar,
+  .sidebar.pinned,
+  .sidebar:not(.pinned):hover {
+    width: var(--sidebar-collapsed) !important;
+  }
+
+  /* desactivar hover expand */
+  .sidebar:hover {
+    width: var(--sidebar-collapsed) !important;
+  }
+
+  /* ocultar textos siempre */
+  .brand span,
+  .nav-link span,
+  .mode-label {
+    display: none !important;
+  }
+
+  /* centrar iconos */
+  .nav-link,
+  .brand {
+    justify-content: center;
+  }
+
+  /* footer más compacto */
+  .sidebar-footer {
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* ocultar pin (no tiene sentido en móvil) */
+  .pin-btn {
+    display: none !important;
+  }
+
+  /* social redes más seguras */
+  .social-nodes {
+    left: 100%;
+  }
+
+  /* main sin margen raro */
+  .main {
+    margin-left: var(--sidebar-collapsed) !important;
+  }
+}
