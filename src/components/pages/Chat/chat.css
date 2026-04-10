@@ -13,7 +13,7 @@
 }
 
 /* Cuando el sidebar está en hover se expande; el chat lo sigue */
-@media (min-width: 641px) {
+@media (min-width: 768px) {
   .sidebar:hover ~ .main .bc-wrapper {
     left: var(--sidebar-width, 240px);
   }
