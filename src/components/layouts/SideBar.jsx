@@ -1,47 +1,41 @@
-import React, { useState, useEffect } from "react"
-import { NavLink, useNavigate } from "react-router-dom"
-import { supabase } from "../../lib/supabase"
-import "./SideBar.css"
+import React, { useState, useEffect } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { supabase } from "../../lib/supabase";
+import "./SideBar.css";
+import { useTheme } from "../hooks/useTheme";
 
 export default function SideBar() {
-  const [modoOscuro, setModoOscuro] = useState(true)
-  const [redesAbiertas, setRedesAbiertas] = useState(false)
-  const [sidebarFijado, setSidebarFijado] = useState(false)
+  const [redesAbiertas, setRedesAbiertas] = useState(false);
+  const [sidebarFijado, setSidebarFijado] = useState(false);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   // Cambiar a tema oscuro / claro
-  useEffect(() => {
-    if (modoOscuro) {
-      document.body.classList.remove("light-mode")
-    } else {
-      document.body.classList.add("light-mode")
-    }
-  }, [modoOscuro])
+  const [theme, setTheme] = useTheme();
+  const modoOscuro = theme === "dark";
 
   // Sidebar fijado
   useEffect(() => {
-    const app = document.querySelector(".app")
+    const app = document.querySelector(".app");
     if (app) {
-      app.classList.toggle("sidebar-pinned", sidebarFijado)
+      app.classList.toggle("sidebar-pinned", sidebarFijado);
     }
-  }, [sidebarFijado])
+  }, [sidebarFijado]);
 
   // Funcion para cerrar sesión
   const cerrarSesion = async () => {
-    await supabase.auth.signOut()
+    await supabase.auth.signOut();
 
-    document.body.classList.remove("light-mode")
+    document.body.classList.remove("light-mode");
 
-    setRedesAbiertas(false)
-    setSidebarFijado(false)
+    setRedesAbiertas(false);
+    setSidebarFijado(false);
 
-    navigate("/login")
-  }
+    navigate("/login");
+  };
 
   return (
     <nav className={`sidebar${sidebarFijado ? " pinned" : ""}`}>
-
       <div className="brand-wrapper">
         <div className="brand">
           <i className="fa-solid fa-city"></i>
@@ -51,7 +45,6 @@ export default function SideBar() {
 
       {/* menu*/}
       <ul className="nav-list">
-
         <li>
           <NavLink to="/dashboard" className="nav-link">
             <i className="fa-solid fa-chart-line"></i>
@@ -147,12 +140,11 @@ export default function SideBar() {
 
       {/* footer*/}
       <div className="sidebar-footer">
-
         <label className="theme-switch">
           <input
             type="checkbox"
             checked={!modoOscuro}
-            onChange={() => setModoOscuro(!modoOscuro)}
+            onChange={() => setTheme(modoOscuro ? "light" : "dark")}
           />
           <div className="slider"></div>
         </label>
@@ -169,7 +161,6 @@ export default function SideBar() {
           <i className="fa-solid fa-thumbtack"></i>
         </button>
       </div>
-
     </nav>
-  )
+  );
 }
