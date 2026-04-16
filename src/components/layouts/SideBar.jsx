@@ -67,13 +67,6 @@ export default function SideBar() {
         </li>
 
         <li>
-          <NavLink to="/reservas" className="nav-link">
-            <i className="fa-regular fa-calendar-check"></i>
-            <span>Reservas</span>
-          </NavLink>
-        </li>
-
-        <li>
           <NavLink to="/documentos" className="nav-link">
             <i className="fa-solid fa-folder-open"></i>
             <span>Documentos</span>

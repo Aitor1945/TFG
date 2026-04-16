@@ -25,13 +25,14 @@ export default function Login() {
     return () => document.body.classList.remove("light-mode", "dark-mode");
   }, [theme]);
 
+  //Validamos campo de email (expresion regular)
   const isEmailValid = useMemo(
     () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()),
     [email]
   );
   const isPasswordValid = useMemo(() => password.trim().length > 0, [password]);
 
-  //OnSubmit
+  //función que se ejecuta al pulsar boton de iniciar sesión
   const onSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
@@ -44,7 +45,7 @@ export default function Login() {
     });
 
     if (error) {
-      setLoginError("Correo o contraseña incorrectos. Inténtalo de nuevo.");
+      setLoginError("Correo o contraseña incorrectos.");
       return;
     }
 
@@ -54,7 +55,7 @@ export default function Login() {
       .eq("id", data.user.id)
       .single();
 
-    console.log("Perfil:", profile);
+    //Se redirecciona a dashboard si el login es exitoso
     navigate("/dashboard");
   };
 
@@ -75,7 +76,7 @@ export default function Login() {
       setTransitioning(false);
     }, 300);
   };
-
+  //recuperacióm de contraseñas
   const onRecovery = async (e) => {
     e.preventDefault();
     if (!recoveryEmail.trim()) return;
@@ -115,7 +116,6 @@ export default function Login() {
           style={{ maxWidth: "900px" }}
         >
           <div className="row g-0 ">
-            {/* Branding */}
             <div className="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center bg-branding text-white p-4 p-md-5 text-center">
               <div className="text-center content-branding">
                 <img
@@ -132,7 +132,7 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Form */}
+            {/* Formulario */}
             <div className="col-12 col-md-6 form-side p-3 p-md-5 d-flex flex-column justify-content-center">
               <div
                 className={`fade-view ${
