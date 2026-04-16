@@ -8,14 +8,11 @@ export default function Documentos() {
 
   useEffect(() => {
     const obtenerDrive = async () => {
-      setLoading(true);
-
       // Guardar usuario logeado
       const { data: userData } = await supabase.auth.getUser();
 
       if (!userData?.user) {
         console.error("No hay usuario logueado");
-        setLoading(false);
         return;
       }
 
@@ -30,7 +27,6 @@ export default function Documentos() {
 
       if (profileError || !profile?.comunidad_id) {
         console.error(profileError);
-        setLoading(false);
         return;
       }
 
@@ -46,8 +42,6 @@ export default function Documentos() {
       } else {
         setDriveUrl(comunidad.drive_url);
       }
-
-      setLoading(false);
     };
 
     obtenerDrive();
