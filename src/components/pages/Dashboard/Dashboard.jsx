@@ -49,7 +49,7 @@ const ESTADO_COLORS = {
   "en curso": "#3b82f6",
   resuelta: "#10b981",
   pendiente: "#f59e0b",
-  en_proceso: "#3b82f6",
+  proceso: "#3b82f6",
 };
 
 const CURRENT_USER_FALLBACK = {
