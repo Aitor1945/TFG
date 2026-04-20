@@ -20,6 +20,7 @@ import Chat from "../components/pages/Chat/Chat";
 import Ajustes from "../components/pages/Ajustes/Ajustes";
 import MiPerfil from "../components/pages/MiPerfil/MiPerfil";
 import ResetPassword from "../components/pages/ResetPassword/ResetPassword";
+import LandingPage from "../components/pages/LandingPage/LandingPage";
 
 //Proteccion de rutas
 const Private = () => {
@@ -61,6 +62,7 @@ export default function Rutas() {
       <Routes>
         {/* Públicas */}
         <Route element={<PublicRoute />}>
+          <Route path="/inicio" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
