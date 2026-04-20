@@ -28,6 +28,12 @@ export default function LandingPage() {
             Bienvenido a <span>BarrioRed</span>
           </h2>
 
+          <img
+            src="./public/BarrioRedLogo.png"
+            alt="Logo BarrioRed"
+            className="app-logo mb-3"
+          />
+
           <p className="intro-text">
             BarrioRed es una plataforma digital diseñada para modernizar la
             gestión de comunidades de vecinos, centralizando la comunicación,
