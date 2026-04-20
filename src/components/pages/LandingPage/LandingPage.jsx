@@ -10,7 +10,7 @@ export default function LandingPage() {
 
   return (
     <div>
-      <nav>
+      <nav className="navbar">
         <a href="#" className="logo-h">
           BarrioRed
         </a>

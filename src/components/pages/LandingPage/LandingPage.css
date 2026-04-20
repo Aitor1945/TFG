@@ -12,7 +12,7 @@
   --border-blue: rgba(59, 130, 246, 0.22);
 }
 
-nav {
+.navbar {
   position: fixed;
   top: 0;
   left: 0;
