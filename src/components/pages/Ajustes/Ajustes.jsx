@@ -7,8 +7,10 @@ export default function Ajustes() {
   const [fontSize, setFontSize] = useState(() => localStorage.getItem("br-fontsize") || "normal")
 
   useEffect(() => {
-    const map = { pequeño: "14px", normal: "16px", grande: "19px" }
-    document.documentElement.style.setProperty("--app-font-size", map[fontSize])
+    const map = { pequeño: "14px", normal: "16px", grande: "18px" }
+    const size = map[fontSize] || "16px"
+    document.documentElement.style.fontSize = size
+    document.documentElement.style.setProperty("--app-font-size", size)
     localStorage.setItem("br-fontsize", fontSize)
   }, [fontSize])
 
