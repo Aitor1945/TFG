@@ -75,18 +75,6 @@
   box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.45), var(--shadow);
 }
 
-.perfil-status-dot {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  width: 14px;
-  height: 14px;
-  background: var(--success);
-  border-radius: 50%;
-  border: 3px solid var(--card-bg);
-  animation: pulse-dot 2.5s ease infinite;
-}
-
 @keyframes pulse-dot {
   0%,
   100% {
