@@ -32,7 +32,7 @@ const team = [
     initial: "A",
     name: "Aitor García",
     role: "Desarrollador Full Stack",
-    bio: "Breve descripción sobre esta persona, su rol en el proyecto y sus especialidades técnicas.",
+    bio: "Desarrollador Full Stack especializado en frontend y backend, centrado en crear soluciones escalables y eficientes.",
     linkedin: "#",
     github: "#",
     photo: aitorFoto,
@@ -41,18 +41,18 @@ const team = [
     initial: "B",
     name: "Felix Dominguez",
     role: "Desarrollador Frontend",
-    bio: "Breve descripción sobre esta persona, su rol en el proyecto y sus especialidades técnicas.",
+    bio: "Desarrollador Frontend enfocado en interfaces modernas, experiencia de usuario y componentes reutilizables.",
     linkedin: "#",
     github: "#",
     photo: felixFoto,
   },
   {
     initial: "C",
-    name: "Joel Sámchez",
+    name: "Joel Sánchez",
     role: "Desarrollador Backend",
-    bio: "Breve descripción sobre esta persona, su rol en el proyecto y sus especialidades técnicas.",
+    bio: "Desarrollador Backend especializado en bases de datos e integración entre frontend y backend.",
     linkedin: "#",
-    github: "#",
+    github: "https://github.com/Joeel06",
     photo: joelFoto,
   },
 ];
@@ -166,7 +166,7 @@ export default function LandingPage() {
 
           <div className="proyecto-footer-row">
             <a
-              href="https://github.com"
+              href="https://github.com/Aitor1945/TFG"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-github"
