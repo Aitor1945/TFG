@@ -1,0 +1,343 @@
+/* ── Contenedor raíz ── */
+.bc-wrapper {
+  position: fixed;
+  top: 0;
+  left: var(--sidebar-collapsed, 68px);
+  right: 0;
+  bottom: 0;
+  display: flex;
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 13px;
+  transition: left var(--transition, 0.3s ease);
+  z-index: 100;
+}
+
+/* Cuando el sidebar está en hover se expande; el chat lo sigue */
+@media (min-width: 768px) {
+  .sidebar:hover ~ .main .bc-wrapper {
+    left: var(--sidebar-width, 240px);
+  }
+}
+
+/* ── Panel izquierdo ── */
+.bc-panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-sidebar);
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
+  width: calc(var(--sidebar-width) + 40px);
+  border-right: 1px solid var(--bg-sidebar-hover);
+}
+
+.bc-panel-header {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--bg-sidebar-hover);
+}
+
+.bc-panel-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Lista de usuarios */
+.bc-user-list {
+  flex: 1;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+}
+.bc-user-list::-webkit-scrollbar { width: 4px; }
+.bc-user-list::-webkit-scrollbar-thumb {
+  background: var(--bg-sidebar-hover);
+  border-radius: 4px;
+}
+
+.bc-user-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-bottom: 2px;
+  transition: background var(--transition), color var(--transition);
+  color: var(--text-primary);
+}
+
+.bc-user-item:hover {
+  background: var(--bg-sidebar-hover);
+}
+
+.bc-user-item.activo {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(0,0,0,0.2);
+}
+
+/* ── Avatar wrapper (necesario para posicionar el badge) ── */
+.bc-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Avatar */
+.bc-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
+  background: var(--bg-sidebar-hover);
+  color: var(--accent);
+  transition: background var(--transition), color var(--transition);
+}
+
+.bc-user-item.activo .bc-avatar {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+}
+
+/* ── Badge de mensajes no leídos ── */
+.bc-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  box-shadow: 0 0 0 2px var(--bg-sidebar);
+  /* Animación de entrada */
+  animation: bc-badge-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes bc-badge-pop {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* Nombres y roles */
+.bc-user-name {
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bc-user-rol {
+  font-size: 11px;
+  opacity: 0.6;
+  color: var(--text-secondary);
+}
+
+/* ── Área de chat ── */
+.bc-chat {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 16px 12px;
+  overflow: hidden;
+  background: var(--bg-body);
+}
+
+.bc-chat-box {
+  width: 100%;
+  max-width: 860px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--bg-sidebar-hover);
+}
+
+/* Empty chat */
+.bc-empty-chat {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+
+.bc-empty-icon { font-size: 2.5rem; }
+.bc-empty-chat p { font-size: 16px; font-weight: 600; color: var(--text-primary); margin: 0; }
+.bc-empty-chat span { font-size: 12px; }
+
+/* Header conversación */
+.bc-chat-header {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--bg-sidebar-hover);
+}
+
+.bc-chat-header-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.bc-chat-header-rol  { font-size: 11px; color: var(--text-secondary); }
+.bc-back-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--accent);
+}
+
+/* Lista mensajes */
+.bc-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  background: var(--bg-body);
+}
+.bc-messages::-webkit-scrollbar { width: 8px; }
+.bc-messages::-webkit-scrollbar-thumb {
+  background: var(--bg-sidebar-hover);
+  border-radius: 10px;
+}
+.bc-messages::-webkit-scrollbar-track { background: transparent; }
+
+/* Mensajes */
+.bc-msg-row { display: flex; }
+.bc-msg-row.mio  { justify-content: flex-end; }
+.bc-msg-row.otro { justify-content: flex-start; }
+
+.bc-bubble {
+  max-width: 70%;
+  padding: 8px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  line-height: 1.4;
+  transition: background var(--transition), color var(--transition);
+}
+
+.bc-bubble.mio {
+  background: var(--accent);
+  color: #ffffff;
+  border-radius: 16px 16px 4px 16px;
+  box-shadow: 0 4px 12px rgba(59,130,246,0.25);
+}
+
+.bc-bubble.otro {
+  background: var(--bg-sidebar-hover);
+  color: var(--text-primary);
+  border-radius: 16px 16px 16px 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.bc-bubble-remitente {
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  opacity: 0.65;
+  color: var(--text-secondary);
+}
+
+.bc-bubble-hora {
+  font-size: 10px;
+  margin-top: 3px;
+  text-align: right;
+  opacity: 0.6;
+}
+
+.bc-bubble.mio .bc-bubble-hora  { color: rgba(255,255,255,0.75); }
+.bc-bubble.otro .bc-bubble-hora { color: var(--text-secondary); }
+
+/* Input */
+.bc-form {
+  padding: 12px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--bg-sidebar-hover);
+}
+
+.bc-input-row { display: flex; gap: 8px; }
+
+.bc-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--bg-sidebar-hover);
+  border-radius: 12px;
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+  background: var(--bg-body);
+  color: var(--text-primary);
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.bc-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+.bc-input::placeholder { color: var(--text-secondary); }
+
+.bc-send-btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  background: var(--accent);
+  color: #ffffff;
+  transition: filter var(--transition), box-shadow var(--transition);
+  box-shadow: 0 4px 10px rgba(59,130,246,0.3);
+}
+.bc-send-btn:hover    { filter: brightness(0.9); }
+.bc-send-btn:disabled { cursor: default; opacity: 0.4; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  @media (max-width: 640px) {
+
+  .bc-panel.oculto {
+    display: none;
+  }
+
+  .bc-chat.oculto {
+    display: none;
+  }
+
+  .bc-back-btn {
+    display: block;
+  }
+
+  .bc-panel,
+  .bc-chat {
+    width: 100%;
+  }
+}
+  .bc-panel.oculto { display: none; }
+  .bc-chat.oculto  { display: none; }
+  .bc-back-btn { display: block; }
+}

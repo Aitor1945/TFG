@@ -1,9 +1,11 @@
 :root {
   --bg-sidebar: #1e293b;
   --bg-sidebar-hover: #2d3f55;
-  --bg-body: #23386B;
+  --bg-body: #0d1b2a;
+  --bg-card: #1e293b;
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
+  --text-chat: #ffffff;
   --accent: #3b82f6;
   --sidebar-width: 240px;
   --sidebar-collapsed: 68px;
@@ -13,12 +15,15 @@
 body.light-mode {
   --bg-sidebar: #f1f5f9;
   --bg-sidebar-hover: #e2e8f0;
+  --bg-body: #f8fafc;
+  --bg-card: #ffffff;
   --text-primary: #1e293b;
   --text-secondary: #64748b;
+  --text-chat: #ffffff;
   --accent: #3b82f6;
 }
 
-/* ── Layout general ── */
+/* ── Layout ── */
 .app {
   display: flex;
 }
@@ -31,7 +36,16 @@ body.light-mode {
   padding: 24px;
 }
 
-/* ── Sidebar ── */
+html {
+  overflow-y: scroll;          /* reserva el espacio siempre → no hay salto */
+  scrollbar-width: none;       /* Firefox: oculta la barra */
+}
+
+html::-webkit-scrollbar {
+  display: none;               /* Chrome / Safari / Edge: oculta la barra */
+}
+
+/* ── Sidebar base ── */
 .sidebar {
   position: fixed;
   top: 0;
@@ -45,27 +59,35 @@ body.light-mode {
   transition: width var(--transition);
   overflow: hidden;
   z-index: 100;
-  box-shadow: 2px 0 12px rgba(0,0,0,0.15);
-  border: 0;
+  right: auto;
+  border-right: 1px solid rgba(0,0,0,0.1);
 }
 
-/* Al hacer hover se expande */
-.sidebar:hover {
+.sidebar:not(.pinned):hover {
   width: var(--sidebar-width);
 }
 
-/* El main también se mueve cuando el sidebar está hover */
-.sidebar:hover ~ .main {
+.sidebar.pinned {
+  width: var(--sidebar-width);
+}
+
+.sidebar:not(.pinned):hover ~ .main {
   margin-left: var(--sidebar-width);
+}
+
+.app.sidebar-pinned .main {
+  margin-left: var(--sidebar-width);
+}
+
+.app.sidebar-pinned .bc-wrapper {
+  left: var(--sidebar-width) !important;
 }
 
 /* ── Brand ── */
 .brand-wrapper {
   display: flex;
   align-items: center;
-  padding: 0 16px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  min-height: 48px;
+  padding: 0 16px 20px;
 }
 
 .brand {
@@ -89,14 +111,15 @@ body.light-mode {
   transition: opacity var(--transition);
 }
 
-.sidebar:hover .brand span {
+.sidebar:hover .brand span,
+.sidebar.pinned .brand span {
   opacity: 1;
 }
 
-/* ── Nav ── */
+/* ── Nav list ── */
 .nav-list {
   list-style: none;
-  margin: 12px 0 0;
+  margin: 0;
   padding: 0 8px;
   flex: 1;
   display: flex;
@@ -129,7 +152,8 @@ body.light-mode {
   transition: opacity var(--transition);
 }
 
-.sidebar:hover .nav-link span {
+.sidebar:hover .nav-link span,
+.sidebar.pinned .nav-link span {
   opacity: 1;
 }
 
@@ -141,23 +165,21 @@ body.light-mode {
 
 .nav-link.active {
   color: var(--accent);
-  background: rgba(59,130,246,0.15);
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.logout-link { color: #ef4444 !important; }
+.logout-link:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
 }
 
 /* ── Spacer ── */
-.menu-spacer {
-  flex: 1;
-}
+.menu-spacer { flex: 1; }
 
-/* ── Redes ── */
-.radial-wrapper {
-  position: relative;
-}
-
-.radial-trigger {
-  cursor: pointer;
-  user-select: none;
-}
+/* ── Redes sociales ── */
+.radial-wrapper { position: relative; }
+.radial-trigger { cursor: pointer; user-select: none; }
 
 .social-nodes {
   position: absolute;
@@ -167,15 +189,19 @@ body.light-mode {
   flex-direction: column;
   gap: 8px;
   background: var(--bg-sidebar);
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   padding: 10px 8px;
-  box-shadow: 4px 4px 16px rgba(0,0,0,0.25);
+  box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.25);
   opacity: 0;
   pointer-events: none;
   transform: translateX(-8px);
   transition: opacity var(--transition), transform var(--transition);
   z-index: 200;
+}
+
+body.light-mode .social-nodes {
+  border-color: rgba(0, 0, 0, 0.08);
 }
 
 .radial-wrapper.open .social-nodes {
@@ -203,15 +229,15 @@ body.light-mode {
   color: #fff;
 }
 
-/* ── Theme switch ── */
-.theme-switch-wrapper {
+/* ── Pie del sidebar ── */
+.sidebar-footer {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 16px 4px;
-  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 12px 14px 4px;
   overflow: hidden;
   white-space: nowrap;
+  min-height: 52px;
 }
 
 .theme-switch {
@@ -222,11 +248,7 @@ body.light-mode {
   flex-shrink: 0;
 }
 
-.theme-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+.theme-switch input { opacity: 0; width: 0; height: 0; }
 
 .slider {
   position: absolute;
@@ -249,21 +271,136 @@ body.light-mode {
   transition: transform var(--transition);
 }
 
-.theme-switch input:checked + .slider {
-  background: var(--accent);
-}
-
-.theme-switch input:checked + .slider::before {
-  transform: translateX(18px);
-}
+.theme-switch input:checked + .slider { background: var(--accent); }
+.theme-switch input:checked + .slider::before { transform: translateX(18px); }
 
 .mode-label {
+  flex: 1;
   color: var(--text-secondary);
   font-size: 0.8rem;
   opacity: 0;
   transition: opacity var(--transition);
 }
 
-.sidebar:hover .mode-label {
+.sidebar:hover .mode-label,
+.sidebar.pinned .mode-label {
   opacity: 1;
+}
+
+/* ── Botón pin ── */
+.pin-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 6px;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  opacity: 0;
+  pointer-events: none;
+  flex-shrink: 0;
+  transition: opacity var(--transition), color var(--transition),
+              background var(--transition), transform var(--transition);
+  transform: rotate(0deg);
+}
+
+.sidebar:hover .pin-btn,
+.sidebar.pinned .pin-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.pin-btn:hover {
+  color: var(--accent);
+  background: var(--bg-sidebar-hover);
+}
+
+.pin-btn--active {
+  color: var(--accent) !important;
+  transform: rotate(45deg);
+}
+
+/* ── Badge de no leídos en el icono de Chat del sidebar ── */
+.nav-icon-wrap {
+  position: relative;
+  width: 20px;          /* igual que los otros iconos */
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  box-shadow: 0 0 0 2px var(--bg-sidebar);
+  animation: nav-badge-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  /* Siempre visible aunque el sidebar esté colapsado */
+  opacity: 1 !important;
+}
+
+@keyframes nav-badge-pop {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+
+  /* nunca expandir */
+  .sidebar,
+  .sidebar.pinned,
+  .sidebar:not(.pinned):hover {
+    width: var(--sidebar-collapsed) !important;
+  }
+
+  /* desactivar hover expand */
+  .sidebar:hover {
+    width: var(--sidebar-collapsed) !important;
+  }
+
+  /* ocultar textos siempre */
+  .brand span,
+  .nav-link span,
+  .mode-label {
+    display: none !important;
+  }
+
+  /* centrar iconos */
+  .nav-link,
+  .brand {
+    justify-content: center;
+  }
+
+  /* footer más compacto */
+  .sidebar-footer {
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* ocultar pin (no tiene sentido en móvil) */
+  .pin-btn {
+    display: none !important;
+  }
+
+  /* social redes más seguras */
+  .social-nodes {
+    left: 100%;
+  }
+
+  /* main sin margen raro */
+  .main {
+    margin-left: var(--sidebar-collapsed) !important;
+  }
 }
