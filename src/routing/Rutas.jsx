@@ -36,7 +36,7 @@ const Private = () => {
 
   if (loading) return null;
 
-  return session ? <AppLayout /> : <Navigate to="/login" replace />;
+  return session ? <AppLayout /> : <Navigate to="/inicio" replace />;
 };
 
 //rutas publicas, impide volver a login si estas logeado
