@@ -17,7 +17,6 @@ body {
   color: var(--text-primary);
 }
 
-/* ─── NAVBAR ─────────────────────────────────────── */
 .navbar {
   position: fixed;
   top: 0;
@@ -75,7 +74,6 @@ body {
   border-color: var(--accent);
 }
 
-/* ─── HERO ───────────────────────────────────────── */
 .hero {
   min-height: 100vh;
   display: flex;
@@ -179,7 +177,6 @@ body {
   color: var(--accent);
 }
 
-/* ─── SHARED SECTION STYLES ──────────────────────── */
 .section-proyecto,
 .section-features,
 .section-team {
@@ -225,14 +222,12 @@ body {
   border-radius: 2px;
   margin: 1.2rem 0 2.5rem;
 }
-
-/* ─── PROYECTO — nuevo diseño ────────────────────── */
 .proyecto-intro {
   color: var(--text-secondary);
   font-size: 1.05rem;
   line-height: 1.8;
   margin-bottom: 3rem;
-  max-width: 680px; /* solo el texto intro queda acotado para legibilidad */
+  max-width: 680px;
 }
 
 .proyecto-pilares {
@@ -300,7 +295,6 @@ body {
   color: var(--accent);
 }
 
-/* ─── FEATURES — 2x2 ────────────────────────────── */
 .features-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -347,7 +341,6 @@ body {
   line-height: 1.65;
 }
 
-/* ─── TEAM ───────────────────────────────────────── */
 .team-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -367,7 +360,21 @@ body {
   border-color: var(--border-blue);
   transform: translateY(-4px);
 }
+.hero-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.2rem;
+}
 
+.hero-logo img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 6px;
+}
 .team-avatar {
   width: 88px;
   height: 88px;
@@ -434,7 +441,6 @@ body {
   color: var(--accent);
 }
 
-/* ─── FOOTER ─────────────────────────────────────── */
 .footer {
   border-top: 1px solid var(--border);
   padding: 2.5rem 5vw;
@@ -452,38 +458,6 @@ body {
   font-size: 0.78rem;
 }
 
-/* ─── ANIMATIONS ─────────────────────────────────── */
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes fadeDown {
-  from {
-    opacity: 0;
-    transform: translateY(-12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.3;
-  }
-}
-
-/* ─── RESPONSIVE ─────────────────────────────────── */
 @media (max-width: 900px) {
   .proyecto-pilares {
     grid-template-columns: 1fr 1fr;

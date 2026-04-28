@@ -74,7 +74,7 @@ export default function LandingPage() {
 
   return (
     <div>
-      {/* NAVBAR */}
+      {/* Navbar*/}
       <nav className="navbar">
         <a href="#" className="logo-h">
           BarrioRed
@@ -95,11 +95,14 @@ export default function LandingPage() {
         </button>
       </nav>
 
-      {/* HERO */}
+      {/* Inicio */}
       <section className="hero" id="inicio">
         <div className="hero-bg" />
         <div className="hero-grid" />
         <div className="hero-content">
+          <div className="hero-logo">
+            <img src="/BarrioRedLogo.png" alt="BarrioRed logo" />
+          </div>
           <div className="badge">Plataforma de gestión vecinal</div>
           <h1 className="hero-title">
             Bienvenido a <span>BarrioRed</span>
@@ -120,21 +123,21 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* PROYECTO — nuevo diseño: texto centrado + 3 pilares */}
+      {/* Proyecto resumen */}
       <section id="proyecto" className="section-proyecto">
         <div className="section-inner">
           <p className="section-label">Sobre el proyecto</p>
           <h2 className="section-title">
             Una plataforma pensada
             <br />
-            para las personas
+            para los vecinos
           </h2>
           <div className="divider" />
           <p className="proyecto-intro">
-            BarrioRed nace para digitalizar la gestión de comunidades de
-            vecinos: un espacio único donde vecinos, administradores y
-            ayuntamientos pueden comunicarse, resolver incidencias y acceder a
-            la documentación de forma sencilla y segura.
+            BarrioRed es un proyecto nacido para digitalizar la gestión de
+            comunidades de vecinos: un espacio único donde vecinos,
+            administradores y ayuntamientos pueden comunicarse, resolver
+            incidencias y acceder a la documentación de forma sencilla y segura.
           </p>
 
           <div className="proyecto-pilares">
@@ -177,7 +180,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FUNCIONALIDADES */}
+      {/* Funcionalidades */}
       <section id="funcionalidades" className="section-features">
         <div className="section-inner">
           <p className="section-label">Funcionalidades</p>
@@ -203,7 +206,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* EQUIPO */}
+      {/* Equipo de desarrollo*/}
       <section id="equipo" className="section-team">
         <div className="section-inner">
           <p className="section-label">El equipo</p>
@@ -246,12 +249,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FOOTER */}
+      {/* Footer */}
       <footer className="footer">
-        <p>
-          © 2025 <span className="footer-brand">BarrioRed</span> — Proyecto de
-          gestión de comunidades de vecinos
-        </p>
         <p className="footer-sub">Desarrollado por el equipo BarrioRed</p>
       </footer>
     </div>
