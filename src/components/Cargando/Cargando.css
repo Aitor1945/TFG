@@ -1,22 +1,17 @@
 .spinner-contenedor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  color: #64748b;
-  z-index: 9999;
+  height: 100vh;
+  gap: 8px;
+  color: gray;
 }
 
 .spinner {
-  width: 44px;
-  height: 44px;
-  border: 4px solid #e0e0e0;
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e0e0e0;
   border-top-color: #3b82f6;
   border-radius: 50%;
   animation: girar 0.8s linear infinite;

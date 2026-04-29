@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
 import "./MiPerfil.css";
+import Cargando from "../../../components/Cargando/Cargando";
 
 /* ── Helpers ─────────────────────────────────────────────────────────── */
 const rolConfig = {
@@ -157,7 +158,7 @@ export default function MiPerfil() {
     const cargar = async () => {
       setCargando(true);
 
-      /* ── 1. Auth ── */
+      // 1. Auth
       const {
         data: { user },
         error: authError,
@@ -169,7 +170,7 @@ export default function MiPerfil() {
       }
       setEmail(user.email);
 
-      /* ── 2. Perfil (columnas confirmadas) ── */
+      // 2. Perfil
       const { data: perfilData, error: perfilError } = await supabase
         .from("profiles")
         .select(
@@ -185,7 +186,7 @@ export default function MiPerfil() {
       }
       setPerfil(perfilData);
 
-      /* ── 3. Comunidad (query independiente, no bloquea si falla) ── */
+      // 3. Comunidad
       if (perfilData.comunidad_id) {
         try {
           const { data: comunidadData, error: comErr } = await supabase
@@ -195,25 +196,13 @@ export default function MiPerfil() {
             )
             .eq("id", perfilData.comunidad_id)
             .maybeSingle();
-
-          if (comErr) {
-            console.warn("Error cargando comunidad:", comErr.message);
-          } else {
-            if (comunidadData) setComunidad(comunidadData);
-          }
+          if (!comErr && comunidadData) setComunidad(comunidadData);
         } catch (e) {
           console.warn("Excepción comunidad:", e);
         }
       }
 
-      /* ── 4. Stats (cada una protegida, si la tabla no existe devuelve 0) ── */
-      const ahora = new Date();
-      const inicioMes = new Date(
-        ahora.getFullYear(),
-        ahora.getMonth(),
-        1
-      ).toISOString();
-
+      // 4. Stats
       const safeCount = async (query) => {
         try {
           const { count } = await query;
@@ -223,17 +212,15 @@ export default function MiPerfil() {
         }
       };
 
-      const [totalInc, totalDoc] = await Promise.all([
-        safeCount(
-          supabase
-            .from("incidencias")
-            .select("id", { count: "exact", head: true })
-            .eq("autor_id", user.id)
-        ),
-      ]);
+      const totalInc = await safeCount(
+        supabase
+          .from("incidencias")
+          .select("id", { count: "exact", head: true })
+          .eq("autor_id", user.id)
+      );
       setStats({ incidencias: totalInc });
 
-      /* ── 5. Actividad reciente (tabla opcional, no bloquea si no existe) ── */
+      // 5. Actividad reciente
       try {
         const { data: actData, error: actErr } = await supabase
           .from("actividad_usuario")
@@ -241,13 +228,12 @@ export default function MiPerfil() {
           .eq("user_id", user.id)
           .order("created_at", { ascending: false })
           .limit(4);
-
         if (!actErr && actData) setActividad(actData);
       } catch (e) {
         console.warn("actividad_usuario no disponible aún:", e);
       }
 
-      setCargando(false);
+      setCargando(false); // aqui ya esta todo cargado
     };
 
     cargar();
@@ -273,13 +259,7 @@ export default function MiPerfil() {
     ];
   };
 
-  /* ── Loading / Error ── */
-  if (cargando)
-    return (
-      <div className="perfil-page perfil-center">
-        <div className="perfil-spinner" />
-      </div>
-    );
+  if (cargando) return <Cargando />;
   if (error)
     return (
       <div className="perfil-page perfil-center">
@@ -318,7 +298,6 @@ export default function MiPerfil() {
             <div className="perfil-avatar">{avatarIni}</div>
             <span className="perfil-status-dot" title="En línea" />
           </div>
-
           <div className="perfil-hero-info">
             <h1 className="perfil-nombre">
               <span>{nombreMostrado}</span>
@@ -364,7 +343,6 @@ export default function MiPerfil() {
       <div className="perfil-body">
         {/* Columna izquierda */}
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-          {/* Información personal */}
           <div className="perfil-card">
             <div className="perfil-card-header">
               <span className="perfil-card-title">Información personal</span>
@@ -417,7 +395,6 @@ export default function MiPerfil() {
             </div>
           </div>
 
-          {/* Mi comunidad — solo se muestra si cargó correctamente */}
           {comunidad ? (
             <div className="perfil-card">
               <div className="comunidad-header-img">
@@ -462,7 +439,6 @@ export default function MiPerfil() {
 
         {/* Columna derecha */}
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-          {/* Actividad reciente */}
           <div className="perfil-card">
             <div className="perfil-card-header">
               <span className="perfil-card-title">Actividad reciente</span>
@@ -498,7 +474,6 @@ export default function MiPerfil() {
             </div>
           </div>
 
-          {/* Permisos de acceso */}
           <div className="perfil-card">
             <div className="perfil-card-header">
               <span className="perfil-card-title">Permisos de acceso</span>
@@ -518,7 +493,6 @@ export default function MiPerfil() {
             </div>
           </div>
 
-          {/* Participación */}
           <div className="perfil-card">
             <div className="perfil-card-header">
               <span className="perfil-card-title">Participación</span>

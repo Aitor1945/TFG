@@ -1,28 +1,28 @@
 import React, { useEffect, useState } from "react";
 import "./incidencias.css";
 import { supabase } from "../../../lib/supabase";
+import Cargando from "../../../components/Cargando/Cargando";
 
 const configuracionEstado = {
-  pendiente:  { etiqueta: "Pendiente",  clase: "estado-pendiente" },
-  en_proceso: { etiqueta: "En proceso", clase: "estado-proceso"   },
-  resuelta:   { etiqueta: "Resuelta",   clase: "estado-resuelta"  },
+  pendiente: { etiqueta: "Pendiente", clase: "estado-pendiente" },
+  en_proceso: { etiqueta: "En proceso", clase: "estado-proceso" },
+  resuelta: { etiqueta: "Resuelta", clase: "estado-resuelta" },
 };
-
-
 
 const ROLES_GESTION = ["ayuntamiento", "presidente", "admin"];
 
 export default function Incidencias() {
-  const [avisos, setAvisos]           = useState([]);
+  const [avisos, setAvisos] = useState([]);
   const [filtroActual, setFiltroActual] = useState("todas");
-  const [rolUsuario, setRolUsuario]   = useState("");
+  const [rolUsuario, setRolUsuario] = useState("");
   const [comunidadId, setComunidadId] = useState(null);
-  const [idUsuario, setIdUsuario]     = useState(null);
+  const [idUsuario, setIdUsuario] = useState(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [enviando, setEnviando]       = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
 
   const [campos, setCampos] = useState({
-    titulo:      "",
+    titulo: "",
     descripcion: "",
   });
 
@@ -65,10 +65,13 @@ export default function Incidencias() {
         nombre_autor:
           perfiles?.find((p) => p.id === i.autor_id)?.full_name || "Vecino",
         fecha_formateada: new Date(i.created_at).toLocaleDateString("es-ES", {
-          day: "2-digit", month: "2-digit", year: "numeric",
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
         }),
       }))
     );
+    setLoadingData(false);
   };
 
   // Panel para crear incidencias
@@ -77,13 +80,15 @@ export default function Incidencias() {
     if (!comunidadId) return;
 
     setEnviando(true);
-    const { error } = await supabase.from("incidencias").insert([{
-      titulo:       campos.titulo,
-      descripcion:  campos.descripcion,
-      estado:       "pendiente",
-      autor_id:     idUsuario,
-      comunidad_id: comunidadId,
-    }]);
+    const { error } = await supabase.from("incidencias").insert([
+      {
+        titulo: campos.titulo,
+        descripcion: campos.descripcion,
+        estado: "pendiente",
+        autor_id: idUsuario,
+        comunidad_id: comunidadId,
+      },
+    ]);
     setEnviando(false);
 
     if (error) {
@@ -109,10 +114,7 @@ export default function Incidencias() {
 
   // Eliminar incidencia
   const borrarAviso = async (id) => {
-    const { error } = await supabase
-      .from("incidencias")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("incidencias").delete().eq("id", id);
 
     if (error) return console.error("Error al eliminar incidencia:", error);
     cargarAvisos();
@@ -129,10 +131,10 @@ export default function Incidencias() {
       : avisos.filter((i) => i.estado === filtroActual);
 
   const puedeGestionar = ROLES_GESTION.includes(rolUsuario);
+  if (loadingData) return <Cargando />;
 
   return (
     <div className="pagina-incidencias">
-
       <div className="cabecera-seccion">
         <h1 className="titulo-pagina">Incidencias</h1>
         <h2 className="subtitulo-pagina">
@@ -145,7 +147,9 @@ export default function Incidencias() {
           {["todas", "pendiente", "en_proceso", "resuelta"].map((f) => (
             <button
               key={f}
-              className={`boton-filtro ${filtroActual === f ? "seleccionado" : ""}`}
+              className={`boton-filtro ${
+                filtroActual === f ? "seleccionado" : ""
+              }`}
               onClick={() => setFiltroActual(f)}
             >
               {f === "todas" ? "Todas" : configuracionEstado[f]?.etiqueta}
@@ -178,13 +182,17 @@ export default function Incidencias() {
             className="campo-descripcion"
             placeholder="Descripción del problema…"
             value={campos.descripcion}
-            onChange={(e) => setCampos({ ...campos, descripcion: e.target.value })}
+            onChange={(e) =>
+              setCampos({ ...campos, descripcion: e.target.value })
+            }
           />
-    
+
           <button
             className="boton-enviar"
             onClick={enviarIncidencia}
-            disabled={enviando || !campos.titulo.trim() || !campos.descripcion.trim()}
+            disabled={
+              enviando || !campos.titulo.trim() || !campos.descripcion.trim()
+            }
           >
             {enviando ? "Enviando…" : "Enviar incidencia"}
           </button>
@@ -201,11 +209,14 @@ export default function Incidencias() {
       <div className="lista-avisos">
         {avisosFiltrados.map((incidencia) => (
           <div key={incidencia.id} className="aviso-comunidad">
-
             <div className="encabezado-aviso">
               <h5>{incidencia.titulo}</h5>
               <div className="grupo-etiquetas">
-                <span className={`etiqueta-estado ${configuracionEstado[incidencia.estado]?.clase}`}>
+                <span
+                  className={`etiqueta-estado ${
+                    configuracionEstado[incidencia.estado]?.clase
+                  }`}
+                >
                   {configuracionEstado[incidencia.estado]?.etiqueta}
                 </span>
               </div>
@@ -218,7 +229,9 @@ export default function Incidencias() {
                 {incidencia.estado === "pendiente" && (
                   <button
                     className="boton-gestion gestion-proceso"
-                    onClick={() => actualizarEstado(incidencia.id, "en_proceso")}
+                    onClick={() =>
+                      actualizarEstado(incidencia.id, "en_proceso")
+                    }
                   >
                     Marcar en proceso
                   </button>
@@ -244,7 +257,6 @@ export default function Incidencias() {
               <span>👤 {incidencia.nombre_autor}</span>
               <span>{incidencia.fecha_formateada}</span>
             </div>
-
           </div>
         ))}
 
@@ -252,7 +264,6 @@ export default function Incidencias() {
           <p className="aviso-vacio">No hay incidencias en esta categoría.</p>
         )}
       </div>
-
     </div>
   );
 }

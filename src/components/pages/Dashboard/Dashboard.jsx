@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../../lib/supabase.js";
 import "./Dashboard.css";
+import Cargando from "../../../components/Cargando/Cargando";
 
-// ─── Constantes ────────────────────────────────────────────────────────────
 const MONTHS_ES = [
   "Enero",
   "Febrero",
@@ -206,9 +206,6 @@ export default function Dashboard() {
   const [month, setMonth] = useState(now.getMonth());
   const [selected, setSel] = useState(now.getDate());
   const [events, setEvents] = useState({});
-  const [showSummary, setShowSummary] = useState(false);
-  const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState({ type: "nota", title: "", time: "" });
 
   const [currentUser, setCurrentUser] = useState(CURRENT_USER_FALLBACK);
   const [incidencias, setIncidencias] = useState([]);
@@ -280,10 +277,6 @@ export default function Dashboard() {
   const cells = getDays(year, month);
   const selDay = new Date(year, month, selected);
   const dayEvents = events[selected] || [];
-  const totalEvents = Object.values(events).reduce(
-    (acc, a) => acc + a.length,
-    0
-  );
 
   function prevMonth() {
     if (month === 0) {
@@ -299,22 +292,7 @@ export default function Dashboard() {
     } else setMonth((m) => m + 1);
     setSel(1);
   }
-  function handleSave() {
-    if (!form.title.trim()) return;
-    setEvents((prev) => ({
-      ...prev,
-      [selected]: [
-        ...(prev[selected] || []),
-        {
-          time: form.time ? form.time + "h" : "Sin hora",
-          title: form.title.trim(),
-          type: form.type,
-        },
-      ],
-    }));
-    setForm({ type: "nota", title: "", time: "" });
-    setShowAdd(false);
-  }
+  if (loadingData) return <Cargando />;
 
   return (
     <div className="dashboard-page">
@@ -419,23 +397,6 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-
-          <div className="cal-divider" />
-
-          <div className="cal-actions">
-            <button
-              className="cal-action-btn cal-action-btn--summary"
-              onClick={() => setShowSummary(true)}
-            >
-              <i className="fa-solid fa-list-ul"></i> Resumen ({totalEvents})
-            </button>
-            <button
-              className="cal-action-btn cal-action-btn--add"
-              onClick={() => setShowAdd(true)}
-            >
-              <i className="fa-solid fa-plus"></i> Añadir
-            </button>
-          </div>
         </div>
 
         {/* ══ COL 2 FILA 1: Tiempo ══ */}
@@ -469,18 +430,7 @@ export default function Dashboard() {
             <span>Últimas incidencias</span>
           </div>
           <div className="dash-list">
-            {loadingData && (
-              <p
-                style={{
-                  fontSize: 12,
-                  color: "var(--text-secondary)",
-                  opacity: 0.6,
-                }}
-              >
-                Cargando…
-              </p>
-            )}
-            {!loadingData && incidencias.length === 0 && (
+            {incidencias.length === 0 && (
               <p
                 style={{
                   fontSize: 12,
@@ -542,116 +492,6 @@ export default function Dashboard() {
           </div>
         )}
       </div>
-
-      {/* ── Modal Resumen ── */}
-      {showSummary && (
-        <div className="modal-overlay" onClick={() => setShowSummary(false)}>
-          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-            <p className="modal-title">Resumen del mes</p>
-            <p className="modal-date">
-              {MONTHS_ES[month]} {year} · {totalEvents} eventos en total
-            </p>
-            <div className="modal-event-list">
-              {totalEvents === 0 && (
-                <p className="modal-empty">No hay eventos este mes.</p>
-              )}
-              {Object.entries(events)
-                .sort(([a], [b]) => Number(a) - Number(b))
-                .map(([day, evs]) =>
-                  evs.map((ev, i) => (
-                    <div key={`${day}-${i}`} className="modal-event-row">
-                      <div
-                        className="modal-event-bar"
-                        style={{
-                          background:
-                            EVENT_COLORS[ev.type] || EVENT_COLORS.nota,
-                        }}
-                      />
-                      <div>
-                        <div className="modal-event-time">
-                          Día {day} · {ev.time}
-                        </div>
-                        <div className="modal-event-name">{ev.title}</div>
-                      </div>
-                    </div>
-                  ))
-                )}
-            </div>
-            <div className="modal-footer">
-              <button
-                className="modal-cancel-btn"
-                onClick={() => setShowSummary(false)}
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Modal Añadir ── */}
-      {showAdd && (
-        <div className="modal-overlay" onClick={() => setShowAdd(false)}>
-          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-            <p className="modal-title">Añadir al día {selected}</p>
-            <p className="modal-date">
-              {DAYS_FULL[selDay.getDay()]}, {MONTHS_ES[month]} {year}
-            </p>
-            <div className="modal-form">
-              <div className="modal-type-row">
-                {Object.keys(EVENT_COLORS).map((type) => (
-                  <button
-                    key={type}
-                    className={`modal-type-btn${
-                      form.type === type ? " active" : ""
-                    }`}
-                    style={
-                      form.type === type
-                        ? {
-                            borderColor: EVENT_COLORS[type],
-                            color: EVENT_COLORS[type],
-                            background: `${EVENT_COLORS[type]}18`,
-                          }
-                        : {}
-                    }
-                    onClick={() => setForm((f) => ({ ...f, type }))}
-                  >
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </button>
-                ))}
-              </div>
-              <input
-                className="modal-input"
-                placeholder="Título o descripción…"
-                value={form.title}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, title: e.target.value }))
-                }
-                onKeyDown={(e) => e.key === "Enter" && handleSave()}
-              />
-              <input
-                className="modal-input"
-                type="time"
-                value={form.time}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, time: e.target.value }))
-                }
-              />
-            </div>
-            <div className="modal-footer">
-              <button
-                className="modal-cancel-btn"
-                onClick={() => setShowAdd(false)}
-              >
-                Cancelar
-              </button>
-              <button className="modal-save-btn" onClick={handleSave}>
-                Guardar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
