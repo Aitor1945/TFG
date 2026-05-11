@@ -119,7 +119,7 @@ export default function Login() {
             <div className="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center bg-branding text-white p-4 p-md-5 text-center">
               <div className="text-center content-branding">
                 <img
-                  src="./public/BarrioRedLogo.png"
+                  src="/BarrioRedLogo.png"
                   alt="Logo BarrioRed"
                   className="app-logo mb-3"
                 />

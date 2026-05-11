@@ -2,35 +2,35 @@ import React, { useEffect, useState } from "react";
 import "./documentos.css";
 import driveIcon from "../../../assets/drive.png";
 import { supabase } from "../../../lib/supabase";
+import Cargando from "../../../components/Cargando/Cargando";
 
 export default function Documentos() {
   const [driveUrl, setDriveUrl] = useState(null);
+  const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
     const obtenerDrive = async () => {
-      // Guardar usuario logeado
-      const { data: userData } = await supabase.auth.getUser();
+      setCargando(true);
 
+      const { data: userData } = await supabase.auth.getUser();
       if (!userData?.user) {
         console.error("No hay usuario logueado");
+        setCargando(false);
         return;
       }
 
-      const userId = userData.user.id;
-
-      // Obtener comunidad del usuario
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("comunidad_id")
-        .eq("id", userId)
+        .eq("id", userData.user.id)
         .single();
 
       if (profileError || !profile?.comunidad_id) {
         console.error(profileError);
+        setCargando(false);
         return;
       }
 
-      // Obtener drive_url de la comunidad
       const { data: comunidad, error } = await supabase
         .from("comunidades")
         .select("drive_url")
@@ -42,10 +42,14 @@ export default function Documentos() {
       } else {
         setDriveUrl(comunidad.drive_url);
       }
+
+      setCargando(false);
     };
 
     obtenerDrive();
   }, []);
+
+  if (cargando) return <Cargando />;
 
   return (
     <div className="documentos-page">

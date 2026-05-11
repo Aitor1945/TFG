@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabase";
 import "./tablon.css";
+import Cargando from "../../../components/Cargando/Cargando";
 
 const Tablon = () => {
   const [anuncios, setAnuncios] = useState([]);
@@ -8,10 +9,10 @@ const Tablon = () => {
   const [contenido, setContenido] = useState("");
   const [rol, setRol] = useState("");
   const [comunidadId, setComunidadId] = useState(null);
+  const [cargando, setCargando] = useState(true);
 
   const rolesPermitidos = ["presidente", "admin", "ayuntamiento"];
 
-  // Obtener rol y comunidad del usuario
   const getUserProfile = async () => {
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (!userData?.user) return console.error(userError);
@@ -30,76 +31,76 @@ const Tablon = () => {
     }
   };
 
-  // Obtener anuncios y unir con nombres de autores
   const fetchAnuncios = async () => {
     const { data: anunciosData, error: errorAnuncios } = await supabase
       .from("muro_publicaciones")
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (errorAnuncios) return console.error("Error al obtener anuncios:", errorAnuncios);
+    if (errorAnuncios)
+      return console.error("Error al obtener anuncios:", errorAnuncios);
     if (!anunciosData) return;
 
-    // Traer perfiles de los autores
-    const autorIds = anunciosData.map(a => a.autor_id);
+    const autorIds = anunciosData.map((a) => a.autor_id);
     const { data: perfiles } = await supabase
       .from("profiles")
       .select("id, role, full_name")
       .in("id", autorIds);
 
-    const anunciosConNombre = anunciosData.map(a => ({
+    const anunciosConNombre = anunciosData.map((a) => ({
       ...a,
-      autor_nombre: perfiles.find(p => p.id === a.autor_id)?.full_name || "Desconocido"
+      autor_nombre:
+        perfiles.find((p) => p.id === a.autor_id)?.full_name || "Desconocido",
     }));
 
     setAnuncios(anunciosConNombre);
   };
 
-  // Crear anuncio
- const crearAnuncio = async () => {
-  const { data: userData } = await supabase.auth.getUser();
-  if (!userData?.user) return alert("Usuario no autenticado");
-  if (!comunidadId) return alert("No se pudo obtener tu comunidad");
+  const crearAnuncio = async () => {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData?.user) return alert("Usuario no autenticado");
+    if (!comunidadId) return alert("No se pudo obtener tu comunidad");
+    if (!titulo.trim() || !contenido.trim()) return;
 
-  // ✅ Validar campos obligatorios
-  if (!titulo.trim() || !contenido.trim()) {
-    return
-  }
+    const { error } = await supabase.from("muro_publicaciones").insert([
+      {
+        titulo,
+        contenido,
+        autor_id: userData.user.id,
+        tipo: "anuncio",
+        comunidad_id: comunidadId,
+      },
+    ]);
 
-  const { error } = await supabase.from("muro_publicaciones").insert([
-    {
-      titulo,
-      contenido,
-      autor_id: userData.user.id,
-      tipo: "anuncio",
-      comunidad_id: comunidadId,
-    },
-  ]);
-
-  if (!error) {
-    setTitulo("");
-    setContenido("");
-    fetchAnuncios();
-  } else {
-    console.error("Error al crear anuncio:", error);
-  }
-};
+    if (!error) {
+      setTitulo("");
+      setContenido("");
+      fetchAnuncios();
+    } else {
+      console.error("Error al crear anuncio:", error);
+    }
+  };
 
   useEffect(() => {
-    fetchAnuncios();
-    getUserProfile();
+    const cargarTodo = async () => {
+      setCargando(true);
+      await getUserProfile();
+      await fetchAnuncios();
+      setCargando(false);
+    };
+    cargarTodo();
   }, []);
+
+  if (cargando) return <Cargando />;
 
   return (
     <div className="container-fluid tablon-container">
       <h1 className="fw-bold">Muro Comunitario</h1>
-      <h2> Novedades y anuncios de la comunidad</h2>
+      <h2>Novedades y anuncios de la comunidad</h2>
 
-      {/* FORMULARIO SOLO PARA ROLES PERMITIDOS */}
       {rol && rolesPermitidos.includes(rol) && (
         <div className="tablon-form">
           <h5>Nuevo mensaje</h5>
-
           <input
             type="text"
             placeholder="Título"
@@ -107,28 +108,26 @@ const Tablon = () => {
             onChange={(e) => setTitulo(e.target.value)}
             required
           />
-
           <textarea
             placeholder="Escribe el mensaje..."
             value={contenido}
             onChange={(e) => setContenido(e.target.value)}
             required
           />
-
-         <button 
-          onClick={crearAnuncio} 
-          disabled={!titulo.trim() || !contenido.trim()}
-          style={{
-          opacity: !titulo.trim() || !contenido.trim() ? 0.6 : 1,
-          cursor: !titulo.trim() || !contenido.trim() ? "not-allowed" : "pointer",
-  }}
->
-  Publicar
-</button>
+          <button
+            onClick={crearAnuncio}
+            disabled={!titulo.trim() || !contenido.trim()}
+            style={{
+              opacity: !titulo.trim() || !contenido.trim() ? 0.6 : 1,
+              cursor:
+                !titulo.trim() || !contenido.trim() ? "not-allowed" : "pointer",
+            }}
+          >
+            Publicar
+          </button>
         </div>
       )}
 
-      {/* Listado de anuncios*/}
       <div className="tablon-grid">
         {anuncios.map((anuncio) => (
           <div key={anuncio.id} className="tablon-card">
@@ -136,7 +135,9 @@ const Tablon = () => {
             <p>{anuncio.contenido}</p>
             <div className="tablon-card-header">
               <span className="tablon-autor">👤 {anuncio.autor_nombre}</span>
-              <span className="tablon-fecha"> {new Date(anuncio.created_at).toLocaleDateString('es-ES')}</span>
+              <span className="tablon-fecha">
+                {new Date(anuncio.created_at).toLocaleDateString("es-ES")}
+              </span>
             </div>
           </div>
         ))}
