@@ -90,30 +90,18 @@ export default function SideBar() {
         <li className="menu-spacer"></li>
 
         {/* redes sociales*/}
-        <li className={`radial-wrapper ${redesAbiertas ? "open" : ""}`}>
-          <div
-            className="nav-link radial-trigger"
-            onClick={() => setRedesAbiertas(!redesAbiertas)}
-          >
-            <i className="fa-solid fa-share-nodes"></i>
-            <span>Redes</span>
-          </div>
-
-          <div className="social-nodes">
-            <a href="#" className="social-btn">
-              <i className="fa-brands fa-instagram"></i>
-            </a>
-            <a href="#" className="social-btn">
-              <i className="fa-brands fa-whatsapp"></i>
-            </a>
-            <a href="#" className="social-btn">
-              <i className="fa-brands fa-linkedin-in"></i>
-            </a>
-            <a href="#" className="social-btn">
-              <i className="fa-brands fa-twitter"></i>
-            </a>
-          </div>
-        </li>
+        {/* redes sociales */}
+<li className="radial-wrapper">
+  <a
+    className="nav-link radial-trigger"
+    href="https://www.instagram.com/barriored_es"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <i className="fa-solid fa-share-nodes"></i>
+    <span>Redes</span>
+  </a>
+</li>
 
         <li>
           <NavLink to="/miperfil" className="nav-link">
