@@ -204,11 +204,6 @@ body.light-mode .social-nodes {
   border-color: rgba(0, 0, 0, 0.08);
 }
 
-.radial-wrapper.open .social-nodes {
-  opacity: 1;
-  pointer-events: all;
-  transform: translateX(0);
-}
 
 .social-btn {
   display: flex;
@@ -392,11 +387,6 @@ body.light-mode .social-nodes {
   /* ocultar pin (no tiene sentido en móvil) */
   .pin-btn {
     display: none !important;
-  }
-
-  /* social redes más seguras */
-  .social-nodes {
-    left: 100%;
   }
 
   /* main sin margen raro */

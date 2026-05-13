@@ -42,7 +42,7 @@ const team = [
     name: "Felix Dominguez",
     role: "Desarrollador Frontend",
     bio: "Desarrollador Frontend enfocado en interfaces modernas, experiencia de usuario y componentes reutilizables.",
-    linkedin: "https://www.linkedin.com/in//",
+    linkedin: "https://www.linkedin.com/in/felix-dominguez-lopez-331445348",
     github: "https://github.com/fdl0005",
     photo: felixFoto,
   },
