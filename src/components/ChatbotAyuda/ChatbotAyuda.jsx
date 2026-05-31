@@ -2,9 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./ChatbotAyuda.css";
 
-// ─────────────────────────────────────────────
 // RESPUESTAS adaptadas a las secciones de BarrioRed
-// ─────────────────────────────────────────────
+
 const RESPUESTAS = {
   empezar:
     "¡Bienvenido a BarrioRed! 🏘️\n\nEn el menú de la izquierda encontrarás todo:\n\n• 📊 Panel → resumen de tu comunidad\n• 📰 Muro → anuncios y noticias\n• ⚠️ Incidencias → reportar problemas\n• 📁 Documentos → actas y normativas\n• 💬 Chat → hablar con vecinos\n\n¿Sobre cuál quieres saber más?",
@@ -43,9 +42,8 @@ const RESPUESTAS = {
     "Lo siento, no he entendido bien tu pregunta. 😅\n\nPrueba a pulsar uno de los botones de abajo, o pregúntame cosas como:\n• '¿Cómo pongo una incidencia?'\n• '¿Dónde está el chat?'\n• '¿Cómo cambio mi contraseña?'",
 };
 
-// ─────────────────────────────────────────────
 // PALABRAS CLAVE para detectar la intención
-// ─────────────────────────────────────────────
+
 const PALABRAS_CLAVE = {
   saludo:       ["hola", "buenas", "buenos días", "buenas tardes", "hey", "saludos"],
   empezar:      ["empezar", "empiezo", "inicio", "comenzar", "nuevo", "primera vez", "cómo funciona"],
@@ -69,9 +67,7 @@ const BOTONES_RAPIDOS = [
   { codigo: "documentos",  icono: "📁", texto: "Documentos"      },
 ];
 
-// ─────────────────────────────────────────────
-// HELPER: hora actual en formato HH:MM
-// ─────────────────────────────────────────────
+
 function horaActual() {
   const d = new Date();
   const h = String(d.getHours()).padStart(2, "0");
@@ -79,9 +75,8 @@ function horaActual() {
   return `${h}:${m}`;
 }
 
-// ─────────────────────────────────────────────
-// HELPER: busca respuesta por palabras clave
-// ─────────────────────────────────────────────
+// busca respuesta por palabras clave
+
 function buscarRespuesta(texto) {
   const lower = texto.toLowerCase();
   for (const categoria in PALABRAS_CLAVE) {
@@ -95,9 +90,7 @@ function buscarRespuesta(texto) {
   return RESPUESTAS.noEntiendo;
 }
 
-// ─────────────────────────────────────────────
-// COMPONENTE PRINCIPAL
-// ─────────────────────────────────────────────
+
 export default function ChatbotAyuda() {
   const navigate = useNavigate();
 
@@ -117,7 +110,7 @@ export default function ChatbotAyuda() {
     refFinal.current?.scrollIntoView({ behavior: "smooth" });
   }, [mensajes, escribiendo]);
 
-  // ── Abrir el chat ──────────────────────────
+  // Abrir el chat 
   function abrirChat() {
     setAbierto(true);
     setBadgeVisible(false);
@@ -134,12 +127,12 @@ export default function ChatbotAyuda() {
     }
   }
 
-  // ── Cerrar el chat ─────────────────────────
+  // Cerrar el chat 
   function cerrarChat() {
     setAbierto(false);
   }
 
-  // ── Añadir mensaje a la lista ──────────────
+  // Añadir mensaje a la lista
   function agregarMensaje(contenido, tipo) {
     const nuevoMensaje = {
       id:       Date.now() + Math.random(), // id único
@@ -150,7 +143,7 @@ export default function ChatbotAyuda() {
     setMensajes(prev => [...prev, nuevoMensaje]);
   }
 
-  // ── Responder con delay (simula que piensa) ─
+  // ─Responder con delay (simula que piensa) 
   function responderConDelay(respuesta) {
     setEscribiendo(true);
     setTimeout(() => {
@@ -159,7 +152,7 @@ export default function ChatbotAyuda() {
     }, 950);
   }
 
-  // ── Pulsar un botón rápido ─────────────────
+  //  Pulsar un botón rápido
   function pulsarBoton(codigo) {
     // Texto que verá el usuario como su "mensaje"
     const boton = BOTONES_RAPIDOS.find(b => b.codigo === codigo);
@@ -169,7 +162,7 @@ export default function ChatbotAyuda() {
     responderConDelay(RESPUESTAS[codigo] || RESPUESTAS.noEntiendo);
   }
 
-  // ── Enviar mensaje de texto libre ──────────
+  //  Enviar mensaje de texto libre 
   function enviarMensaje() {
     const textoLimpio = texto.trim();
     if (!textoLimpio) return;
@@ -181,17 +174,15 @@ export default function ChatbotAyuda() {
     responderConDelay(respuesta);
   }
 
-  // ── Enter para enviar ──────────────────────
+  //  Enter para enviar 
   function manejarTecla(e) {
     if (e.key === "Enter") enviarMensaje();
   }
 
-  // ─────────────────────────────────────────────
-  // RENDER
-  // ─────────────────────────────────────────────
+
   return (
     <>
-      {/* ── Ventana del chat ── */}
+      {/*  Ventana del chat  */}
       <div className={`cb-contenedor${abierto ? "" : " cb-oculto"}`}>
 
         {/* Cabecera azul */}
