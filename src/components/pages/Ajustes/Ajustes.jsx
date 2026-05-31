@@ -3,7 +3,7 @@ import { supabase } from "../../../lib/supabase"
 import "./ajustes.css"
 
 export default function Ajustes() {
-  // ── Fuente ──────────────────────────────────────────────────────────────
+  //  Fuente 
   const [fontSize, setFontSize] = useState(() => localStorage.getItem("br-fontsize") || "normal")
 
   useEffect(() => {
@@ -14,7 +14,7 @@ export default function Ajustes() {
     localStorage.setItem("br-fontsize", fontSize)
   }, [fontSize])
 
-  // ── Notificaciones ───────────────────────────────────────────────────────
+  //  Notificaciones 
   const [notifChat, setNotifChat]   = useState(() => localStorage.getItem("br-notif-chat")  !== "false")
   const [notifMuro, setNotifMuro]   = useState(() => localStorage.getItem("br-notif-muro")  !== "false")
   const [notifEmail, setNotifEmail] = useState(() => localStorage.getItem("br-notif-email") !== "false")
@@ -24,7 +24,7 @@ export default function Ajustes() {
     localStorage.setItem(key, val)
   }
 
-  // ── Cuenta / Cambiar contraseña ──────────────────────────────────────────
+  //  Cuenta / Cambiar contraseña 
   const [passActual,    setPassActual]    = useState("")
   const [passNueva,     setPassNueva]     = useState("")
   const [passConfirmar, setPassConfirmar] = useState("")
@@ -48,7 +48,7 @@ export default function Ajustes() {
     setTimeout(() => setPassOk(false), 3500)
   }
 
-  // ── Perfil editable ──────────────────────────────────────────────────────
+  // Perfil editable 
   const [perfil,        setPerfil]        = useState({ full_name: "", telefono: "", piso: "" })
   const [perfilOriginal,setPerfilOriginal]= useState({ full_name: "", telefono: "", piso: "" })
   const [perfilLoading, setPerfilLoading] = useState(false)
@@ -94,7 +94,6 @@ export default function Ajustes() {
     setTimeout(() => setPerfilOk(false), 3000)
   }
 
-  // ── Helpers ──────────────────────────────────────────────────────────────
   const Toggle = ({ checked, onChange }) => (
     <button
       type="button"
@@ -115,7 +114,6 @@ export default function Ajustes() {
   return (
     <div className="aj-page">
 
-      {/* ── CABECERA ── */}
       <div className="aj-header">
         <h1 className="aj-title">Ajustes</h1>
         <p className="aj-subtitle">Personaliza tu experiencia en BarrioRed</p>
@@ -123,9 +121,6 @@ export default function Ajustes() {
 
       <div className="aj-grid">
 
-        {/* ══════════════════════════════════════
-            BLOQUE 1 — APARIENCIA (solo fuente)
-        ══════════════════════════════════════ */}
         <section className="aj-card">
           <div className="aj-card-header">
             <span className="aj-card-icon"><i className="fa-solid fa-paintbrush" /></span>
@@ -157,9 +152,6 @@ export default function Ajustes() {
           </div>
         </section>
 
-        {/* ══════════════════════════════════════
-            BLOQUE 2 — NOTIFICACIONES
-        ══════════════════════════════════════ */}
         <section className="aj-card">
           <div className="aj-card-header">
             <span className="aj-card-icon"><i className="fa-solid fa-bell" /></span>
@@ -206,9 +198,6 @@ export default function Ajustes() {
           ))}
         </section>
 
-        {/* ══════════════════════════════════════
-            BLOQUE 3 — EDITAR PERFIL
-        ══════════════════════════════════════ */}
         <section className="aj-card">
           <div className="aj-card-header">
             <span className="aj-card-icon"><i className="fa-regular fa-user" /></span>
@@ -278,9 +267,6 @@ export default function Ajustes() {
           </form>
         </section>
 
-        {/* ══════════════════════════════════════
-            BLOQUE 4 — CAMBIAR CONTRASEÑA
-        ══════════════════════════════════════ */}
         <section className="aj-card">
           <div className="aj-card-header">
             <span className="aj-card-icon"><i className="fa-solid fa-lock" /></span>
