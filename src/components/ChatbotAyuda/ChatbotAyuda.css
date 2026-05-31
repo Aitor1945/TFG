@@ -1,15 +1,4 @@
-/* ==============================================
-   ChatbotAyuda.css
-   Usa las variables CSS de BarrioRed (SideBar.css):
-   --bg-sidebar, --bg-sidebar-hover, --bg-body,
-   --text-primary, --text-secondary, --accent,
-   --transition
-   No rompe nada del diseño existente porque
-   todo está en position: fixed con z-index alto.
-=============================================== */
 
-
-/* ── BOTÓN FLOTANTE ───────────────────────────────── */
 .cb-btn-abrir {
   position: fixed;
   bottom: 30px;
@@ -66,7 +55,6 @@
 }
 
 
-/* ── CONTENEDOR PRINCIPAL DEL CHAT ────────────────── */
 .cb-contenedor {
   position: fixed;
   bottom: 105px;
@@ -99,7 +87,6 @@
 }
 
 
-/* ── CABECERA ──────────────────────────────────────── */
 .cb-cabecera {
   background: var(--accent);
   padding: 12px 14px;
@@ -153,8 +140,6 @@
   background: rgba(255, 255, 255, 0.35);
 }
 
-
-/* ── ZONA DE MENSAJES ─────────────────────────────── */
 .cb-mensajes {
   flex: 1;
   overflow-y: auto;
@@ -216,8 +201,6 @@
   opacity: 0.7;
 }
 
-
-/* ── INDICADOR "ESCRIBIENDO..." ────────────────────── */
 .cb-escribiendo {
   display: flex;
   align-items: center;
@@ -245,7 +228,6 @@
 }
 
 
-/* ── BOTONES RÁPIDOS ──────────────────────────────── */
 .cb-botones {
   padding: 10px 12px;
   border-top: 1px solid rgba(59, 130, 246, 0.1);
@@ -291,7 +273,6 @@
 }
 
 
-/* ── CAMPO DE ESCRITURA ────────────────────────────── */
 .cb-escritura {
   display: flex;
   gap: 7px;
@@ -342,7 +323,6 @@
 .cb-btn-enviar:active { transform: scale(0.97); }
 
 
-/* ── RESPONSIVE: móviles ──────────────────────────── */
 @media (max-width: 768px) {
   /* En móvil el sidebar siempre está colapsado (68px),
      así que no necesitamos ajustar el margen izquierdo */
