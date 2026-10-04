@@ -51,7 +51,11 @@ export default function Incidencias() {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error) return console.error("Error al cargar incidencias:", error);
+    if (error) {
+      console.error("Error al cargar incidencias:", error);
+      setLoadingData(false); // si no, la página se queda cargando para siempre
+      return;
+    }
 
     const idsAutores = data.map((i) => i.autor_id).filter(Boolean);
     const { data: perfiles } = await supabase
@@ -121,8 +125,10 @@ export default function Incidencias() {
   };
 
   useEffect(() => {
-    cargarPerfil();
-    cargarAvisos();
+    const cargarTodo = async () => {
+      await Promise.all([cargarPerfil(), cargarAvisos()]);
+    };
+    cargarTodo();
   }, []);
 
   const avisosFiltrados =

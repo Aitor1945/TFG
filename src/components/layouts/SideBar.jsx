@@ -5,7 +5,6 @@ import "./SideBar.css";
 import { useTheme } from "../hooks/useTheme";
 
 export default function SideBar() {
-  const [redesAbiertas, setRedesAbiertas] = useState(false);
   const [sidebarFijado, setSidebarFijado] = useState(false);
 
   const navigate = useNavigate();
@@ -28,7 +27,6 @@ export default function SideBar() {
 
     document.body.classList.remove("light-mode");
 
-    setRedesAbiertas(false);
     setSidebarFijado(false);
 
     navigate("/login");

@@ -22,21 +22,18 @@ export default function Chat() {
   // sincronizo la ref con el estado cada vez que cambia el vecino
   useEffect(() => {
     refVecinoActivo.current = vecinoSeleccionado;
-
-    // si abro una conversacion pongo los no leidos a 0
-    if (vecinoSeleccionado) {
-      setDatosConversacion((prev) => {
-        if ((prev[vecinoSeleccionado.id]?.noLeidos || 0) === 0) return prev;
-        return {
-          ...prev,
-          [vecinoSeleccionado.id]: {
-            ...prev[vecinoSeleccionado.id],
-            noLeidos: 0,
-          },
-        };
-      });
-    }
   }, [vecinoSeleccionado]);
+
+  // abrir una conversacion: limpio los mensajes anteriores y pongo sus no leidos a 0
+  const seleccionarVecino = (v) => {
+    if (vecinoSeleccionado?.id !== v.id) setListaMensajes([]);
+    setVecinoSeleccionado(v);
+    setPantallaMovil("chat");
+    setDatosConversacion((prev) => ({
+      ...prev,
+      [v.id]: { ...(prev[v.id] || {}), noLeidos: 0 },
+    }));
+  };
 
   // cojo el usuario que esta logueado
   useEffect(() => {
@@ -153,17 +150,6 @@ export default function Chat() {
       supabase.removeChannel(refCanal.current);
       refCanal.current = null;
     }
-
-    setListaMensajes([]);
-
-    // pongo a 0 los no leidos cuando abro la conversacion
-    setDatosConversacion((prev) => ({
-      ...prev,
-      [vecinoSeleccionado.id]: {
-        ...(prev[vecinoSeleccionado.id] || {}),
-        noLeidos: 0,
-      },
-    }));
 
     // marco como leidos en la base de datos
     supabase
@@ -345,10 +331,7 @@ export default function Chat() {
                 className={`bc-user-item${
                   vecinoSeleccionado?.id === v.id ? " activo" : ""
                 }`}
-                onClick={() => {
-                  setVecinoSeleccionado(v);
-                  setPantallaMovil("chat");
-                }}
+                onClick={() => seleccionarVecino(v)}
               >
                 <div className="bc-avatar-wrap">
                   <div className="bc-avatar">

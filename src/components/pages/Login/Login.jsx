@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./login.css";
-import { supabase } from "../../../lib/supabase";
+import { supabase, getRecordarSesion, setRecordarSesion } from "../../../lib/supabase";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../hooks/useTheme";
 
@@ -10,7 +10,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false);
+  const [remember, setRemember] = useState(getRecordarSesion);
   const [submitted, setSubmitted] = useState(false);
   const [forgotMode, setForgotMode] = useState(false);
   const [recoveryEmail, setRecoveryEmail] = useState("");
@@ -37,6 +37,9 @@ export default function Login() {
     setSubmitted(true);
     setLoginError("");
     if (!isEmailValid || !isPasswordValid) return;
+
+    // Decide dónde se guarda la sesión (ver lib/supabase.js)
+    setRecordarSesion(remember);
 
     // La contraseña no se recorta: los espacios forman parte de ella
     const { error } = await supabase.auth.signInWithPassword({

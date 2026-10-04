@@ -283,7 +283,7 @@ export default function MiPerfil() {
     {
       valor: stats.incidencias,
       sufijo: "",
-      label: "Incidencias gestionadas",
+      label: "Incidencias reportadas",
       clase: "accent",
     },
   ];
