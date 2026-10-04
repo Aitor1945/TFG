@@ -83,7 +83,7 @@ export default function Login() {
 
     const { error } = await supabase.auth.resetPasswordForEmail(
       recoveryEmail.trim(),
-      { redirectTo: "http://localhost:5173/reset-password" }
+      { redirectTo: `${window.location.origin}/reset-password` }
     );
 
     if (error) {
