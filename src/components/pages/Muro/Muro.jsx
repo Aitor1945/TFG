@@ -41,7 +41,7 @@ const Tablon = () => {
       return console.error("Error al obtener anuncios:", errorAnuncios);
     if (!anunciosData) return;
 
-    const autorIds = anunciosData.map((a) => a.autor_id);
+    const autorIds = [...new Set(anunciosData.map((a) => a.autor_id).filter(Boolean))];
     const { data: perfiles } = await supabase
       .from("profiles")
       .select("id, role, full_name")
@@ -50,7 +50,7 @@ const Tablon = () => {
     const anunciosConNombre = anunciosData.map((a) => ({
       ...a,
       autor_nombre:
-        perfiles.find((p) => p.id === a.autor_id)?.full_name || "Desconocido",
+        perfiles?.find((p) => p.id === a.autor_id)?.full_name || "Desconocido",
     }));
 
     setAnuncios(anunciosConNombre);
@@ -64,8 +64,8 @@ const Tablon = () => {
 
     const { error } = await supabase.from("muro_publicaciones").insert([
       {
-        titulo,
-        contenido,
+        titulo: titulo.trim(),
+        contenido: contenido.trim(),
         autor_id: userData.user.id,
         tipo: "anuncio",
         comunidad_id: comunidadId,
@@ -78,6 +78,7 @@ const Tablon = () => {
       fetchAnuncios();
     } else {
       console.error("Error al crear anuncio:", error);
+      alert("No se pudo publicar el anuncio. Inténtalo de nuevo.");
     }
   };
 
@@ -131,7 +132,7 @@ const Tablon = () => {
       <div className="tablon-grid">
         {anuncios.map((anuncio) => (
           <div key={anuncio.id} className="tablon-card">
-            <h5>{anuncio.titulo}</h5>
+            {anuncio.titulo && <h5>{anuncio.titulo}</h5>}
             <p>{anuncio.contenido}</p>
             <div className="tablon-card-header">
               <span className="tablon-autor">👤 {anuncio.autor_nombre}</span>

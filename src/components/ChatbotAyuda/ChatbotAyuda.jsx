@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import "./ChatbotAyuda.css";
 
 // RESPUESTAS adaptadas a las secciones de BarrioRed
@@ -77,9 +76,16 @@ function horaActual() {
 
 // busca respuesta por palabras clave
 
+// Primero los temas concretos y al final saludos/agradecimientos, para que
+// "hola, ¿cómo cambio la contraseña?" responda sobre la contraseña
+const ORDEN_BUSQUEDA = [
+  "contrasena", "cerrarSesion", "incidencias", "muro", "documentos",
+  "perfil", "chat", "empezar", "gracias", "saludo",
+];
+
 function buscarRespuesta(texto) {
   const lower = texto.toLowerCase();
-  for (const categoria in PALABRAS_CLAVE) {
+  for (const categoria of ORDEN_BUSQUEDA) {
     const palabras = PALABRAS_CLAVE[categoria];
     for (const palabra of palabras) {
       if (lower.includes(palabra)) {
@@ -92,7 +98,6 @@ function buscarRespuesta(texto) {
 
 
 export default function ChatbotAyuda() {
-  const navigate = useNavigate();
 
   // Estado: abierto/cerrado, lista de mensajes, texto escrito, badge visible
   const [abierto,       setAbierto]       = useState(false);
@@ -104,6 +109,8 @@ export default function ChatbotAyuda() {
 
   // Ref al final de la zona de mensajes para hacer scroll automático
   const refFinal = useRef(null);
+  // contador para dar un id único a cada mensaje
+  const refContador = useRef(0);
 
   // Cuando cambia la lista de mensajes, hacemos scroll al último
   useEffect(() => {
@@ -135,7 +142,7 @@ export default function ChatbotAyuda() {
   // Añadir mensaje a la lista
   function agregarMensaje(contenido, tipo) {
     const nuevoMensaje = {
-      id:       Date.now() + Math.random(), // id único
+      id:       ++refContador.current,      // id único
       contenido,
       tipo,                                 // "asistente" | "usuario"
       hora:     horaActual(),

@@ -1,17 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./login.css";
-import { supabase } from "../../../lib/supabase";
+import { supabase, getRecordarSesion, setRecordarSesion } from "../../../lib/supabase";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../hooks/useTheme";
 
 export default function Login() {
   const navigate = useNavigate();
   const [theme, setTheme] = useTheme();
-  const modoOscuro = theme === "dark";
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false);
+  const [remember, setRemember] = useState(getRecordarSesion);
   const [submitted, setSubmitted] = useState(false);
   const [forgotMode, setForgotMode] = useState(false);
   const [recoveryEmail, setRecoveryEmail] = useState("");
@@ -39,21 +38,19 @@ export default function Login() {
     setLoginError("");
     if (!isEmailValid || !isPasswordValid) return;
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    // Decide dónde se guarda la sesión (ver lib/supabase.js)
+    setRecordarSesion(remember);
+
+    // La contraseña no se recorta: los espacios forman parte de ella
+    const { error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
-      password: password.trim(),
+      password,
     });
 
     if (error) {
       setLoginError("Correo o contraseña incorrectos.");
       return;
     }
-
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", data.user.id)
-      .single();
 
     //Se redirecciona a dashboard si el login es exitoso
     navigate("/dashboard");
@@ -83,7 +80,7 @@ export default function Login() {
 
     const { error } = await supabase.auth.resetPasswordForEmail(
       recoveryEmail.trim(),
-      { redirectTo: "http://localhost:5173/reset-password" }
+      { redirectTo: `${window.location.origin}/reset-password` }
     );
 
     if (error) {

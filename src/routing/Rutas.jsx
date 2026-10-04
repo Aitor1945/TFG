@@ -22,8 +22,8 @@ import MiPerfil from "../components/pages/MiPerfil/MiPerfil";
 import ResetPassword from "../components/pages/ResetPassword/ResetPassword";
 import LandingPage from "../components/pages/LandingPage/LandingPage";
 
-//Proteccion de rutas
-const Private = () => {
+// Sesión actual que se actualiza sola si se cierra o caduca (también en otra pestaña)
+const useSesion = () => {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,7 +32,18 @@ const Private = () => {
       setSession(data.session);
       setLoading(false);
     });
+    const { data: listener } = supabase.auth.onAuthStateChange((_evento, nueva) => {
+      setSession(nueva);
+    });
+    return () => listener.subscription.unsubscribe();
   }, []);
+
+  return { session, loading };
+};
+
+//Proteccion de rutas
+const Private = () => {
+  const { session, loading } = useSesion();
 
   if (loading) return null;
 
@@ -41,15 +52,7 @@ const Private = () => {
 
 //rutas publicas, impide volver a login si estas logeado
 const PublicRoute = () => {
-  const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setLoading(false);
-    });
-  }, []);
+  const { session, loading } = useSesion();
 
   if (loading) return null;
 

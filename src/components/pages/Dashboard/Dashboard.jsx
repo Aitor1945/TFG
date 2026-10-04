@@ -109,13 +109,13 @@ function getDays(year, month) {
 
 function WeatherCard() {
   const [weather, setWeather] = useState(null);
-  const [status, setStatus] = useState("loading");
+  // si el navegador no tiene geolocalizacion, empezamos directamente en error
+  const [status, setStatus] = useState(() =>
+    navigator.geolocation ? "loading" : "error"
+  );
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      setStatus("error");
-      return;
-    }
+    if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
       async ({ coords }) => {
         try {
@@ -205,7 +205,8 @@ export default function Dashboard() {
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth());
   const [selected, setSel] = useState(now.getDate());
-  const [events, setEvents] = useState({});
+  // eventos del calendario por dia (pendiente de conectar con reservas)
+  const [events] = useState({});
 
   const [currentUser, setCurrentUser] = useState(CURRENT_USER_FALLBACK);
   const [incidencias, setIncidencias] = useState([]);

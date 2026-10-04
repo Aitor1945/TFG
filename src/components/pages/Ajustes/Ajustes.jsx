@@ -2,6 +2,24 @@ import React, { useState, useEffect } from "react"
 import { supabase } from "../../../lib/supabase"
 import "./ajustes.css"
 
+// Fuera del componente para que React no los recree en cada render
+const Toggle = ({ checked, onChange }) => (
+  <button
+    type="button"
+    className={`aj-toggle${checked ? " aj-toggle--on" : ""}`}
+    onClick={() => onChange(!checked)}
+    aria-pressed={checked}
+  >
+    <span className="aj-toggle-knob" />
+  </button>
+)
+
+const EyeBtn = ({ show, onClick }) => (
+  <button type="button" className="aj-eye" onClick={onClick} tabIndex={-1}>
+    <i className={`fa-regular ${show ? "fa-eye-slash" : "fa-eye"}`} />
+  </button>
+)
+
 export default function Ajustes() {
   //  Fuente 
   const [fontSize, setFontSize] = useState(() => localStorage.getItem("br-fontsize") || "normal")
@@ -37,9 +55,23 @@ export default function Ajustes() {
     e.preventDefault()
     setPassError("")
     setPassOk(false)
+    if (!passActual)                      return setPassError("Escribe tu contraseña actual.")
     if (passNueva.length < 6)             return setPassError("La contraseña debe tener al menos 6 caracteres.")
     if (passNueva !== passConfirmar)      return setPassError("Las contraseñas no coinciden.")
+    if (passNueva === passActual)         return setPassError("La nueva contraseña debe ser distinta de la actual.")
     setPassLoading(true)
+
+    // Comprobamos la contraseña actual volviendo a iniciar sesión con ella
+    const { data: { user } } = await supabase.auth.getUser()
+    const { error: errorActual } = await supabase.auth.signInWithPassword({
+      email: user?.email ?? "",
+      password: passActual,
+    })
+    if (errorActual) {
+      setPassLoading(false)
+      return setPassError("La contraseña actual no es correcta.")
+    }
+
     const { error } = await supabase.auth.updateUser({ password: passNueva })
     setPassLoading(false)
     if (error) return setPassError("Error al actualizar: " + error.message)
@@ -93,23 +125,6 @@ export default function Ajustes() {
     setPerfilOk(true)
     setTimeout(() => setPerfilOk(false), 3000)
   }
-
-  const Toggle = ({ checked, onChange }) => (
-    <button
-      type="button"
-      className={`aj-toggle${checked ? " aj-toggle--on" : ""}`}
-      onClick={() => onChange(!checked)}
-      aria-pressed={checked}
-    >
-      <span className="aj-toggle-knob" />
-    </button>
-  )
-
-  const EyeBtn = ({ show, onClick }) => (
-    <button type="button" className="aj-eye" onClick={onClick} tabIndex={-1}>
-      <i className={`fa-regular ${show ? "fa-eye-slash" : "fa-eye"}`} />
-    </button>
-  )
 
   return (
     <div className="aj-page">
@@ -280,6 +295,22 @@ export default function Ajustes() {
             <div className="aj-form-grid aj-form-grid--col1">
 
               <div className="aj-field">
+                <label className="aj-label" htmlFor="aj-pactual">Contraseña actual</label>
+                <div className="aj-input-wrap">
+                  <input
+                    id="aj-pactual"
+                    className="aj-input"
+                    type={showPass.actual ? "text" : "password"}
+                    placeholder="Tu contraseña de ahora"
+                    autoComplete="current-password"
+                    value={passActual}
+                    onChange={e => setPassActual(e.target.value)}
+                  />
+                  <EyeBtn show={showPass.actual} onClick={() => setShowPass(p => ({ ...p, actual: !p.actual }))} />
+                </div>
+              </div>
+
+              <div className="aj-field">
                 <label className="aj-label" htmlFor="aj-pnueva">Nueva contraseña</label>
                 <div className="aj-input-wrap">
                   <input
@@ -324,7 +355,7 @@ export default function Ajustes() {
             <button
               type="submit"
               className="aj-btn aj-btn--primary"
-              disabled={passLoading || !passNueva || !passConfirmar}
+              disabled={passLoading || !passActual || !passNueva || !passConfirmar}
             >
               {passLoading
                 ? <><i className="fa-solid fa-spinner fa-spin" /> Guardando…</>

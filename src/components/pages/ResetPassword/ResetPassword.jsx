@@ -52,8 +52,9 @@ export default function ResetPassword() {
 
     setCargando(true);
 
+    // Sin trim: se guarda exactamente lo que el usuario escribe (igual que en Ajustes)
     const { error: err } = await supabase.auth.updateUser({
-      password: password.trim()
+      password
     });
 
     setCargando(false);
