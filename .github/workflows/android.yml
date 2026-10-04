@@ -1,0 +1,48 @@
+# Compila la app Android y deja el APK para descargar en la pestaña "Actions" de GitHub.
+name: App Android
+
+on:
+  push:
+    branches: [main]
+    paths: ["app-android/**", ".github/workflows/android.yml"]
+  pull_request:
+    paths: ["app-android/**", ".github/workflows/android.yml"]
+  workflow_dispatch: # Permite lanzarlo a mano desde la pestaña Actions
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app-android
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      # Las claves salen de los secrets del repo (Settings > Secrets and variables > Actions).
+      # Sin ellas la app compila igual, pero no podrá conectarse a Supabase.
+      - name: Crear local.properties
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "::warning::Faltan los secrets SUPABASE_URL y SUPABASE_ANON_KEY: el APK no podrá conectarse."
+          fi
+          printf 'SUPABASE_URL=%s\nSUPABASE_ANON_KEY=%s\n' "$SUPABASE_URL" "$SUPABASE_ANON_KEY" > local.properties
+
+      - name: Compilar APK
+        run: ./gradlew assembleDebug --stacktrace
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BarrioRed-apk
+          path: app-android/app/build/outputs/apk/debug/*.apk
+          retention-days: 14

@@ -15,6 +15,21 @@ aparece en la web y al revés.
 
 > Si Android Studio te propone actualizar AGP o alguna librería, puedes aceptar sin problema.
 
+## Descargar el APK sin Android Studio
+
+Cada cambio en `app-android/` lanza el workflow **App Android** (`.github/workflows/android.yml`), que compila la app.
+En GitHub: pestaña **Actions** → la última ejecución de *App Android* → abajo, en *Artifacts*, descarga **BarrioRed-apk**
+(un .zip con el `.apk`). Pásalo al móvil e instálalo (Android pedirá permitir "orígenes desconocidos").
+
+Para que el APK se conecte a Supabase, añade una vez en el repo `Settings > Secrets and variables > Actions`
+los secrets `SUPABASE_URL` y `SUPABASE_ANON_KEY`.
+
+## Probar en varios tamaños de móvil
+
+En Android Studio, en **Device Manager** crea varios dispositivos virtuales (por ejemplo, un Pixel pequeño,
+uno grande y una tablet) y elige en cuál ejecutar con el desplegable que hay junto al botón ▶.
+También existe el dispositivo *Resizable*, que permite cambiar entre móvil, plegable y tablet sin reiniciar.
+
 ## Qué incluye
 
 | Pantalla | Equivale en la web a | Qué hace |
