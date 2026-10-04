@@ -1,0 +1,5 @@
+# Copia este archivo como "local.properties" (NO se sube a git) y rellena tus claves.
+# Son las mismas que VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY de la web.
+# Android Studio añadirá aquí también la ruta sdk.dir automáticamente.
+SUPABASE_URL=https://TU-PROYECTO.supabase.co
+SUPABASE_ANON_KEY=tu-anon-key
