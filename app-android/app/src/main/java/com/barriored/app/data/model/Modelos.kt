@@ -103,5 +103,13 @@ data class NuevoMensaje(
     val content: String,
 )
 
+@Serializable
+data class Actividad(
+    val tipo: String,
+    val titulo: String,
+    val descripcion: String? = null,
+    @SerialName("created_at") val creadoEn: String? = null,
+)
+
 /** Publicación o incidencia junto al nombre de su autor, ya lista para pintar. */
 data class ConAutor<T>(val item: T, val autor: String)
