@@ -89,7 +89,10 @@ class LoginViewModel : ViewModel() {
             _estado.update { EstadoLogin(cargando = true) }
             try {
                 auth.iniciarSesion(correo.trim(), contrasena)
-                // No hace falta navegar: RaizApp cambia sola al detectar la sesión
+                // No hace falta navegar: RaizApp cambia sola al detectar la sesión.
+                // Pero este ViewModel sigue vivo mientras la app esté abierta: si no se
+                // reinicia el estado, al cerrar sesión el botón vuelve bloqueado "cargando".
+                _estado.value = EstadoLogin()
             } catch (e: Exception) {
                 _estado.update { EstadoLogin(error = e.mensajeUsuario()) }
             }
