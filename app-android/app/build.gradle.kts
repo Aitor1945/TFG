@@ -1,4 +1,5 @@
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
@@ -44,8 +45,11 @@ android {
     }
 }
 
+// Genera bytecode Java 17 con el JDK que traiga Android Studio (sin exigir un JDK 17 instalado)
 kotlin {
-    jvmToolchain(17)
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+    }
 }
 
 dependencies {
