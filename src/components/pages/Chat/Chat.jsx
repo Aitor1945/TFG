@@ -53,7 +53,12 @@ export default function Chat() {
       .from("profiles")
       .select("id, full_name, username, email, role")
       .neq("id", usuarioActual.id)
-      .then(({ data }) => setListaVecinos(data || []));
+      .then(({ data, error }) => {
+        if (error) console.error("Error al cargar vecinos:", error);
+        setListaVecinos(data || []);
+        // sin vecinos no hay mensajes que cargar: quito el spinner aqui
+        if (!data || data.length === 0) setLoadingData(false);
+      });
   }, [usuarioActual]);
 
   // cargo los mensajes de todas las conversaciones para saber cuales no se han leido
@@ -75,8 +80,12 @@ export default function Chat() {
           .join(",")
       )
       .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        if (!data) return;
+      .then(({ data, error }) => {
+        if (error) console.error("Error al cargar mensajes:", error);
+        if (!data) {
+          setLoadingData(false);
+          return;
+        }
         const info = {};
         data.forEach((msg) => {
           // saco quien es el otro en este mensaje
@@ -200,6 +209,15 @@ export default function Chat() {
             return [...prev, msg];
           });
 
+          // si me escribe con la conversacion abierta, lo marco como leido en la bd
+          if (msg.sender_id === vecinoSeleccionado.id) {
+            supabase
+              .from("messages")
+              .update({ read: true })
+              .eq("id", msg.id)
+              .then(() => {});
+          }
+
           // actualizo el timestamp del ultimo mensaje
           const otroId =
             msg.sender_id === usuarioActual.id
@@ -238,7 +256,7 @@ export default function Chat() {
     const contenido = mensajeEscrito.trim();
     setMensajeEscrito("");
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("messages")
       .insert({
         sender_id: usuarioActual.id,
@@ -247,6 +265,19 @@ export default function Chat() {
       })
       .select()
       .single();
+
+    if (error) {
+      console.error("Error al enviar mensaje:", error);
+      // devuelvo el texto al input para no perderlo
+      setMensajeEscrito(contenido);
+      alert("No se pudo enviar el mensaje. Inténtalo de nuevo.");
+      return;
+    }
+
+    // lo pinto ya, sin esperar al tiempo real (si llega despues, no se duplica)
+    setListaMensajes((prev) =>
+      prev.some((m) => m.id === data.id) ? prev : [...prev, data]
+    );
 
     // actualizo el timestamp del ultimo mensaje que he mandado yo
     if (data) {

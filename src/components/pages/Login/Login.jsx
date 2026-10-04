@@ -7,7 +7,6 @@ import { useTheme } from "../../hooks/useTheme";
 export default function Login() {
   const navigate = useNavigate();
   const [theme, setTheme] = useTheme();
-  const modoOscuro = theme === "dark";
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,21 +38,16 @@ export default function Login() {
     setLoginError("");
     if (!isEmailValid || !isPasswordValid) return;
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    // La contraseña no se recorta: los espacios forman parte de ella
+    const { error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
-      password: password.trim(),
+      password,
     });
 
     if (error) {
       setLoginError("Correo o contraseña incorrectos.");
       return;
     }
-
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", data.user.id)
-      .single();
 
     //Se redirecciona a dashboard si el login es exitoso
     navigate("/dashboard");

@@ -2,6 +2,24 @@ import React, { useState, useEffect } from "react"
 import { supabase } from "../../../lib/supabase"
 import "./ajustes.css"
 
+// Fuera del componente para que React no los recree en cada render
+const Toggle = ({ checked, onChange }) => (
+  <button
+    type="button"
+    className={`aj-toggle${checked ? " aj-toggle--on" : ""}`}
+    onClick={() => onChange(!checked)}
+    aria-pressed={checked}
+  >
+    <span className="aj-toggle-knob" />
+  </button>
+)
+
+const EyeBtn = ({ show, onClick }) => (
+  <button type="button" className="aj-eye" onClick={onClick} tabIndex={-1}>
+    <i className={`fa-regular ${show ? "fa-eye-slash" : "fa-eye"}`} />
+  </button>
+)
+
 export default function Ajustes() {
   //  Fuente 
   const [fontSize, setFontSize] = useState(() => localStorage.getItem("br-fontsize") || "normal")
@@ -93,23 +111,6 @@ export default function Ajustes() {
     setPerfilOk(true)
     setTimeout(() => setPerfilOk(false), 3000)
   }
-
-  const Toggle = ({ checked, onChange }) => (
-    <button
-      type="button"
-      className={`aj-toggle${checked ? " aj-toggle--on" : ""}`}
-      onClick={() => onChange(!checked)}
-      aria-pressed={checked}
-    >
-      <span className="aj-toggle-knob" />
-    </button>
-  )
-
-  const EyeBtn = ({ show, onClick }) => (
-    <button type="button" className="aj-eye" onClick={onClick} tabIndex={-1}>
-      <i className={`fa-regular ${show ? "fa-eye-slash" : "fa-eye"}`} />
-    </button>
-  )
 
   return (
     <div className="aj-page">

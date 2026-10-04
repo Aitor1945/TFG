@@ -77,9 +77,16 @@ function horaActual() {
 
 // busca respuesta por palabras clave
 
+// Primero los temas concretos y al final saludos/agradecimientos, para que
+// "hola, ¿cómo cambio la contraseña?" responda sobre la contraseña
+const ORDEN_BUSQUEDA = [
+  "contrasena", "cerrarSesion", "incidencias", "muro", "documentos",
+  "perfil", "chat", "empezar", "gracias", "saludo",
+];
+
 function buscarRespuesta(texto) {
   const lower = texto.toLowerCase();
-  for (const categoria in PALABRAS_CLAVE) {
+  for (const categoria of ORDEN_BUSQUEDA) {
     const palabras = PALABRAS_CLAVE[categoria];
     for (const palabra of palabras) {
       if (lower.includes(palabra)) {
