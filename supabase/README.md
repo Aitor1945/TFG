@@ -11,8 +11,14 @@
 | `messages` | Mensajes del chat (con tiempo real activado) |
 | `actividad_usuario` | "Actividad reciente" de Mi perfil |
 
-Roles posibles en `profiles.role`: `vecino`, `presidente`, `admin`, `ayuntamiento`.
-Los tres últimos pueden publicar en el Muro y gestionar incidencias.
+Roles posibles en `profiles.role`: `vecino`, `presidente`, `admin`, `ayuntamiento` y `conserje`.
+Presidente, admin y ayuntamiento publican en el Muro y gestionan incidencias; el conserje puede borrar incidencias.
+
+Triggers (los mismos que en el anexo de la memoria): `create_profile` (crea el perfil al dar de alta un usuario),
+`trigger_actualizar_vecinos` (mantiene `comunidades.num_vecinos`) y `trg_actividad_incidencia` (rellena la actividad reciente).
+
+> Respecto al script original de la memoria, la seguridad es **más estricta**: antes cualquiera podía leer todos
+> los perfiles y todas las comunidades; ahora cada usuario solo ve los de su comunidad.
 
 ## Seguridad incluida (RLS)
 

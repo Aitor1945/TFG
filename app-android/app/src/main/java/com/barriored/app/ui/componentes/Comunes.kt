@@ -17,7 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import java.time.LocalDateTime
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -51,8 +53,10 @@ fun TextoVacio(texto: String) {
 private val formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 private val formatoHora = DateTimeFormatter.ofPattern("HH:mm")
 
+// Acepta "timestamptz" (con zona, p. ej. +00:00) y "timestamp" (sin zona, se asume UTC)
 private fun local(iso: String?) = iso?.let {
     runCatching { OffsetDateTime.parse(it).atZoneSameInstant(ZoneId.systemDefault()) }.getOrNull()
+        ?: runCatching { LocalDateTime.parse(it).atZone(ZoneOffset.UTC).withZoneSameInstant(ZoneId.systemDefault()) }.getOrNull()
 }
 
 /** "2025-03-01T10:20:30+00:00" -> "01/03/2025" */

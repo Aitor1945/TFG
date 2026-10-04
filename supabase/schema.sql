@@ -1,9 +1,9 @@
 -- =====================================================================
 --  BarrioRed · Esquema completo de la base de datos (Supabase)
 -- =====================================================================
---  Reconstruido a partir de las consultas de la web (src/) y de la app
---  Android (app-android/). Crea las tablas, la seguridad (RLS), los
---  triggers y deja el chat preparado para tiempo real.
+--  Basado en el script del anexo de la memoria del TFG y ajustado a las
+--  consultas de la web (src/) y de la app Android (app-android/). Crea las
+--  tablas, la seguridad (RLS), los triggers y el chat en tiempo real.
 --
 --  Cómo usarlo en un proyecto NUEVO de Supabase:
 --    1. supabase.com > tu proyecto > SQL Editor > New query
@@ -22,26 +22,26 @@
 create table if not exists public.comunidades (
     id                 uuid primary key default gen_random_uuid(),
     nombre             text not null,
-    tipo               text,                 -- p. ej. "Comunidad de vecinos", "Urbanización"
+    tipo               text not null default 'Comunidad de vecinos',
     ciudad             text,
-    num_vecinos        integer,
-    num_bloques        integer,
-    num_zonas_comunes  integer,
-    drive_url          text,                 -- carpeta de Google Drive (página Documentos)
+    num_vecinos        integer default 0,    -- lo mantiene el trigger actualizar_num_vecinos
+    num_bloques        integer default 0,
+    num_zonas_comunes  integer default 0,
+    drive_url          text default 'https://drive.google.com/drive/folders',  -- página Documentos
     created_at         timestamptz not null default now()
 );
 
 -- Perfil de cada usuario (1 a 1 con auth.users)
 create table if not exists public.profiles (
     id            uuid primary key references auth.users (id) on delete cascade,
-    email         text,
+    email         text not null,
     username      text,
     full_name     text,
     avatar_url    text,
     telefono      text,
     piso          text,
     role          text not null default 'vecino'
-                  check (role in ('vecino', 'presidente', 'admin', 'ayuntamiento')),
+                  check (role in ('vecino', 'presidente', 'admin', 'ayuntamiento', 'conserje')),
     comunidad_id  uuid references public.comunidades (id) on delete set null,
     created_at    timestamptz not null default now()
 );
@@ -49,10 +49,10 @@ create table if not exists public.profiles (
 -- Anuncios del Muro (los publican presidente / admin / ayuntamiento)
 create table if not exists public.muro_publicaciones (
     id            uuid primary key default gen_random_uuid(),
-    titulo        text not null,
+    titulo        text,
     contenido     text not null,
-    tipo          text not null default 'anuncio',
-    autor_id      uuid references public.profiles (id) on delete set null,
+    tipo          text not null default 'texto' check (tipo in ('texto', 'anuncio')),
+    autor_id      uuid not null references public.profiles (id) on delete cascade,
     comunidad_id  uuid not null references public.comunidades (id) on delete cascade,
     created_at    timestamptz not null default now()
 );
@@ -64,7 +64,8 @@ create table if not exists public.incidencias (
     descripcion   text,
     estado        text not null default 'pendiente'
                   check (estado in ('pendiente', 'en_proceso', 'resuelta')),
-    autor_id      uuid references public.profiles (id) on delete set null,
+    fecha         date default current_date,
+    autor_id      uuid not null references public.profiles (id) on delete cascade,
     comunidad_id  uuid not null references public.comunidades (id) on delete cascade,
     created_at    timestamptz not null default now()
 );
@@ -83,7 +84,7 @@ create table if not exists public.messages (
 create table if not exists public.actividad_usuario (
     id           uuid primary key default gen_random_uuid(),
     user_id      uuid not null references public.profiles (id) on delete cascade,
-    tipo         text not null check (tipo in ('reserva', 'incidencia', 'documento', 'chat')),
+    tipo         text not null,               -- 'incidencia', 'reserva', 'documento', 'chat'
     titulo       text not null,
     descripcion  text,
     created_at   timestamptz not null default now()
@@ -196,7 +197,7 @@ create policy "incidencias: vecinos crean" on public.incidencias
     for insert to authenticated
     with check (autor_id = auth.uid() and comunidad_id = public.mi_comunidad());
 
--- incidencias: cambiar estado y borrar solo los gestores
+-- incidencias: cambiar estado solo los gestores (borrar, también el conserje)
 drop policy if exists "incidencias: gestores editan" on public.incidencias;
 create policy "incidencias: gestores editan" on public.incidencias
     for update to authenticated
@@ -206,7 +207,10 @@ create policy "incidencias: gestores editan" on public.incidencias
 drop policy if exists "incidencias: gestores borran" on public.incidencias;
 create policy "incidencias: gestores borran" on public.incidencias
     for delete to authenticated
-    using (public.es_gestor() and comunidad_id = public.mi_comunidad());
+    using (comunidad_id = public.mi_comunidad()
+           and (public.es_gestor()
+                or exists (select 1 from public.profiles
+                            where id = auth.uid() and role = 'conserje')));
 
 -- messages: ver solo mis conversaciones
 drop policy if exists "messages: ver los mios" on public.messages;
@@ -250,10 +254,10 @@ create policy "actividad: crear la mia" on public.actividad_usuario
 -- 4. TRIGGERS
 -- ---------------------------------------------------------------------
 
--- Al crear un usuario en Authentication se crea su perfil automáticamente.
+-- handle_new_user: al crear un usuario en Authentication se crea su perfil.
 -- Comunidad: la indicada en los metadatos (comunidad_id) o, si no, la primera
 -- comunidad que exista (cómodo cuando solo hay una).
-create or replace function public.crear_perfil_nuevo_usuario()
+create or replace function public.handle_new_user()
 returns trigger
 language plpgsql security definer
 set search_path = public
@@ -276,30 +280,59 @@ begin
 end;
 $$;
 
-drop trigger if exists on_auth_user_created on auth.users;
-create trigger on_auth_user_created
+drop trigger if exists create_profile on auth.users;
+create trigger create_profile
     after insert on auth.users
-    for each row execute function public.crear_perfil_nuevo_usuario();
+    for each row execute function public.handle_new_user();
 
--- Registrar actividad cuando alguien crea una incidencia
-create or replace function public.registrar_actividad_incidencia()
+-- actualizar_num_vecinos: recalcula comunidades.num_vecinos al añadir un
+-- perfil o cambiarlo de comunidad.
+create or replace function public.actualizar_num_vecinos()
 returns trigger
 language plpgsql security definer
 set search_path = public
 as $$
 begin
-    if new.autor_id is not null then
-        insert into public.actividad_usuario (user_id, tipo, titulo, descripcion)
-        values (new.autor_id, 'incidencia', 'Nueva incidencia', new.titulo);
+    if new.comunidad_id is not null then
+        update public.comunidades
+           set num_vecinos = (select count(*) from public.profiles where comunidad_id = new.comunidad_id)
+         where id = new.comunidad_id;
+    end if;
+    if tg_op = 'UPDATE' and old.comunidad_id is distinct from new.comunidad_id
+       and old.comunidad_id is not null then
+        update public.comunidades
+           set num_vecinos = (select count(*) from public.profiles where comunidad_id = old.comunidad_id)
+         where id = old.comunidad_id;
     end if;
     return new;
 end;
 $$;
 
-drop trigger if exists on_incidencia_creada on public.incidencias;
-create trigger on_incidencia_creada
+drop trigger if exists trigger_actualizar_vecinos on public.profiles;
+create trigger trigger_actualizar_vecinos
+    after insert or update of comunidad_id on public.profiles
+    for each row execute function public.actualizar_num_vecinos();
+
+-- registrar_actividad: apunta en actividad_usuario lo que hace cada vecino.
+-- (Preparada para reservas y documentos cuando existan esas tablas.)
+create or replace function public.registrar_actividad()
+returns trigger
+language plpgsql security definer
+set search_path = public
+as $$
+begin
+    if tg_table_name = 'incidencias' then
+        insert into public.actividad_usuario (user_id, tipo, titulo, descripcion)
+        values (new.autor_id, 'incidencia', 'Incidencia reportada', new.titulo);
+    end if;
+    return new;
+end;
+$$;
+
+drop trigger if exists trg_actividad_incidencia on public.incidencias;
+create trigger trg_actividad_incidencia
     after insert on public.incidencias
-    for each row execute function public.registrar_actividad_incidencia();
+    for each row execute function public.registrar_actividad();
 
 
 -- ---------------------------------------------------------------------

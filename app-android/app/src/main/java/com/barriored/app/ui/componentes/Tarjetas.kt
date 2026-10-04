@@ -30,8 +30,10 @@ import com.barriored.app.ui.theme.Verde
 fun TarjetaPublicacion(p: ConAutor<Publicacion>, resumida: Boolean = false) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp)) {
-            Text(p.item.titulo, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-            Spacer(Modifier.height(4.dp))
+            p.item.titulo?.takeIf { it.isNotBlank() }?.let {
+                Text(it, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                Spacer(Modifier.height(4.dp))
+            }
             Text(
                 p.item.contenido,
                 maxLines = if (resumida) 2 else Int.MAX_VALUE,

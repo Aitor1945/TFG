@@ -41,7 +41,7 @@ data class Comunidad(
 @Serializable
 data class Publicacion(
     val id: String,
-    val titulo: String,
+    val titulo: String? = null, // opcional en la base de datos (tipo "texto")
     val contenido: String,
     @SerialName("autor_id") val autorId: String? = null,
     val tipo: String? = null,
