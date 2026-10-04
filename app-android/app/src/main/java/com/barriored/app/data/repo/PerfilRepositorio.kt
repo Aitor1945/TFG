@@ -1,12 +1,14 @@
 package com.barriored.app.data.repo
 
 import com.barriored.app.data.SupabaseCliente
+import com.barriored.app.data.model.Actividad
 import com.barriored.app.data.model.Comunidad
 import com.barriored.app.data.model.Perfil
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.query.Count
+import io.github.jan.supabase.postgrest.query.Order
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -51,6 +53,14 @@ class PerfilRepositorio {
             head = true
             filter { eq("autor_id", idActual()) }
         }.countOrNull() ?: 0
+
+    /** "Actividad reciente" de Mi perfil (la rellena un trigger de la base de datos). */
+    suspend fun actividadReciente(): List<Actividad> =
+        db.from("actividad_usuario").select(Columns.list("tipo", "titulo", "descripcion", "created_at")) {
+            filter { eq("user_id", idActual()) }
+            order("created_at", Order.DESCENDING)
+            limit(4)
+        }.decodeList()
 
     suspend fun actualizarDatos(nombre: String, telefono: String, piso: String) {
         db.from("profiles").update(DatosPerfil(nombre, telefono, piso)) {

@@ -26,8 +26,22 @@ class AuthRepositorio {
         auth.resetPasswordForEmail(correo)
     }
 
-    suspend fun cambiarContrasena(nueva: String) {
+    /**
+     * Igual que Ajustes en la web: primero comprueba la contraseña actual
+     * (volviendo a iniciar sesión con ella) y después guarda la nueva.
+     * Devuelve false si la actual no es correcta.
+     */
+    suspend fun cambiarContrasena(actual: String, nueva: String): Boolean {
+        val correo = auth.currentUserOrNull()?.email ?: return false
+        val actualCorrecta = runCatching {
+            auth.signInWith(Email) {
+                email = correo
+                password = actual
+            }
+        }.isSuccess
+        if (!actualCorrecta) return false
         auth.updateUser { password = nueva }
+        return true
     }
 
     suspend fun cerrarSesion() = auth.signOut()

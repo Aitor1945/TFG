@@ -32,14 +32,18 @@ También existe el dispositivo *Resizable*, que permite cambiar entre móvil, pl
 
 ## Qué incluye
 
+El diseño replica el de la web: mismos colores (modo oscuro por defecto y modo claro), tarjetas,
+pastillas de estado y el **asistente flotante** con sus mismas respuestas.
+
 | Pantalla | Equivale en la web a | Qué hace |
 |---|---|---|
-| Login | `Login.jsx` | Iniciar sesión y recuperar contraseña |
-| Inicio | `Dashboard.jsx` | Saludo, últimos anuncios e incidencias |
+| Login | `Login.jsx` | Iniciar sesión, recuperar contraseña y cambiar el tema |
+| Inicio | `Dashboard.jsx` | Bienvenida, calendario, tiempo (con tu ubicación), accesos rápidos, últimas incidencias y último anuncio |
 | Muro | `Muro.jsx` | Ver anuncios; publicar si eres presidente/admin/ayuntamiento |
 | Incidencias | `Incidencias.jsx` | Ver, filtrar y crear; los gestores cambian el estado o las borran |
 | Chat | `Chat.jsx` | Lista de vecinos con no leídos y conversación **en tiempo real** |
-| Perfil | `MiPerfil.jsx` + `Ajustes.jsx` + `Documentos.jsx` | Datos, comunidad, editar perfil, documentos de Drive, cerrar sesión |
+| Perfil | `MiPerfil.jsx` + `Ajustes.jsx` + `Documentos.jsx` | Datos, comunidad, actividad, participación, editar datos, cambiar contraseña, modo oscuro, documentos de Drive y cerrar sesión |
+| Asistente | `ChatbotAyuda.jsx` | Botón flotante con preguntas rápidas y respuestas por palabras clave |
 
 La sesión se guarda en el móvil: al volver a abrir la app no hace falta iniciar sesión otra vez.
 
@@ -58,7 +62,8 @@ app/src/main/java/com/barriored/app/
 │       ├── IncidenciasRepositorio.kt
 │       └── ChatRepositorio.kt   Incluye el canal Realtime
 └── ui/
-    ├── theme/Tema.kt            Colores de la web, modo claro/oscuro del sistema
+    ├── theme/Tema.kt            Colores de la web (modo oscuro por defecto y claro)
+    ├── asistente/               Asistente flotante (como ChatbotAyuda de la web)
     ├── navegacion/Navegacion.kt Login o app según la sesión + barra inferior
     ├── componentes/             Piezas reutilizables (tarjetas, cargando, diálogos…)
     └── pantallas/               Cada archivo = ViewModel + pantalla Compose
@@ -85,7 +90,5 @@ de roles de la app es solo visual; la seguridad real la pone Supabase.
 ## Ideas para seguir
 
 - Notificaciones push de chat y muro (Firebase Cloud Messaging + Edge Function de Supabase)
-- Tiempo y ubicación en Inicio (como el Dashboard de la web), pidiendo el permiso de ubicación
 - Foto de perfil con la cámara (Supabase Storage)
 - Enlace profundo `barriored://reset-password` para cambiar la contraseña dentro de la app
-- Chatbot de ayuda (`ChatbotAyuda.jsx`)
